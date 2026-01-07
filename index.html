@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ring Time Clock</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="clock-wrapper">
+            <!-- SVG Rings -->
+            <svg class="rings" viewBox="0 0 400 400">
+                <defs>
+                    <!-- Gradient definitions -->
+                    <linearGradient id="hourGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                    </linearGradient>
+                    <linearGradient id="minuteGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#f5576c;stop-opacity:1" />
+                    </linearGradient>
+                    <linearGradient id="secondGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />
+                    </linearGradient>
+                    <linearGradient id="msGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#43e97b;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#38f9d7;stop-opacity:1" />
+                    </linearGradient>
+
+                    <!-- Blur filter for glow effect -->
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                <!-- Hour ring (outermost) -->
+                <circle class="ring-bg" cx="200" cy="200" r="180" />
+                <circle class="ring-progress" id="hourRing" cx="200" cy="200" r="180"
+                        stroke="url(#hourGradient)" filter="url(#glow)" />
+
+                <!-- Minute ring -->
+                <circle class="ring-bg" cx="200" cy="200" r="140" />
+                <circle class="ring-progress" id="minuteRing" cx="200" cy="200" r="140"
+                        stroke="url(#minuteGradient)" filter="url(#glow)" />
+
+                <!-- Second ring -->
+                <circle class="ring-bg" cx="200" cy="200" r="100" />
+                <circle class="ring-progress" id="secondRing" cx="200" cy="200" r="100"
+                        stroke="url(#secondGradient)" filter="url(#glow)" />
+
+                <!-- Millisecond ring (innermost) -->
+                <circle class="ring-bg" cx="200" cy="200" r="60" />
+                <circle class="ring-progress" id="msRing" cx="200" cy="200" r="60"
+                        stroke="url(#msGradient)" filter="url(#glow)" />
+            </svg>
+
+            <!-- Time labels -->
+            <div class="time-labels">
+                <div class="time-unit">
+                    <span class="time-value" id="hourValue">00</span>
+                    <span class="time-label">Hours</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value" id="minuteValue">00</span>
+                    <span class="time-label">Minutes</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value" id="secondValue">00</span>
+                    <span class="time-label">Seconds</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value" id="msValue">000</span>
+                    <span class="time-label">Milliseconds</span>
+                </div>
+            </div>
+
+            <!-- Accessible text time display -->
+            <div class="text-time" aria-live="polite" aria-atomic="true">
+                <span id="textTime">00:00:00.000</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
