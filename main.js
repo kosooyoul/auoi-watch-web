@@ -4,17 +4,43 @@ const MINUTES_IN_HOUR = 60;
 const SECONDS_IN_MINUTE = 60;
 const MS_IN_SECOND = 1000;
 
-// DOM elements
-const hourRing = document.getElementById('hourRing');
-const minuteRing = document.getElementById('minuteRing');
-const secondRing = document.getElementById('secondRing');
-const msRing = document.getElementById('msRing');
+// DOM elements - Arc containers
+const hourArcsContainer = document.getElementById('hourArcs');
+const minuteArcsContainer = document.getElementById('minuteArcs');
+const secondArcsContainer = document.getElementById('secondArcs');
+const msArcsContainer = document.getElementById('msArcs');
 
+// Arc segment arrays (will be populated dynamically)
+let hourArcs = [];
+let minuteArcs = [];
+let secondArcs = [];
+let msArcs = [];
+
+// DOM elements - Text displays
 const hourValue = document.getElementById('hourValue');
 const minuteValue = document.getElementById('minuteValue');
 const secondValue = document.getElementById('secondValue');
 const msValue = document.getElementById('msValue');
 const textTime = document.getElementById('textTime');
+
+// Arc configuration (number of segments based on radius)
+const ARC_CONFIG = {
+    hour: { radius: 180, count: 50, color: '#667eea' },
+    minute: { radius: 140, count: 40, color: '#f093fb' },
+    second: { radius: 100, count: 30, color: '#4facfe' },
+    ms: { radius: 60, count: 20, color: '#43e97b' }
+};
+
+// Trail length (how many arcs behind the head should be visible)
+const TRAIL_LENGTH = 8;
+
+// Store current colors for smooth interpolation
+const currentColors = {
+    hour: null,
+    minute: null,
+    second: null,
+    ms: null
+};
 
 /**
  * Calculate the circumference of a circle given its radius
@@ -26,43 +52,189 @@ function getCircumference(radius) {
 }
 
 /**
- * Initialize stroke-dasharray for all rings based on their radius
+ * Create arc segments for a ring
+ * @param {HTMLElement} container - SVG container element
+ * @param {number} radius - Radius of the ring
+ * @param {number} count - Number of arc segments
+ * @param {string} colorUrl - Gradient URL reference
+ * @returns {Array} Array of created arc elements
+ */
+function createArcSegments(container, radius, count, colorUrl) {
+    const arcs = [];
+    const circumference = getCircumference(radius);
+    const degreesPerArc = 360 / count;
+
+    // Each arc covers slightly less than its allocated space to create gaps
+    const arcCoverage = 0.75; // 75% filled, 25% gap
+    const arcLength = (circumference / count) * arcCoverage;
+    const gapLength = circumference; // Large gap, only arcLength visible
+
+    for (let i = 0; i < count; i++) {
+        const arc = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        arc.setAttribute('cx', '200');
+        arc.setAttribute('cy', '200');
+        arc.setAttribute('r', radius);
+        arc.setAttribute('fill', 'none');
+        arc.setAttribute('stroke', colorUrl);
+        arc.setAttribute('stroke-width', '14');
+        arc.setAttribute('stroke-linecap', 'round');
+        arc.setAttribute('stroke-dasharray', `${arcLength} ${gapLength}`);
+        arc.setAttribute('stroke-dashoffset', circumference - (i * circumference / count));
+        arc.setAttribute('opacity', '0');
+        arc.classList.add('arc-segment');
+
+        container.appendChild(arc);
+        arcs.push(arc);
+    }
+
+    return arcs;
+}
+
+/**
+ * Initialize arc segments for all rings
  */
 function initializeRings() {
-    const rings = [
-        { element: hourRing, radius: 180 },
-        { element: minuteRing, radius: 140 },
-        { element: secondRing, radius: 100 },
-        { element: msRing, radius: 60 }
-    ];
+    // Create arc segments for each ring
+    hourArcs = createArcSegments(hourArcsContainer, ARC_CONFIG.hour.radius, ARC_CONFIG.hour.count, 'url(#hourGradient)');
+    minuteArcs = createArcSegments(minuteArcsContainer, ARC_CONFIG.minute.radius, ARC_CONFIG.minute.count, 'url(#minuteGradient)');
+    secondArcs = createArcSegments(secondArcsContainer, ARC_CONFIG.second.radius, ARC_CONFIG.second.count, 'url(#secondGradient)');
+    msArcs = createArcSegments(msArcsContainer, ARC_CONFIG.ms.radius, ARC_CONFIG.ms.count, 'url(#msGradient)');
+}
 
-    rings.forEach(({ element, radius }) => {
-        const circumference = getCircumference(radius);
-        element.style.strokeDasharray = `${circumference} ${circumference}`;
-        element.style.strokeDashoffset = circumference;
+/**
+ * Update arc segments with comet trail effect
+ * @param {Array} arcs - Array of arc elements
+ * @param {number} progress - Current progress (0 to 1)
+ * @param {string} color - Current color
+ * @param {number} count - Total number of arcs
+ */
+function updateArcSegments(arcs, progress, color, count) {
+    // Calculate which arc is at the "head" of the progress
+    const headIndex = Math.floor(progress * count);
+
+    // Update all arcs
+    arcs.forEach((arc, index) => {
+        // Calculate distance from head (wraps around)
+        let distance = headIndex - index;
+        if (distance < 0) distance += count;
+
+        // Show trail arcs (TRAIL_LENGTH arcs behind the head)
+        if (distance <= TRAIL_LENGTH) {
+            // Opacity decreases as distance increases
+            const opacity = 1 - (distance / TRAIL_LENGTH) * 0.85;
+            arc.setAttribute('opacity', opacity);
+            arc.setAttribute('stroke', color);
+        } else {
+            // Hide arcs outside the trail
+            arc.setAttribute('opacity', '0');
+        }
     });
 }
 
+
 /**
- * Calculate progress (0 to 1) for a given time unit
- * @param {number} current - Current value
- * @param {number} max - Maximum value
- * @returns {number} Progress from 0 to 1
+ * Interpolate between two colors
+ * @param {Array} color1 - RGB array [r, g, b]
+ * @param {Array} color2 - RGB array [r, g, b]
+ * @param {number} factor - Interpolation factor (0 to 1)
+ * @returns {Array} RGB array [r, g, b]
  */
-function calculateProgress(current, max) {
-    return current / max;
+function interpolateColor(color1, color2, factor) {
+    const r = Math.round(color1[0] + (color2[0] - color1[0]) * factor);
+    const g = Math.round(color1[1] + (color2[1] - color1[1]) * factor);
+    const b = Math.round(color1[2] + (color2[2] - color1[2]) * factor);
+    return [r, g, b];
 }
 
 /**
- * Update a ring's visual progress
- * @param {HTMLElement} ring - The SVG circle element
- * @param {number} radius - The radius of the ring
- * @param {number} progress - Progress from 0 to 1
+ * Convert RGB array to CSS string
+ * @param {Array} rgb - RGB array [r, g, b]
+ * @returns {string} RGB color string
  */
-function updateRing(ring, radius, progress) {
-    const circumference = getCircumference(radius);
-    const offset = circumference - (progress * circumference);
-    ring.style.strokeDashoffset = offset;
+function rgbToString(rgb) {
+    return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+}
+
+/**
+ * Parse RGB string to array
+ * @param {string} rgbString - RGB string like "rgb(255, 0, 0)"
+ * @returns {Array} RGB array [r, g, b]
+ */
+function parseRgbString(rgbString) {
+    const match = rgbString.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (match) {
+        return [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])];
+    }
+    return [0, 0, 0];
+}
+
+/**
+ * Get target color based on progress through palette
+ * @param {Array} palette - Color palette array
+ * @param {number} progress - Progress from 0 to 1
+ * @returns {Array} Target RGB color [r, g, b]
+ */
+function getTargetColor(palette, progress) {
+    if (progress < 0.5) {
+        // First half: interpolate between start and mid
+        return interpolateColor(palette[0], palette[1], progress * 2);
+    } else {
+        // Second half: interpolate between mid and end
+        return interpolateColor(palette[1], palette[2], (progress - 0.5) * 2);
+    }
+}
+
+/**
+ * Get color for progress with smooth interpolation
+ * @param {number} progress - Progress from 0 to 1
+ * @param {string} type - Ring type (hour, minute, second, ms)
+ * @returns {string} RGB color string
+ */
+function getColorForProgress(progress, type) {
+    // Define color palettes for each ring type (water stream colors)
+    const colorPalettes = {
+        hour: [
+            [102, 126, 234],  // #667eea (start)
+            [118, 75, 162],   // #764ba2 (mid)
+            [147, 51, 234]    // brighter purple (end)
+        ],
+        minute: [
+            [240, 147, 251],  // #f093fb (start)
+            [245, 87, 108],   // #f5576c (mid)
+            [255, 107, 129]   // brighter pink (end)
+        ],
+        second: [
+            [79, 172, 254],   // #4facfe (start)
+            [0, 242, 254],    // #00f2fe (mid)
+            [64, 224, 208]    // turquoise (end)
+        ],
+        ms: [
+            [67, 233, 123],   // #43e97b (start)
+            [56, 249, 215],   // #38f9d7 (mid)
+            [127, 255, 212]   // aquamarine (end)
+        ]
+    };
+
+    const palette = colorPalettes[type];
+
+    // Calculate target color based on progress
+    const targetColor = getTargetColor(palette, progress);
+
+    // Initialize current color if not set
+    if (currentColors[type] === null) {
+        currentColors[type] = targetColor;
+    }
+
+    // Smooth interpolation factor (adjust for smoothness)
+    const smoothFactor = 0.15;
+
+    // Smoothly interpolate from current color to target color
+    const newColor = interpolateColor(currentColors[type], targetColor, smoothFactor);
+
+    // Store the new color for next frame
+    currentColors[type] = newColor;
+
+    return rgbToString(newColor);
 }
 
 /**
@@ -87,17 +259,24 @@ function updateClock() {
     const seconds = now.getSeconds();
     const milliseconds = now.getMilliseconds();
 
-    // Calculate progress for each unit
-    const hourProgress = calculateProgress(hours, HOURS_IN_DAY);
-    const minuteProgress = calculateProgress(minutes, MINUTES_IN_HOUR);
-    const secondProgress = calculateProgress(seconds, SECONDS_IN_MINUTE);
-    const msProgress = calculateProgress(milliseconds, MS_IN_SECOND);
+    // Calculate fractional progress for smooth water-like flow
+    // Each unit includes fractional parts of smaller units to prevent jumps
+    const msProgress = milliseconds / MS_IN_SECOND;
+    const secondProgress = (seconds + msProgress) / SECONDS_IN_MINUTE;
+    const minuteProgress = (minutes + secondProgress) / MINUTES_IN_HOUR;
+    const hourProgress = (hours + minuteProgress) / HOURS_IN_DAY;
 
-    // Update rings
-    updateRing(hourRing, 180, hourProgress);
-    updateRing(minuteRing, 140, minuteProgress);
-    updateRing(secondRing, 100, secondProgress);
-    updateRing(msRing, 60, msProgress);
+    // Calculate colors based on progress
+    const hourColor = getColorForProgress(hourProgress, 'hour');
+    const minuteColor = getColorForProgress(minuteProgress, 'minute');
+    const secondColor = getColorForProgress(secondProgress, 'second');
+    const msColor = getColorForProgress(msProgress, 'ms');
+
+    // Update arc segments with comet trail effect
+    updateArcSegments(hourArcs, hourProgress, hourColor, ARC_CONFIG.hour.count);
+    updateArcSegments(minuteArcs, minuteProgress, minuteColor, ARC_CONFIG.minute.count);
+    updateArcSegments(secondArcs, secondProgress, secondColor, ARC_CONFIG.second.count);
+    updateArcSegments(msArcs, msProgress, msColor, ARC_CONFIG.ms.count);
 
     // Update text displays
     hourValue.textContent = padZero(hours);
