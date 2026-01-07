@@ -46,8 +46,6 @@ body {
     width: 100%;
     height: 100%;
     transform: rotate(-90deg); /* Start from top */
-    /* Subtle ambient glow */
-    filter: drop-shadow(0 0 20px rgba(100, 126, 234, 0.2));
 }
 
 /* Ring background (track) */
@@ -60,8 +58,7 @@ body {
 
 /* Arc segments - individual comet fragments */
 .arc-segment {
-    /* Subtle glow for arc segments */
-    filter: drop-shadow(0 0 3px currentColor);
+    /* Clean, no glow */
     transition: opacity 0.05s ease-out;
 }
 

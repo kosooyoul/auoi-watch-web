@@ -23,16 +23,13 @@ const secondValue = document.getElementById('secondValue');
 const msValue = document.getElementById('msValue');
 const textTime = document.getElementById('textTime');
 
-// Arc configuration (number of segments based on radius)
+// Arc configuration (number of segments based on radius, trail scales with radius)
 const ARC_CONFIG = {
-    hour: { radius: 180, count: 50, color: '#667eea' },
-    minute: { radius: 140, count: 40, color: '#f093fb' },
-    second: { radius: 100, count: 30, color: '#4facfe' },
-    ms: { radius: 60, count: 20, color: '#43e97b' }
+    hour: { radius: 180, count: 50, trailLength: 15, color: '#667eea' },
+    minute: { radius: 140, count: 40, trailLength: 12, color: '#f093fb' },
+    second: { radius: 100, count: 30, trailLength: 9, color: '#4facfe' },
+    ms: { radius: 60, count: 20, trailLength: 6, color: '#43e97b' }
 };
-
-// Trail length (how many arcs behind the head should be visible)
-const TRAIL_LENGTH = 8;
 
 // Store current colors for smooth interpolation
 const currentColors = {
@@ -76,7 +73,7 @@ function createArcSegments(container, radius, count, colorUrl) {
         arc.setAttribute('r', radius);
         arc.setAttribute('fill', 'none');
         arc.setAttribute('stroke', colorUrl);
-        arc.setAttribute('stroke-width', '14');
+        arc.setAttribute('stroke-width', '0'); // Will be set dynamically
         arc.setAttribute('stroke-linecap', 'round');
         arc.setAttribute('stroke-dasharray', `${arcLength} ${gapLength}`);
         arc.setAttribute('stroke-dashoffset', circumference - (i * circumference / count));
@@ -107,26 +104,43 @@ function initializeRings() {
  * @param {number} progress - Current progress (0 to 1)
  * @param {string} color - Current color
  * @param {number} count - Total number of arcs
+ * @param {number} trailLength - Number of trailing arcs to show
  */
-function updateArcSegments(arcs, progress, color, count) {
-    // Calculate which arc is at the "head" of the progress
-    const headIndex = Math.floor(progress * count);
+function updateArcSegments(arcs, progress, color, count, trailLength) {
+    // Use fractional progress for smoother transitions
+    const exactPosition = progress * count;
+    const headIndex = Math.floor(exactPosition) % count;
+    const fractionalPart = exactPosition - Math.floor(exactPosition);
+
+    // Stroke width range (head thick, tail thin)
+    const HEAD_WIDTH = 14;
+    const TAIL_WIDTH = 4;
 
     // Update all arcs
     arcs.forEach((arc, index) => {
-        // Calculate distance from head (wraps around)
-        let distance = headIndex - index;
-        if (distance < 0) distance += count;
+        // Calculate how far behind the head this arc is (wraps around)
+        let distance = (headIndex - index + count) % count;
 
-        // Show trail arcs (TRAIL_LENGTH arcs behind the head)
-        if (distance <= TRAIL_LENGTH) {
+        // Adjust distance with fractional progress for smooth transitions
+        // This makes the trail smoothly fade as the head moves between arcs
+        distance = distance - (1 - fractionalPart);
+
+        // Show trail arcs (trailLength arcs behind the head)
+        if (distance >= 0 && distance <= trailLength) {
             // Opacity decreases as distance increases
-            const opacity = 1 - (distance / TRAIL_LENGTH) * 0.85;
-            arc.setAttribute('opacity', opacity);
+            const opacityFactor = distance / trailLength;
+            const opacity = 1 - opacityFactor * 0.85;
+
+            // Stroke width decreases as distance increases (taper effect)
+            const strokeWidth = HEAD_WIDTH - (HEAD_WIDTH - TAIL_WIDTH) * opacityFactor;
+
+            arc.setAttribute('opacity', Math.max(0, opacity));
             arc.setAttribute('stroke', color);
+            arc.setAttribute('stroke-width', strokeWidth);
         } else {
-            // Hide arcs outside the trail
+            // Hide arcs outside the trail (don't render)
             arc.setAttribute('opacity', '0');
+            arc.setAttribute('stroke-width', '0');
         }
     });
 }
@@ -272,11 +286,11 @@ function updateClock() {
     const secondColor = getColorForProgress(secondProgress, 'second');
     const msColor = getColorForProgress(msProgress, 'ms');
 
-    // Update arc segments with comet trail effect
-    updateArcSegments(hourArcs, hourProgress, hourColor, ARC_CONFIG.hour.count);
-    updateArcSegments(minuteArcs, minuteProgress, minuteColor, ARC_CONFIG.minute.count);
-    updateArcSegments(secondArcs, secondProgress, secondColor, ARC_CONFIG.second.count);
-    updateArcSegments(msArcs, msProgress, msColor, ARC_CONFIG.ms.count);
+    // Update arc segments with comet trail effect (trail length scales with ring size)
+    updateArcSegments(hourArcs, hourProgress, hourColor, ARC_CONFIG.hour.count, ARC_CONFIG.hour.trailLength);
+    updateArcSegments(minuteArcs, minuteProgress, minuteColor, ARC_CONFIG.minute.count, ARC_CONFIG.minute.trailLength);
+    updateArcSegments(secondArcs, secondProgress, secondColor, ARC_CONFIG.second.count, ARC_CONFIG.second.trailLength);
+    updateArcSegments(msArcs, msProgress, msColor, ARC_CONFIG.ms.count, ARC_CONFIG.ms.trailLength);
 
     // Update text displays
     hourValue.textContent = padZero(hours);
