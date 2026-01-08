@@ -61,8 +61,8 @@ function createArcSegments(container, radius, count, colorUrl) {
     const circumference = getCircumference(radius);
     const degreesPerArc = 360 / count;
 
-    // Each arc covers less space to create larger gaps (reduces alpha overlap)
-    const arcCoverage = 0.5; // 50% filled, 50% gap - prevents alpha blending overlap
+    // Each arc covers less space to create larger gaps (eliminates alpha overlap)
+    const arcCoverage = 0.35; // 35% filled, 65% gap - eliminates alpha blending artifacts
     const arcLength = (circumference / count) * arcCoverage;
     const gapLength = circumference; // Large gap, only arcLength visible
 
@@ -74,7 +74,7 @@ function createArcSegments(container, radius, count, colorUrl) {
         arc.setAttribute('fill', 'none');
         arc.setAttribute('stroke', colorUrl);
         arc.setAttribute('stroke-width', '0'); // Will be set dynamically
-        arc.setAttribute('stroke-linecap', 'round');
+        arc.setAttribute('stroke-linecap', 'butt'); // Precise edges, no overlap
         arc.setAttribute('stroke-dasharray', `${arcLength} ${gapLength}`);
         arc.setAttribute('stroke-dashoffset', circumference - (i * circumference / count));
         arc.setAttribute('opacity', '0');

@@ -2,6 +2,26 @@
 
 ## Version History
 
+### v1.4 (2026-01-08)
+**Arc Overlap Elimination**
+
+**Changes:**
+- Reduced arc coverage from 50% to 35% for cleaner gaps
+  - arcCoverage: 0.5 → 0.35 (65% gap between arcs)
+- Changed stroke-linecap from 'round' to 'butt' for precise edges
+  - Eliminates rounded caps that caused overlap
+- Removed all alpha blending artifacts at arc connections
+
+**Result:** Completely eliminated visual artifacts from overlapping arcs, cleaner appearance
+
+**Verification:**
+✅ No dark spots at arc connections
+✅ Trail effect remains smooth and natural
+✅ 60fps performance maintained
+✅ All 4 rings (ms/sec/min/hour) consistent
+
+---
+
 ### v1.3 (2026-01-08)
 **Arc Density & Spacing Improvements**
 
