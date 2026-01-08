@@ -25,10 +25,10 @@ const textTime = document.getElementById('textTime');
 
 // Arc configuration (number of segments based on radius, trail scales with radius)
 const ARC_CONFIG = {
-    hour: { radius: 180, count: 50, trailLength: 15, color: '#667eea' },
-    minute: { radius: 140, count: 40, trailLength: 12, color: '#f093fb' },
-    second: { radius: 100, count: 30, trailLength: 9, color: '#4facfe' },
-    ms: { radius: 60, count: 20, trailLength: 6, color: '#43e97b' }
+    hour: { radius: 180, count: 96, trailLength: 30, color: '#667eea' },
+    minute: { radius: 140, count: 60, trailLength: 20, color: '#f093fb' },
+    second: { radius: 100, count: 60, trailLength: 16, color: '#4facfe' },
+    ms: { radius: 60, count: 50, trailLength: 12, color: '#43e97b' }
 };
 
 // Store current colors for smooth interpolation
@@ -61,8 +61,8 @@ function createArcSegments(container, radius, count, colorUrl) {
     const circumference = getCircumference(radius);
     const degreesPerArc = 360 / count;
 
-    // Each arc covers slightly less than its allocated space to create gaps
-    const arcCoverage = 0.75; // 75% filled, 25% gap
+    // Each arc covers less space to create larger gaps (reduces alpha overlap)
+    const arcCoverage = 0.5; // 50% filled, 50% gap - prevents alpha blending overlap
     const arcLength = (circumference / count) * arcCoverage;
     const gapLength = circumference; // Large gap, only arcLength visible
 
