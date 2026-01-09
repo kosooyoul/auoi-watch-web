@@ -133,10 +133,6 @@ body {
         bottom: -50px;
     }
 
-    .ring-progress {
-        stroke-width: 10;
-    }
-
     .ring-bg {
         stroke-width: 0.5;
     }
@@ -160,10 +156,6 @@ body {
         bottom: -40px;
     }
 
-    .ring-progress {
-        stroke-width: 8;
-    }
-
     .ring-bg {
         stroke-width: 0.5;
     }
@@ -171,9 +163,8 @@ body {
 
 /* Accessibility - reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-    .ring-progress {
+    .arc-segment {
         transition: none;
-        filter: none;
     }
 
     .rings {

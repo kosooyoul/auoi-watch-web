@@ -1,8 +1,24 @@
-// Constants
+// Time constants
 const HOURS_IN_DAY = 24;
 const MINUTES_IN_HOUR = 60;
 const SECONDS_IN_MINUTE = 60;
 const MS_IN_SECOND = 1000;
+
+// Visual constants for comet trail effect
+const ARC_COVERAGE = 0.68; // 68% filled, 32% gap for continuous flow
+const STROKE_LINECAP = 'round'; // Smooth rounded edges for comet effect
+
+// Stroke width range (head thick, tail thin)
+const HEAD_STROKE_WIDTH = 14;
+const TAIL_STROKE_WIDTH = 4;
+
+// Arc length multipliers (head shorter, tail longer)
+const HEAD_LENGTH_MULTIPLIER = 0.7;  // Head is 70% of base length
+const TAIL_LENGTH_MULTIPLIER = 1.4;  // Tail is 140% of base length (2x head)
+
+// Color blending
+const BLACK_BLEND_FACTOR = 0.85; // Maximum black blending (0 = full color, 1 = black)
+const COLOR_SMOOTH_FACTOR = 0.15; // Color interpolation smoothness
 
 // DOM elements - Arc containers
 const hourArcsContainer = document.getElementById('hourArcs');
@@ -61,9 +77,8 @@ function createArcSegments(container, radius, count, colorUrl) {
     const circumference = getCircumference(radius);
     const degreesPerArc = 360 / count;
 
-    // Arc coverage increased for tighter spacing and stronger comet trail
-    const arcCoverage = 0.68; // 68% filled, 32% gap - tighter spacing for continuous flow
-    const arcLength = (circumference / count) * arcCoverage;
+    // Arc coverage for tighter spacing and stronger comet trail
+    const arcLength = (circumference / count) * ARC_COVERAGE;
     const gapLength = circumference; // Large gap, only arcLength visible
 
     for (let i = 0; i < count; i++) {
@@ -74,7 +89,7 @@ function createArcSegments(container, radius, count, colorUrl) {
         arc.setAttribute('fill', 'none');
         arc.setAttribute('stroke', colorUrl);
         arc.setAttribute('stroke-width', '0'); // Will be set dynamically
-        arc.setAttribute('stroke-linecap', 'round'); // Smooth rounded edges for comet effect
+        arc.setAttribute('stroke-linecap', STROKE_LINECAP);
         arc.setAttribute('stroke-dasharray', `${arcLength} ${gapLength}`);
         arc.setAttribute('stroke-dashoffset', circumference - (i * circumference / count));
         arc.setAttribute('opacity', '0');
@@ -99,6 +114,71 @@ function initializeRings() {
 }
 
 /**
+ * Calculate distance of arc from head position with fractional adjustment
+ * @param {number} headIndex - Current head position index
+ * @param {number} arcIndex - Index of the arc to calculate distance for
+ * @param {number} count - Total number of arcs
+ * @param {number} fractionalPart - Fractional part of head position
+ * @returns {number} Adjusted distance from head
+ */
+function calculateArcDistance(headIndex, arcIndex, count, fractionalPart) {
+    let distance = (headIndex - arcIndex + count) % count;
+    // Adjust with fractional progress for smooth transitions
+    return distance - (1 - fractionalPart);
+}
+
+/**
+ * Calculate trail styling parameters (width, length, color) for an arc
+ * @param {number} distance - Distance from head position
+ * @param {number} trailLength - Total length of trail
+ * @param {number} baseArcLength - Base arc length before multiplier
+ * @param {string} color - Base color as RGB string
+ * @returns {Object} Styling parameters {strokeWidth, arcLength, color}
+ */
+function calculateTrailStyling(distance, trailLength, baseArcLength, color) {
+    const distanceFactor = distance / trailLength;
+
+    // Black blending for color (0 = full color, 1 = black)
+    const blackFactor = distanceFactor * BLACK_BLEND_FACTOR;
+
+    // Stroke width (head thick, tail thin)
+    const strokeWidth = HEAD_STROKE_WIDTH - (HEAD_STROKE_WIDTH - TAIL_STROKE_WIDTH) * distanceFactor;
+
+    // Arc length (head short, tail long)
+    const lengthMultiplier = HEAD_LENGTH_MULTIPLIER + (TAIL_LENGTH_MULTIPLIER - HEAD_LENGTH_MULTIPLIER) * distanceFactor;
+    const arcLength = baseArcLength * lengthMultiplier;
+
+    // Blend color with black
+    const baseColor = parseRgbString(color);
+    const darkenedColor = interpolateColor(baseColor, [0, 0, 0], blackFactor);
+    const colorString = rgbToString(darkenedColor);
+
+    return { strokeWidth, arcLength, color: colorString };
+}
+
+/**
+ * Apply styling to a visible trail arc
+ * @param {Element} arc - SVG arc element
+ * @param {Object} styling - Styling parameters from calculateTrailStyling
+ * @param {number} gapLength - Gap length for stroke-dasharray
+ */
+function applyVisibleArcStyling(arc, styling, gapLength) {
+    arc.setAttribute('opacity', '1');
+    arc.setAttribute('stroke', styling.color);
+    arc.setAttribute('stroke-width', styling.strokeWidth);
+    arc.setAttribute('stroke-dasharray', `${styling.arcLength} ${gapLength}`);
+}
+
+/**
+ * Hide an arc that's outside the trail
+ * @param {Element} arc - SVG arc element
+ */
+function hideArc(arc) {
+    arc.setAttribute('opacity', '0');
+    arc.setAttribute('stroke-width', '0');
+}
+
+/**
  * Update arc segments with comet trail effect
  * @param {Array} arcs - Array of arc elements
  * @param {number} progress - Current progress (0 to 1)
@@ -107,63 +187,28 @@ function initializeRings() {
  * @param {number} trailLength - Number of trailing arcs to show
  */
 function updateArcSegments(arcs, progress, color, count, trailLength) {
-    // Use fractional progress for smoother transitions
+    // Calculate head position with fractional progress for smooth transitions
     const exactPosition = progress * count;
     const headIndex = Math.floor(exactPosition) % count;
     const fractionalPart = exactPosition - Math.floor(exactPosition);
 
-    // Stroke width range (head thick, tail thin)
-    const HEAD_WIDTH = 14;
-    const TAIL_WIDTH = 4;
-
-    // Arc length multipliers (head shorter, tail longer)
-    const HEAD_LENGTH_MULT = 0.7;  // Head is 70% of base length
-    const TAIL_LENGTH_MULT = 1.4;  // Tail is 140% of base length (2x head)
-
-    // Base arc coverage
-    const baseArcCoverage = 0.68;
-
-    // Get radius from first arc
+    // Calculate arc geometry
     const radius = parseFloat(arcs[0].getAttribute('r'));
     const circumference = getCircumference(radius);
-    const baseArcLength = (circumference / count) * baseArcCoverage;
+    const baseArcLength = (circumference / count) * ARC_COVERAGE;
     const gapLength = circumference;
 
-    // Update all arcs
+    // Update each arc
     arcs.forEach((arc, index) => {
-        // Calculate how far behind the head this arc is (wraps around)
-        let distance = (headIndex - index + count) % count;
+        const distance = calculateArcDistance(headIndex, index, count, fractionalPart);
 
-        // Adjust distance with fractional progress for smooth transitions
-        // This makes the trail smoothly fade as the head moves between arcs
-        distance = distance - (1 - fractionalPart);
-
-        // Show trail arcs (trailLength arcs behind the head)
         if (distance >= 0 && distance <= trailLength) {
-            // Factor for blending with black (0 = full color, 1 = black)
-            const blackFactor = (distance / trailLength) * 0.85;
-
-            // Stroke width decreases as distance increases (taper effect)
-            const strokeWidth = HEAD_WIDTH - (HEAD_WIDTH - TAIL_WIDTH) * (distance / trailLength);
-
-            // Arc length increases from head to tail (head short, tail long)
-            const lengthFactor = distance / trailLength;
-            const lengthMultiplier = HEAD_LENGTH_MULT + (TAIL_LENGTH_MULT - HEAD_LENGTH_MULT) * lengthFactor;
-            const arcLength = baseArcLength * lengthMultiplier;
-
-            // Blend color with black instead of using opacity
-            const baseColor = parseRgbString(color);
-            const darkenedColor = interpolateColor(baseColor, [0, 0, 0], blackFactor);
-            const darkenedColorString = rgbToString(darkenedColor);
-
-            arc.setAttribute('opacity', '1'); // Always fully opaque
-            arc.setAttribute('stroke', darkenedColorString);
-            arc.setAttribute('stroke-width', strokeWidth);
-            arc.setAttribute('stroke-dasharray', `${arcLength} ${gapLength}`);
+            // Arc is in the visible trail
+            const styling = calculateTrailStyling(distance, trailLength, baseArcLength, color);
+            applyVisibleArcStyling(arc, styling, gapLength);
         } else {
-            // Hide arcs outside the trail (don't render)
-            arc.setAttribute('opacity', '0');
-            arc.setAttribute('stroke-width', '0');
+            // Arc is outside the trail
+            hideArc(arc);
         }
     });
 }
@@ -262,11 +307,8 @@ function getColorForProgress(progress, type) {
         currentColors[type] = targetColor;
     }
 
-    // Smooth interpolation factor (adjust for smoothness)
-    const smoothFactor = 0.15;
-
     // Smoothly interpolate from current color to target color
-    const newColor = interpolateColor(currentColors[type], targetColor, smoothFactor);
+    const newColor = interpolateColor(currentColors[type], targetColor, COLOR_SMOOTH_FACTOR);
 
     // Store the new color for next frame
     currentColors[type] = newColor;
