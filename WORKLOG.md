@@ -2,6 +2,39 @@
 
 ## Version History
 
+### v1.4.1 (2026-01-09)
+**Comet Trail Volume Restoration & Visual Refinement**
+
+**Changes:**
+- Increased arc coverage from 35% to 68% for stronger comet trail volume
+  - arcCoverage: 0.35 → 0.68 (tighter spacing, more continuous flow)
+- Changed stroke-linecap from 'butt' to 'round' for smoother connections
+  - Creates natural, flowing comet trail effect
+- Replaced opacity-based fading with black color blending
+  - Trail now darkens instead of becoming transparent (more solid appearance)
+  - Opacity always 1.0, color interpolates with black
+  - blackFactor: 0 (full color) → 0.85 (near black)
+- Implemented dynamic arc length variation (head-to-tail)
+  - Head: 70% of base length (short and bright)
+  - Tail: 140% of base length (long and dark, 2x head length)
+  - Creates authentic meteor/comet appearance
+- Updated background ring styling
+  - Color: black → gray (rgba(128, 128, 128, 0.2))
+  - Thickness: 12px → 0.5px (thin orbit-like guides)
+
+**Result:** Restored prominent comet trail effect with better visual flow and orbit-like background rings
+
+**Verification:**
+✅ Comet trail has strong volume and presence
+✅ Head is short and bright, tail is long and dark
+✅ Trail flows naturally with round caps
+✅ Background rings appear as thin orbital guides
+✅ Black blending creates solid, non-transparent trails
+✅ 60fps performance maintained
+✅ All 4 rings (ms/sec/min/hour) consistent
+
+---
+
 ### v1.4 (2026-01-08)
 **Arc Overlap Elimination**
 

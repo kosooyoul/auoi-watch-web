@@ -48,11 +48,11 @@ body {
     transform: rotate(-90deg); /* Start from top */
 }
 
-/* Ring background (track) */
+/* Ring background (track) - thin orbit-like appearance */
 .ring-bg {
     fill: none;
-    stroke: rgba(255, 255, 255, 0.08);
-    stroke-width: 12;
+    stroke: rgba(128, 128, 128, 0.2);
+    stroke-width: 0.5;
     stroke-linecap: round;
 }
 
@@ -133,9 +133,12 @@ body {
         bottom: -50px;
     }
 
-    .ring-progress,
-    .ring-bg {
+    .ring-progress {
         stroke-width: 10;
+    }
+
+    .ring-bg {
+        stroke-width: 0.5;
     }
 }
 
@@ -157,9 +160,12 @@ body {
         bottom: -40px;
     }
 
-    .ring-progress,
-    .ring-bg {
+    .ring-progress {
         stroke-width: 8;
+    }
+
+    .ring-bg {
+        stroke-width: 0.5;
     }
 }
 
