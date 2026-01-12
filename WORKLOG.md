@@ -2,6 +2,59 @@
 
 ## Version History
 
+### v1.5.0 (2026-01-12)
+**Theme System & Settings Persistence**
+
+**New Features:**
+- CSS variables-based theming system
+  - All colors (background, text, rings) now use CSS variables
+  - Smooth theme transitions (0.3-0.5s ease)
+- 5 color theme presets:
+  - **Classic**: Original dark theme with vibrant gradients
+  - **Warm Sunset**: Warm reds/oranges/golds (#2d1b1b background)
+  - **Ocean Breeze**: Cool blues (#0a1929 background)
+  - **Neon Night**: Bright neon colors (#0d0221 background)
+  - **Soft Pastel**: Light theme with soft pastels (#f8f9fa background)
+- Settings modal UI:
+  - Floating settings button (⚙) in top-right corner
+  - Modal with theme selector grid
+  - Theme preview circles showing ring colors
+  - Glass-morphism design with backdrop blur
+- localStorage persistence:
+  - User's theme selection saved automatically
+  - Settings restored on page load
+  - Key: `ringClockSettings` → `{ theme: "themeName" }`
+- Accessibility improvements:
+  - Keyboard navigation (Enter/Space to select theme)
+  - ARIA attributes (role="dialog", aria-checked, etc.)
+  - Focus management (modal open → focus first option)
+  - ESC key to close modal
+
+**Technical Implementation:**
+- Dynamic SVG gradient updates based on theme
+- `hexToRgb()` helper for color conversion
+- Ring colors now pull from theme definitions in JS
+- Color interpolation system updated to use theme colors
+- Settings UI event handlers with proper cleanup
+
+**Files Modified:**
+- `styles.css`: Added CSS variables, settings UI styles (250+ lines)
+- `index.html`: Added settings button and modal markup
+- `main.js`: Theme system, localStorage, event handlers (260+ lines)
+
+**Result:** Users can now personalize their clock with 5 distinct themes, and preferences persist across sessions
+
+**Verification:**
+✅ All 5 themes apply correctly
+✅ Ring colors update smoothly when switching themes
+✅ localStorage saves and restores theme on refresh
+✅ Settings modal opens/closes properly
+✅ Keyboard navigation works (Tab, Enter, Space, ESC)
+✅ 60fps performance maintained
+✅ Responsive on mobile and desktop
+
+---
+
 ### v1.4.1 (2026-01-09)
 **Comet Trail Volume Restoration & Visual Refinement**
 
@@ -150,7 +203,12 @@
 - Git workflow: `dev` → `main`
 
 ### Future Considerations
-- Potential optimizations: requestIdleCallback for non-visible arcs
-- Color palette customization
+- ~~Color palette customization~~ ✅ Completed in v1.5.0
+- URL-based theme sharing (query params)
+- Fullscreen mode (Fullscreen API)
+- PWA support (manifest.json, service worker)
+- Alarm/Timer features (Notification API)
 - 12h/24h toggle
 - Animation speed control
+- World clock (multi-timezone)
+- Stopwatch mode
