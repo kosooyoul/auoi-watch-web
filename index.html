@@ -7,10 +7,20 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Fullscreen Button -->
+    <button class="fullscreen-btn" id="fullscreenBtn" aria-label="Toggle fullscreen">
+        ⛶
+    </button>
+
     <!-- Settings Button -->
     <button class="settings-btn" id="settingsBtn" aria-label="Open settings">
         ⚙
     </button>
+
+    <!-- Fullscreen Hint -->
+    <div class="fullscreen-hint" id="fullscreenHint">
+        <span class="hint-text">Press <kbd>ESC</kbd> to exit fullscreen</span>
+    </div>
 
     <!-- Settings Modal -->
     <div class="settings-modal" id="settingsModal" role="dialog" aria-labelledby="settingsTitle" aria-modal="true">

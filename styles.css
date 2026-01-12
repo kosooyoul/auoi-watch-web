@@ -213,6 +213,37 @@ body {
     }
 }
 
+/* Fullscreen Button */
+.fullscreen-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.fullscreen-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.1);
+}
+
+.fullscreen-btn:focus {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
+}
+
 /* Settings Button */
 .settings-btn {
     position: fixed;
@@ -242,6 +273,11 @@ body {
 .settings-btn:focus {
     outline: 2px solid var(--text-primary);
     outline-offset: 2px;
+}
+
+.settings-btn.hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 
 /* Settings Modal */
@@ -469,6 +505,13 @@ body {
 }
 
 @media (max-width: 480px) {
+    .fullscreen-btn {
+        width: 44px;
+        height: 44px;
+        top: 16px;
+        left: 16px;
+    }
+
     .settings-btn {
         width: 44px;
         height: 44px;
@@ -483,4 +526,46 @@ body {
     .settings-title {
         font-size: 1.3rem;
     }
+}
+
+/* Fullscreen Hint */
+.fullscreen-hint {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    padding: 20px 40px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 200;
+}
+
+.fullscreen-hint.active {
+    opacity: 1;
+}
+
+.hint-text {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.hint-text kbd {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-family: monospace;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
