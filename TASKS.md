@@ -1,11 +1,14 @@
 # auoi-watch-web Tasks & Roadmap
 
-## Current State (v1.4.1)
+## Current State (v1.5.0)
 - ✅ Real-time clock with comet trail animation (ms/sec/min/hour rings)
 - ✅ SVG-based premium visual design
 - ✅ 60fps smooth animation
 - ✅ Accessible text time display
 - ✅ Responsive design
+- ✅ Theme system with 5 color presets
+- ✅ Settings panel UI with modal
+- ✅ localStorage persistence for user preferences
 
 ---
 
@@ -29,36 +32,29 @@
 
 ---
 
-## Suggested Tasks (Priority Order)
+## Completed Tasks
 
-### 1. [HIGH] Settings Persistence (localStorage)
-**Why:** 사용자 설정이 새로고침 후 사라지면 불편함 - 웹의 localStorage 활용
-**Effort:** Small (1-2 hours)
-**Value:** High - 사용자 경험 향상
-**Scope:**
-- Color theme preference 저장
-- Animation speed preference 저장
-- 12h/24h format preference 저장
-- 페이지 로드 시 저장된 설정 복원
-- Settings UI 패널 추가 (간단한 토글/슬라이더)
-**Web Strength:** localStorage API로 브라우저 간 설정 유지
+### ✅ 1. Settings Persistence + Theme Customization (v1.5.0)
+**Completed:** 2026-01-12
+**Implemented:**
+- ✅ 5 color theme presets (Classic, Warm Sunset, Ocean Breeze, Neon Night, Soft Pastel)
+- ✅ CSS variables-based theming system
+- ✅ Settings modal UI with theme selector
+- ✅ localStorage save/restore functionality
+- ✅ Dynamic ring color updates based on theme
+- ✅ Accessible keyboard navigation and ARIA attributes
+- ✅ Smooth theme transition animations (0.3-0.5s)
 
----
-
-### 2. [HIGH] Color Theme Customization
-**Why:** 시계는 개인 공간에 놓이는 도구 - 취향 반영 필요
-**Effort:** Small-Medium (2-3 hours)
-**Value:** High - 개인화
-**Scope:**
-- 3-5개 프리셋 테마 (Classic, Warm, Cool, Neon, Pastel)
-- CSS variables 기반 색상 시스템
-- 테마 선택 UI (드롭다운 또는 버튼)
-- localStorage로 선택 저장
-**Web Strength:** CSS variables + localStorage로 즉시 테마 전환
+**Files Modified:**
+- `styles.css` - Added CSS variables, settings UI styles
+- `index.html` - Added settings button and modal
+- `main.js` - Theme system, localStorage, event handlers
 
 ---
 
-### 3. [MEDIUM] URL-based Theme Sharing
+## Remaining Tasks (Priority Order)
+
+### 1. [MEDIUM] URL-based Theme Sharing
 **Why:** "내 시계 설정 봐" - URL 하나로 공유 가능 (웹의 핵심 강점)
 **Effort:** Small (1 hour)
 **Value:** Medium - 공유 가능성
@@ -70,7 +66,7 @@
 
 ---
 
-### 4. [MEDIUM] Fullscreen Mode
+### 2. [MEDIUM] Fullscreen Mode
 **Why:** 시계를 전체 화면으로 보고 싶을 때 (프레젠테이션, 대기 화면)
 **Effort:** Small (30 min - 1 hour)
 **Value:** Medium - 특정 사용 사례에서 큰 가치
@@ -83,7 +79,7 @@
 
 ---
 
-### 5. [MEDIUM] PWA Support (Install as App)
+### 3. [MEDIUM] PWA Support (Install as App)
 **Why:** "앱처럼 설치해서 사용하고 싶다" - 북마크보다 접근성 높음
 **Effort:** Medium (2-3 hours)
 **Value:** High - 앱 같은 경험
@@ -96,7 +92,7 @@
 
 ---
 
-### 6. [MEDIUM] Alarm / Timer Feature
+### 4. [MEDIUM] Alarm / Timer Feature
 **Why:** 시계의 핵심 기능 - 단순 시간 표시를 넘어서
 **Effort:** Medium-High (3-5 hours)
 **Value:** High - 실용적 기능
@@ -110,7 +106,7 @@
 
 ---
 
-### 7. [LOW] World Clock (Multi-timezone)
+### 5. [LOW] World Clock (Multi-timezone)
 **Why:** 글로벌 시대 - 여러 시간대 동시 확인
 **Effort:** Medium (3-4 hours)
 **Value:** Medium - 특정 사용자에게 큰 가치
@@ -123,7 +119,7 @@
 
 ---
 
-### 8. [LOW] Stopwatch Mode
+### 6. [LOW] Stopwatch Mode
 **Why:** 시계의 부가 기능 - 운동, 요리 등에 유용
 **Effort:** Medium (2-3 hours)
 **Value:** Medium - 특정 사용 사례
@@ -136,7 +132,7 @@
 
 ---
 
-### 9. [FUTURE] Animation Speed Control
+### 7. [FUTURE] Animation Speed Control
 **Why:** 시각적 선호도 - 빠른/느린 애니메이션
 **Effort:** Small (1 hour)
 **Value:** Low-Medium
@@ -148,7 +144,7 @@
 
 ---
 
-### 10. [FUTURE] 12h/24h Format Toggle
+### 8. [FUTURE] 12h/24h Format Toggle
 **Why:** 지역/개인 선호도
 **Effort:** Small (1 hour)
 **Value:** Low-Medium
@@ -160,31 +156,29 @@
 
 ---
 
-## Recommended First Task
+## Recommended Next Task
 
-### 🎯 Start with #1 + #2 Combined: "Settings Persistence + Theme Customization"
+### 🎯 Next: Task #1 "URL-based Theme Sharing"
 
 **Rationale:**
-- 웹의 가장 기본적이면서 강력한 기능 (localStorage)
-- 시계의 개인화 요구 충족 (테마)
-- 다른 기능의 기반이 됨 (설정 시스템)
-- 사용자에게 즉각적인 가치 제공
+- 테마 시스템이 완성되었으므로 공유 기능 추가
+- 빠른 구현 (1시간 정도)
+- 웹의 강력한 특성 활용 (URL sharing)
+- 사용자가 설정을 쉽게 공유 가능
 
-**Task Card:**
-- Settings panel UI 추가 (사이드바 또는 모달)
-- 3-5개 color theme 프리셋
-- localStorage로 저장/복원
-- CSS variables 기반 테마 시스템
-- Effort: 3-4 hours
-- Files: main.js, styles.css, index.html
+**Implementation:**
+- Query params로 테마 인코딩 (`?theme=neon`)
+- URL 복사 버튼 추가
+- 페이지 로드 시 URL params 체크 및 적용
+- Effort: 1 hour
+- Files: main.js, (optional) index.html
 
 ---
 
-## Next Steps After Completion
-1. Task #3 (URL Sharing) - 테마 시스템 완성
-2. Task #4 (Fullscreen) - 빠른 win
-3. Task #5 (PWA) - 앱 경험으로 업그레이드
-4. Task #6 (Alarm) - 실용성 추가
+## Alternative Next Steps
+1. Task #2 (Fullscreen) - 빠른 win, 특정 사용 사례에서 큰 가치
+2. Task #3 (PWA) - 앱 경험으로 업그레이드
+3. Task #4 (Alarm) - 실용성 추가
 
 ---
 
