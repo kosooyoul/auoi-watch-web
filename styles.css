@@ -1,3 +1,39 @@
+/* CSS Variables for Theming */
+:root {
+    /* Background colors */
+    --bg-primary: #1e1e2e;
+    --bg-secondary: #2d2d44;
+
+    /* Text colors */
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --text-muted: rgba(255, 255, 255, 0.5);
+    --text-time: rgba(255, 255, 255, 0.7);
+
+    /* Ring background */
+    --ring-bg: rgba(128, 128, 128, 0.2);
+
+    /* Hour ring colors */
+    --ring-hour-start: #667eea;
+    --ring-hour-mid: #764ba2;
+    --ring-hour-end: #9333ea;
+
+    /* Minute ring colors */
+    --ring-minute-start: #f093fb;
+    --ring-minute-mid: #f5576c;
+    --ring-minute-end: #ff6b81;
+
+    /* Second ring colors */
+    --ring-second-start: #4facfe;
+    --ring-second-mid: #00f2fe;
+    --ring-second-end: #40e0d0;
+
+    /* Millisecond ring colors */
+    --ring-ms-start: #43e97b;
+    --ring-ms-mid: #38f9d7;
+    --ring-ms-end: #7fffd4;
+}
+
 /* Reset and base styles */
 * {
     margin: 0;
@@ -11,13 +47,14 @@ body {
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #e0e0e0;
+    color: var(--text-secondary);
     overflow: hidden;
+    transition: background 0.5s ease;
 }
 
 /* Container */
@@ -51,9 +88,10 @@ body {
 /* Ring background (track) - thin orbit-like appearance */
 .ring-bg {
     fill: none;
-    stroke: rgba(128, 128, 128, 0.2);
+    stroke: var(--ring-bg);
     stroke-width: 0.5;
     stroke-linecap: round;
+    transition: stroke 0.3s ease;
 }
 
 /* Arc segments - individual comet fragments */
@@ -87,9 +125,10 @@ body {
     font-size: 1.5rem;
     font-weight: 300;
     letter-spacing: 0.05em;
-    color: #ffffff;
+    color: var(--text-primary);
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     font-variant-numeric: tabular-nums;
+    transition: color 0.3s ease;
 }
 
 .time-label {
@@ -97,7 +136,8 @@ body {
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--text-muted);
+    transition: color 0.3s ease;
 }
 
 /* Accessible text time display */
@@ -109,9 +149,10 @@ body {
     font-size: 1.2rem;
     font-weight: 300;
     letter-spacing: 0.1em;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-time);
     font-variant-numeric: tabular-nums;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: color 0.3s ease;
 }
 
 /* Responsive adjustments */
@@ -169,5 +210,228 @@ body {
 
     .rings {
         filter: drop-shadow(0 0 15px rgba(100, 126, 234, 0.3));
+    }
+}
+
+/* Settings Button */
+.settings-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.settings-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: rotate(90deg);
+}
+
+.settings-btn:focus {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
+}
+
+/* Settings Modal */
+.settings-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.settings-modal.active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.settings-panel {
+    background: linear-gradient(135deg, rgba(30, 30, 46, 0.95) 0%, rgba(45, 45, 68, 0.95) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: scale(0.9) translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.settings-title {
+    font-size: 1.8rem;
+    font-weight: 300;
+    color: var(--text-primary);
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 2rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.close-btn:focus {
+    outline: 2px solid var(--text-primary);
+}
+
+.settings-section {
+    margin-bottom: 30px;
+}
+
+.settings-section:last-child {
+    margin-bottom: 0;
+}
+
+.settings-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    display: block;
+}
+
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+}
+
+.theme-option {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.theme-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.theme-option.active {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--text-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.theme-option:focus {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
+}
+
+.theme-preview {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.theme-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+/* Responsive adjustments for settings */
+@media (max-width: 768px) {
+    .settings-panel {
+        padding: 30px 20px;
+    }
+
+    .settings-title {
+        font-size: 1.5rem;
+    }
+
+    .theme-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-btn {
+        width: 44px;
+        height: 44px;
+        top: 16px;
+        right: 16px;
+    }
+
+    .settings-panel {
+        padding: 24px 16px;
+    }
+
+    .settings-title {
+        font-size: 1.3rem;
     }
 }

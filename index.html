@@ -7,6 +7,76 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Settings Button -->
+    <button class="settings-btn" id="settingsBtn" aria-label="Open settings">
+        ⚙
+    </button>
+
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settingsModal" role="dialog" aria-labelledby="settingsTitle" aria-modal="true">
+        <div class="settings-panel">
+            <div class="settings-header">
+                <h2 class="settings-title" id="settingsTitle">Settings</h2>
+                <button class="close-btn" id="closeBtn" aria-label="Close settings">×</button>
+            </div>
+
+            <div class="settings-section">
+                <label class="settings-label">Color Theme</label>
+                <div class="theme-grid" role="radiogroup" aria-label="Color theme selection">
+                    <div class="theme-option active" data-theme="classic" role="radio" aria-checked="true" tabindex="0">
+                        <div class="theme-preview">
+                            <div class="theme-color" style="background: #667eea;"></div>
+                            <div class="theme-color" style="background: #f093fb;"></div>
+                            <div class="theme-color" style="background: #4facfe;"></div>
+                            <div class="theme-color" style="background: #43e97b;"></div>
+                        </div>
+                        <div class="theme-name">Classic</div>
+                    </div>
+
+                    <div class="theme-option" data-theme="warm" role="radio" aria-checked="false" tabindex="0">
+                        <div class="theme-preview">
+                            <div class="theme-color" style="background: #ff6b6b;"></div>
+                            <div class="theme-color" style="background: #ffa600;"></div>
+                            <div class="theme-color" style="background: #ff8c42;"></div>
+                            <div class="theme-color" style="background: #ffd93d;"></div>
+                        </div>
+                        <div class="theme-name">Warm Sunset</div>
+                    </div>
+
+                    <div class="theme-option" data-theme="ocean" role="radio" aria-checked="false" tabindex="0">
+                        <div class="theme-preview">
+                            <div class="theme-color" style="background: #1e3a8a;"></div>
+                            <div class="theme-color" style="background: #0ea5e9;"></div>
+                            <div class="theme-color" style="background: #06b6d4;"></div>
+                            <div class="theme-color" style="background: #67e8f9;"></div>
+                        </div>
+                        <div class="theme-name">Ocean Breeze</div>
+                    </div>
+
+                    <div class="theme-option" data-theme="neon" role="radio" aria-checked="false" tabindex="0">
+                        <div class="theme-preview">
+                            <div class="theme-color" style="background: #ff00ff;"></div>
+                            <div class="theme-color" style="background: #00ffff;"></div>
+                            <div class="theme-color" style="background: #ff00aa;"></div>
+                            <div class="theme-color" style="background: #00ff00;"></div>
+                        </div>
+                        <div class="theme-name">Neon Night</div>
+                    </div>
+
+                    <div class="theme-option" data-theme="pastel" role="radio" aria-checked="false" tabindex="0">
+                        <div class="theme-preview">
+                            <div class="theme-color" style="background: #ffc6ff;"></div>
+                            <div class="theme-color" style="background: #bdb2ff;"></div>
+                            <div class="theme-color" style="background: #a0c4ff;"></div>
+                            <div class="theme-color" style="background: #caffbf;"></div>
+                        </div>
+                        <div class="theme-name">Soft Pastel</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="clock-wrapper">
             <!-- SVG Rings -->

@@ -1,3 +1,269 @@
+// ==================== THEME SYSTEM ====================
+
+// Theme definitions
+const THEMES = {
+    classic: {
+        name: 'Classic',
+        bgPrimary: '#1e1e2e',
+        bgSecondary: '#2d2d44',
+        textPrimary: '#ffffff',
+        textSecondary: '#e0e0e0',
+        textMuted: 'rgba(255, 255, 255, 0.5)',
+        textTime: 'rgba(255, 255, 255, 0.7)',
+        ringBg: 'rgba(128, 128, 128, 0.2)',
+        ringHour: { start: '#667eea', mid: '#764ba2', end: '#9333ea' },
+        ringMinute: { start: '#f093fb', mid: '#f5576c', end: '#ff6b81' },
+        ringSecond: { start: '#4facfe', mid: '#00f2fe', end: '#40e0d0' },
+        ringMs: { start: '#43e97b', mid: '#38f9d7', end: '#7fffd4' }
+    },
+    warm: {
+        name: 'Warm Sunset',
+        bgPrimary: '#2d1b1b',
+        bgSecondary: '#4a2828',
+        textPrimary: '#ffffff',
+        textSecondary: '#ffe4e4',
+        textMuted: 'rgba(255, 228, 228, 0.5)',
+        textTime: 'rgba(255, 228, 228, 0.7)',
+        ringBg: 'rgba(255, 107, 107, 0.15)',
+        ringHour: { start: '#ff6b6b', mid: '#ee5a6f', end: '#ff4757' },
+        ringMinute: { start: '#ffa600', mid: '#ff8c42', end: '#ff7f50' },
+        ringSecond: { start: '#ff8c42', mid: '#ff6348', end: '#ff4757' },
+        ringMs: { start: '#ffd93d', mid: '#feca57', end: '#ffb142' }
+    },
+    ocean: {
+        name: 'Ocean Breeze',
+        bgPrimary: '#0a1929',
+        bgSecondary: '#1a2332',
+        textPrimary: '#ffffff',
+        textSecondary: '#e0f2fe',
+        textMuted: 'rgba(224, 242, 254, 0.5)',
+        textTime: 'rgba(224, 242, 254, 0.7)',
+        ringBg: 'rgba(14, 165, 233, 0.15)',
+        ringHour: { start: '#1e3a8a', mid: '#1e40af', end: '#2563eb' },
+        ringMinute: { start: '#0ea5e9', mid: '#0284c7', end: '#0369a1' },
+        ringSecond: { start: '#06b6d4', mid: '#0891b2', end: '#0e7490' },
+        ringMs: { start: '#67e8f9', mid: '#22d3ee', end: '#06b6d4' }
+    },
+    neon: {
+        name: 'Neon Night',
+        bgPrimary: '#0d0221',
+        bgSecondary: '#1a0b3f',
+        textPrimary: '#ffffff',
+        textSecondary: '#f0f0ff',
+        textMuted: 'rgba(240, 240, 255, 0.5)',
+        textTime: 'rgba(240, 240, 255, 0.7)',
+        ringBg: 'rgba(255, 0, 255, 0.15)',
+        ringHour: { start: '#ff00ff', mid: '#d946ef', end: '#c026d3' },
+        ringMinute: { start: '#00ffff', mid: '#06b6d4', end: '#0891b2' },
+        ringSecond: { start: '#ff00aa', mid: '#ec4899', end: '#db2777' },
+        ringMs: { start: '#00ff00', mid: '#22c55e', end: '#16a34a' }
+    },
+    pastel: {
+        name: 'Soft Pastel',
+        bgPrimary: '#f8f9fa',
+        bgSecondary: '#e9ecef',
+        textPrimary: '#212529',
+        textSecondary: '#495057',
+        textMuted: 'rgba(73, 80, 87, 0.5)',
+        textTime: 'rgba(73, 80, 87, 0.7)',
+        ringBg: 'rgba(173, 181, 189, 0.3)',
+        ringHour: { start: '#ffc6ff', mid: '#e7c6ff', end: '#c8b6ff' },
+        ringMinute: { start: '#bdb2ff', mid: '#a0c4ff', end: '#9bf6ff' },
+        ringSecond: { start: '#a0c4ff', mid: '#9bf6ff', end: '#caffbf' },
+        ringMs: { start: '#caffbf', mid: '#a7f3d0', end: '#6ee7b7' }
+    }
+};
+
+// Current theme
+let currentTheme = 'classic';
+
+/**
+ * Apply a theme to the page
+ * @param {string} themeName - Name of the theme to apply
+ */
+function applyTheme(themeName) {
+    const theme = THEMES[themeName];
+    if (!theme) {
+        console.error(`Theme "${themeName}" not found`);
+        return;
+    }
+
+    const root = document.documentElement;
+
+    // Apply CSS variables
+    root.style.setProperty('--bg-primary', theme.bgPrimary);
+    root.style.setProperty('--bg-secondary', theme.bgSecondary);
+    root.style.setProperty('--text-primary', theme.textPrimary);
+    root.style.setProperty('--text-secondary', theme.textSecondary);
+    root.style.setProperty('--text-muted', theme.textMuted);
+    root.style.setProperty('--text-time', theme.textTime);
+    root.style.setProperty('--ring-bg', theme.ringBg);
+
+    // Hour ring
+    root.style.setProperty('--ring-hour-start', theme.ringHour.start);
+    root.style.setProperty('--ring-hour-mid', theme.ringHour.mid);
+    root.style.setProperty('--ring-hour-end', theme.ringHour.end);
+
+    // Minute ring
+    root.style.setProperty('--ring-minute-start', theme.ringMinute.start);
+    root.style.setProperty('--ring-minute-mid', theme.ringMinute.mid);
+    root.style.setProperty('--ring-minute-end', theme.ringMinute.end);
+
+    // Second ring
+    root.style.setProperty('--ring-second-start', theme.ringSecond.start);
+    root.style.setProperty('--ring-second-mid', theme.ringSecond.mid);
+    root.style.setProperty('--ring-second-end', theme.ringSecond.end);
+
+    // MS ring
+    root.style.setProperty('--ring-ms-start', theme.ringMs.start);
+    root.style.setProperty('--ring-ms-mid', theme.ringMs.mid);
+    root.style.setProperty('--ring-ms-end', theme.ringMs.end);
+
+    // Update SVG gradients
+    updateSVGGradients(theme);
+
+    // Update current theme
+    currentTheme = themeName;
+
+    // Save to localStorage
+    saveSettings();
+
+    // Update active theme option in UI
+    updateThemeUI(themeName);
+}
+
+/**
+ * Update SVG gradient definitions with theme colors
+ * @param {Object} theme - Theme object
+ */
+function updateSVGGradients(theme) {
+    // Hour gradient
+    const hourGradient = document.getElementById('hourGradient');
+    if (hourGradient) {
+        hourGradient.children[0].setAttribute('style', `stop-color:${theme.ringHour.start};stop-opacity:1`);
+        hourGradient.children[1].setAttribute('style', `stop-color:${theme.ringHour.mid};stop-opacity:1`);
+    }
+
+    // Minute gradient
+    const minuteGradient = document.getElementById('minuteGradient');
+    if (minuteGradient) {
+        minuteGradient.children[0].setAttribute('style', `stop-color:${theme.ringMinute.start};stop-opacity:1`);
+        minuteGradient.children[1].setAttribute('style', `stop-color:${theme.ringMinute.mid};stop-opacity:1`);
+    }
+
+    // Second gradient
+    const secondGradient = document.getElementById('secondGradient');
+    if (secondGradient) {
+        secondGradient.children[0].setAttribute('style', `stop-color:${theme.ringSecond.start};stop-opacity:1`);
+        secondGradient.children[1].setAttribute('style', `stop-color:${theme.ringSecond.mid};stop-opacity:1`);
+    }
+
+    // MS gradient
+    const msGradient = document.getElementById('msGradient');
+    if (msGradient) {
+        msGradient.children[0].setAttribute('style', `stop-color:${theme.ringMs.start};stop-opacity:1`);
+        msGradient.children[1].setAttribute('style', `stop-color:${theme.ringMs.mid};stop-opacity:1`);
+    }
+}
+
+/**
+ * Update theme UI to reflect active theme
+ * @param {string} themeName - Name of the active theme
+ */
+function updateThemeUI(themeName) {
+    const themeOptions = document.querySelectorAll('.theme-option');
+    themeOptions.forEach(option => {
+        const isActive = option.dataset.theme === themeName;
+        option.classList.toggle('active', isActive);
+        option.setAttribute('aria-checked', isActive ? 'true' : 'false');
+    });
+}
+
+/**
+ * Save settings to localStorage
+ */
+function saveSettings() {
+    const settings = {
+        theme: currentTheme
+    };
+    localStorage.setItem('ringClockSettings', JSON.stringify(settings));
+}
+
+/**
+ * Load settings from localStorage
+ */
+function loadSettings() {
+    try {
+        const saved = localStorage.getItem('ringClockSettings');
+        if (saved) {
+            const settings = JSON.parse(saved);
+            if (settings.theme && THEMES[settings.theme]) {
+                applyTheme(settings.theme);
+            }
+        }
+    } catch (error) {
+        console.error('Error loading settings:', error);
+    }
+}
+
+/**
+ * Initialize settings UI event listeners
+ */
+function initSettingsUI() {
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsModal = document.getElementById('settingsModal');
+    const closeBtn = document.getElementById('closeBtn');
+    const themeOptions = document.querySelectorAll('.theme-option');
+
+    // Open modal
+    settingsBtn.addEventListener('click', () => {
+        settingsModal.classList.add('active');
+        // Focus first theme option for accessibility
+        document.querySelector('.theme-option').focus();
+    });
+
+    // Close modal
+    const closeModal = () => {
+        settingsModal.classList.remove('active');
+        settingsBtn.focus(); // Return focus to settings button
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+
+    // Close on backdrop click
+    settingsModal.addEventListener('click', (e) => {
+        if (e.target === settingsModal) {
+            closeModal();
+        }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && settingsModal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    // Theme selection
+    themeOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            const themeName = option.dataset.theme;
+            applyTheme(themeName);
+        });
+
+        // Keyboard support
+        option.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const themeName = option.dataset.theme;
+                applyTheme(themeName);
+            }
+        });
+    });
+}
+
+// ==================== CLOCK SYSTEM ====================
+
 // Time constants
 const HOURS_IN_DAY = 24;
 const MINUTES_IN_HOUR = 60;
@@ -273,27 +539,25 @@ function getTargetColor(palette, progress) {
  * @returns {string} RGB color string
  */
 function getColorForProgress(progress, type) {
-    // Define color palettes for each ring type (water stream colors)
+    // Get current theme colors
+    const theme = THEMES[currentTheme];
+
+    // Map type to theme ring property
+    const ringMap = {
+        hour: 'ringHour',
+        minute: 'ringMinute',
+        second: 'ringSecond',
+        ms: 'ringMs'
+    };
+
+    const ringColors = theme[ringMap[type]];
+
+    // Convert hex colors to RGB arrays
     const colorPalettes = {
-        hour: [
-            [102, 126, 234],  // #667eea (start)
-            [118, 75, 162],   // #764ba2 (mid)
-            [147, 51, 234]    // brighter purple (end)
-        ],
-        minute: [
-            [240, 147, 251],  // #f093fb (start)
-            [245, 87, 108],   // #f5576c (mid)
-            [255, 107, 129]   // brighter pink (end)
-        ],
-        second: [
-            [79, 172, 254],   // #4facfe (start)
-            [0, 242, 254],    // #00f2fe (mid)
-            [64, 224, 208]    // turquoise (end)
-        ],
-        ms: [
-            [67, 233, 123],   // #43e97b (start)
-            [56, 249, 215],   // #38f9d7 (mid)
-            [127, 255, 212]   // aquamarine (end)
+        [type]: [
+            hexToRgb(ringColors.start),
+            hexToRgb(ringColors.mid),
+            hexToRgb(ringColors.end)
         ]
     };
 
@@ -314,6 +578,23 @@ function getColorForProgress(progress, type) {
     currentColors[type] = newColor;
 
     return rgbToString(newColor);
+}
+
+/**
+ * Convert hex color to RGB array
+ * @param {string} hex - Hex color string (e.g. "#667eea")
+ * @returns {Array} RGB array [r, g, b]
+ */
+function hexToRgb(hex) {
+    // Remove # if present
+    hex = hex.replace('#', '');
+
+    // Parse hex values
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    return [r, g, b];
 }
 
 /**
@@ -374,6 +655,11 @@ function updateClock() {
  * Initialize the clock
  */
 function init() {
+    // Initialize settings system
+    initSettingsUI();
+    loadSettings(); // Load saved theme from localStorage
+
+    // Initialize clock
     initializeRings();
     updateClock();
 }
