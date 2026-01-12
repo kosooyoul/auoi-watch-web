@@ -128,6 +128,9 @@ function applyTheme(themeName) {
     // Save to localStorage
     saveSettings();
 
+    // Update URL with new theme
+    updateURL();
+
     // Update active theme option in UI
     updateThemeUI(themeName);
 }
@@ -180,6 +183,62 @@ function updateThemeUI(themeName) {
 }
 
 /**
+ * Get theme from URL query parameter
+ * @returns {string|null} Theme name from URL or null
+ */
+function getThemeFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const theme = urlParams.get('theme');
+    return (theme && THEMES[theme]) ? theme : null;
+}
+
+/**
+ * Update URL with current theme (without page reload)
+ */
+function updateURL() {
+    const url = new URL(window.location.href);
+    url.searchParams.set('theme', currentTheme);
+    window.history.replaceState({}, '', url);
+}
+
+/**
+ * Copy shareable URL to clipboard
+ */
+async function copyShareURL() {
+    const url = new URL(window.location.href);
+    url.searchParams.set('theme', currentTheme);
+    const shareURL = url.toString();
+
+    try {
+        await navigator.clipboard.writeText(shareURL);
+        showCopyFeedback(true);
+    } catch (error) {
+        console.error('Failed to copy URL:', error);
+        showCopyFeedback(false);
+    }
+}
+
+/**
+ * Show visual feedback for URL copy action
+ * @param {boolean} success - Whether the copy was successful
+ */
+function showCopyFeedback(success) {
+    const btn = document.getElementById('shareUrlBtn');
+    const textSpan = btn.querySelector('.share-text');
+    const originalText = textSpan.textContent;
+
+    textSpan.textContent = success ? 'Copied!' : 'Failed';
+    btn.style.background = success
+        ? 'linear-gradient(135deg, rgba(67, 233, 123, 0.3) 0%, rgba(56, 249, 215, 0.3) 100%)'
+        : 'linear-gradient(135deg, rgba(255, 107, 129, 0.3) 0%, rgba(255, 64, 87, 0.3) 100%)';
+
+    setTimeout(() => {
+        textSpan.textContent = originalText;
+        btn.style.background = '';
+    }, 2000);
+}
+
+/**
  * Save settings to localStorage
  */
 function saveSettings() {
@@ -190,17 +249,29 @@ function saveSettings() {
 }
 
 /**
- * Load settings from localStorage
+ * Load settings from URL params (priority) or localStorage
  */
 function loadSettings() {
     try {
+        // Check URL params first (higher priority)
+        const urlTheme = getThemeFromURL();
+        if (urlTheme) {
+            applyTheme(urlTheme);
+            return;
+        }
+
+        // Fallback to localStorage
         const saved = localStorage.getItem('ringClockSettings');
         if (saved) {
             const settings = JSON.parse(saved);
             if (settings.theme && THEMES[settings.theme]) {
                 applyTheme(settings.theme);
+                return;
             }
         }
+
+        // If no URL param or localStorage, use default theme and update URL
+        updateURL();
     } catch (error) {
         console.error('Error loading settings:', error);
     }
@@ -214,6 +285,7 @@ function initSettingsUI() {
     const settingsModal = document.getElementById('settingsModal');
     const closeBtn = document.getElementById('closeBtn');
     const themeOptions = document.querySelectorAll('.theme-option');
+    const shareUrlBtn = document.getElementById('shareUrlBtn');
 
     // Open modal
     settingsBtn.addEventListener('click', () => {
@@ -259,6 +331,11 @@ function initSettingsUI() {
                 applyTheme(themeName);
             }
         });
+    });
+
+    // Share URL button
+    shareUrlBtn.addEventListener('click', () => {
+        copyShareURL();
     });
 }
 
