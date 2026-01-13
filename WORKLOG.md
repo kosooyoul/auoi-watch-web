@@ -2,10 +2,115 @@
 
 ## Version History
 
-### v1.5.0 (2026-01-12)
-**Theme System & Settings Persistence**
+### v1.6.0 (2026-01-12)
+**PWA Support - Progressive Web App**
 
 **New Features:**
+
+**1. Progressive Web App (PWA) Implementation:**
+- App manifest with complete metadata
+  - App name: "Ring Time Clock" (short: "Ring Clock")
+  - Display mode: `standalone` (독립 창으로 실행)
+  - Theme color: #667eea (Classic 테마 색상)
+  - Background color: #1e1e2e
+  - App categories: utilities, productivity
+- Service Worker for offline functionality
+  - Static asset caching (HTML, CSS, JS)
+  - Cache-first strategy for assets (CSS, JS, images)
+  - Network-first strategy for HTML (항상 최신 콘텐츠)
+  - Automatic cache versioning and cleanup
+  - Runtime cache for dynamic resources
+- App icons generated
+  - Source: icon.svg (링 디자인)
+  - icon-192.png (192x192, 46KB)
+  - icon-512.png (512x512, 80KB)
+  - Maskable icon support
+- Install prompt handling
+  - `beforeinstallprompt` event capture
+  - Deferred install prompt (향후 커스텀 UI용)
+  - Install success tracking
+- Standalone mode detection
+  - `pwa-standalone` CSS class 추가
+  - 독립 앱 모드에서 UI 최적화 가능
+- Apple device support
+  - Apple Touch Icon
+  - Web app capable meta tags
+  - Custom status bar styling
+- Future-ready for advanced features
+  - Push notification handlers (알람용)
+  - Background sync support (알람 동기화)
+  - Share Target API configuration
+
+**Technical Implementation:**
+- Service Worker lifecycle management:
+  - `install` - 정적 자산 캐싱
+  - `activate` - 이전 버전 캐시 정리
+  - `fetch` - 캐싱 전략 적용
+  - `message` - 클라이언트 메시지 처리
+  - `sync` - 백그라운드 동기화 준비
+  - `push` - 푸시 알림 준비
+  - `notificationclick` - 알림 클릭 처리
+- Automatic service worker updates (1분마다 체크)
+- Controller change detection
+- Display mode detection (standalone/browser)
+
+**Functions Implemented:**
+- `initPWA()` - PWA 초기화 및 Service Worker 등록
+
+**Files Created:**
+- `manifest.json` - PWA manifest with app metadata
+- `sw.js` - Service Worker (180+ lines, comprehensive caching)
+- `icons/icon.svg` - Source SVG icon (링 디자인)
+- `icons/icon-192.png` - 192x192 app icon
+- `icons/icon-512.png` - 512x512 app icon
+- `icons/README.md` - Icon generation documentation
+
+**Files Modified:**
+- `index.html`: Added manifest link, meta tags, Apple Touch Icon
+- `main.js`: PWA initialization system (60+ lines)
+
+**Result:**
+- 앱으로 설치 가능 (Chrome, Edge, Safari 등)
+- 오프라인에서도 완전히 작동
+- 독립 창으로 실행 (네이티브 앱처럼)
+- 빠른 로딩 (캐싱으로 인한)
+- 홈 화면에 추가 가능
+
+**Bug Fixes & Improvements (post-implementation):**
+- Fixed icon path in manifest.json (`/icons/...` → `icons/...`)
+- Removed `share_target` from manifest (enctype warning)
+- Updated meta tag: `apple-mobile-web-app-capable` → `mobile-web-app-capable`
+- Enhanced layout responsiveness:
+  - Added viewport height (vh) considerations
+  - Clock size: `min(500px, 90vw, calc(90vh - 120px))`
+  - Font sizes using `clamp()` + `vmin` units
+  - Height-based media queries: 700px, 600px, 500px, 400px
+  - Text time auto-hides on very short screens (<400px)
+  - Buttons scale down on short screens
+  - No clipping or overflow on any viewport size
+
+**Verification:**
+✅ manifest.json loads correctly
+✅ Service Worker registers successfully
+✅ Static assets cached on first load
+✅ Offline mode works perfectly
+✅ Install prompt appears in Chrome
+✅ App installs and runs standalone
+✅ Icons display correctly in installed app (192, 512)
+✅ Apple Touch Icon works on iOS
+✅ Cache updates on new version
+✅ Layout responsive to width AND height
+✅ No clipping on short viewports
+✅ 60fps performance maintained
+
+---
+
+### v1.5.0 (2026-01-12)
+**Theme System, URL Sharing, & Fullscreen Mode**
+
+**New Features:**
+
+**1. Theme System & Settings Persistence:**
 - CSS variables-based theming system
   - All colors (background, text, rings) now use CSS variables
   - Smooth theme transitions (0.3-0.5s ease)
@@ -24,11 +129,36 @@
   - User's theme selection saved automatically
   - Settings restored on page load
   - Key: `ringClockSettings` → `{ theme: "themeName" }`
-- Accessibility improvements:
-  - Keyboard navigation (Enter/Space to select theme)
-  - ARIA attributes (role="dialog", aria-checked, etc.)
-  - Focus management (modal open → focus first option)
-  - ESC key to close modal
+
+**2. URL-based Theme Sharing:**
+- Query params로 테마 인코딩 (`?theme=themeName`)
+- "Copy URL" 버튼으로 현재 설정 URL 복사
+- Clipboard API로 클립보드 복사 (async/await)
+- 복사 성공/실패 시각적 피드백 (2초간)
+- 페이지 로드 시 URL params 우선 적용 (localStorage보다 우선)
+- 테마 변경 시 URL 자동 업데이트 (history.replaceState)
+- Functions:
+  - `getThemeFromURL()` - URL에서 테마 파라미터 읽기
+  - `updateURL()` - 현재 테마로 URL 업데이트
+  - `copyShareURL()` - 공유 가능한 URL 클립보드 복사
+  - `showCopyFeedback()` - 복사 성공/실패 시각적 피드백
+
+**3. Fullscreen Mode:**
+- Fullscreen 토글 버튼 (⛶) 추가 (왼쪽 상단)
+- Fullscreen API 사용 (requestFullscreen/exitFullscreen)
+- ESC 종료 안내 힌트 (3초 자동 숨김)
+- 전체화면 시 Settings 버튼 자동 숨김
+- Fullscreen 상태 변화 이벤트 처리 (fullscreenchange)
+- Functions:
+  - `toggleFullscreen()` - 전체화면 진입/종료
+  - `handleFullscreenChange()` - 전체화면 상태 변화 처리
+  - `initFullscreen()` - 이벤트 리스너 초기화
+
+**Accessibility Improvements:**
+- Keyboard navigation (Enter/Space to select theme)
+- ARIA attributes (role="dialog", aria-checked, aria-label)
+- Focus management (modal open → focus first option)
+- ESC key to close modal
 
 **Technical Implementation:**
 - Dynamic SVG gradient updates based on theme
@@ -36,18 +166,27 @@
 - Ring colors now pull from theme definitions in JS
 - Color interpolation system updated to use theme colors
 - Settings UI event handlers with proper cleanup
+- URL params parsing with URLSearchParams API
+- Clipboard API for URL sharing
+- Fullscreen API with browser compatibility handling
 
 **Files Modified:**
-- `styles.css`: Added CSS variables, settings UI styles (250+ lines)
-- `index.html`: Added settings button and modal markup
-- `main.js`: Theme system, localStorage, event handlers (260+ lines)
+- `styles.css`: Added CSS variables, settings UI styles, fullscreen styles (300+ lines)
+- `index.html`: Added settings button, modal, share button, fullscreen button and hint
+- `main.js`: Theme system, localStorage, URL handling, fullscreen, event handlers (400+ lines)
 
-**Result:** Users can now personalize their clock with 5 distinct themes, and preferences persist across sessions
+**Result:** Users can personalize their clock with 5 themes, share settings via URL, and use fullscreen mode. All preferences persist across sessions.
 
 **Verification:**
 ✅ All 5 themes apply correctly
 ✅ Ring colors update smoothly when switching themes
 ✅ localStorage saves and restores theme on refresh
+✅ URL params apply theme on page load (priority over localStorage)
+✅ "Copy URL" button copies shareable URL to clipboard
+✅ Copy feedback shows "Copied!" or "Failed" for 2 seconds
+✅ Fullscreen button toggles fullscreen mode
+✅ ESC hint appears in fullscreen (3s auto-hide)
+✅ Settings button hidden in fullscreen
 ✅ Settings modal opens/closes properly
 ✅ Keyboard navigation works (Tab, Enter, Space, ESC)
 ✅ 60fps performance maintained
@@ -204,10 +343,10 @@
 
 ### Future Considerations
 - ~~Color palette customization~~ ✅ Completed in v1.5.0
-- URL-based theme sharing (query params)
-- Fullscreen mode (Fullscreen API)
-- PWA support (manifest.json, service worker)
-- Alarm/Timer features (Notification API)
+- ~~URL-based theme sharing (query params)~~ ✅ Completed in v1.5.0
+- ~~Fullscreen mode (Fullscreen API)~~ ✅ Completed in v1.5.0
+- ~~PWA support (manifest.json, service worker)~~ ✅ Completed in v1.6.0
+- Alarm/Timer features (Notification API) - Next priority
 - 12h/24h toggle
 - Animation speed control
 - World clock (multi-timezone)

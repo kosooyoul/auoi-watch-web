@@ -52,47 +52,91 @@
 
 ---
 
+### ✅ 2. URL-based Theme Sharing (v1.5.0)
+**Completed:** 2026-01-12
+**Implemented:**
+- ✅ Query params로 테마 인코딩 (`?theme=themeName`)
+- ✅ "Copy URL" 버튼으로 현재 설정 URL 복사
+- ✅ 클립보드 복사 성공/실패 피드백
+- ✅ 페이지 로드 시 URL params 우선 적용 (localStorage보다 우선)
+- ✅ 테마 변경 시 URL 자동 업데이트 (history.replaceState)
+
+**Functions Implemented:**
+- `getThemeFromURL()` - URL에서 테마 파라미터 읽기
+- `updateURL()` - 현재 테마로 URL 업데이트
+- `copyShareURL()` - 공유 가능한 URL 클립보드 복사
+- `showCopyFeedback()` - 복사 성공/실패 시각적 피드백
+
+**Files Modified:**
+- `main.js` - URL handling, clipboard API
+- `index.html` - Share URL button in settings modal
+
+---
+
+### ✅ 3. Fullscreen Mode (v1.5.0)
+**Completed:** 2026-01-12
+**Implemented:**
+- ✅ Fullscreen 토글 버튼 (⛶) 추가
+- ✅ Fullscreen API 사용 (requestFullscreen/exitFullscreen)
+- ✅ ESC 종료 안내 힌트 (3초 자동 숨김)
+- ✅ 전체화면 시 Settings 버튼 자동 숨김
+- ✅ Fullscreen 상태 변화 이벤트 처리
+- ✅ 접근성 지원 (aria-label)
+
+**Functions Implemented:**
+- `toggleFullscreen()` - 전체화면 진입/종료
+- `handleFullscreenChange()` - 전체화면 상태 변화 처리
+- `initFullscreen()` - 이벤트 리스너 초기화
+
+**Files Modified:**
+- `main.js` - Fullscreen system
+- `index.html` - Fullscreen button and hint
+- `styles.css` - Fullscreen UI styles
+
+---
+
+### ✅ 4. PWA Support (v1.6.0)
+**Completed:** 2026-01-12
+**Implemented:**
+- ✅ manifest.json 생성 (앱 메타데이터, 아이콘, 테마 색상)
+- ✅ Service Worker 등록 (오프라인 캐싱)
+- ✅ Cache-first 전략 (CSS, JS, images)
+- ✅ Network-first 전략 (HTML)
+- ✅ 자동 캐시 업데이트 및 버전 관리
+- ✅ App icons 생성 (192x192, 512x512 PNG)
+- ✅ Apple Touch Icon 지원
+- ✅ Standalone 모드 감지
+- ✅ Install prompt 이벤트 핸들링
+- ✅ 푸시 알림 준비 (향후 알람 기능용)
+
+**Functions Implemented:**
+- `initPWA()` - PWA 초기화 및 Service Worker 등록
+- Service Worker (`sw.js`):
+  - `install` - 정적 파일 캐싱
+  - `activate` - 구 캐시 정리
+  - `fetch` - 캐싱 전략 (cache-first/network-first)
+  - `sync` - 백그라운드 동기화 준비
+  - `push` - 푸시 알림 준비
+
+**Files Created:**
+- `manifest.json` - PWA manifest
+- `sw.js` - Service Worker (180+ lines)
+- `icons/icon.svg` - 앱 아이콘 소스
+- `icons/icon-192.png` - 192x192 PNG icon
+- `icons/icon-512.png` - 512x512 PNG icon
+- `icons/README.md` - Icon generation guide
+
+**Files Modified:**
+- `index.html` - Manifest link, meta tags, Apple Touch Icon
+- `main.js` - PWA initialization system
+
+**Result:** 앱으로 설치 가능, 오프라인에서도 작동, 독립 창으로 실행
+
+---
+
 ## Remaining Tasks (Priority Order)
 
-### 1. [MEDIUM] URL-based Theme Sharing
-**Why:** "내 시계 설정 봐" - URL 하나로 공유 가능 (웹의 핵심 강점)
-**Effort:** Small (1 hour)
-**Value:** Medium - 공유 가능성
-**Scope:**
-- Query params로 테마/설정 인코딩 (예: `?theme=neon&speed=1.5`)
-- URL 복사 버튼 ("Share Settings")
-- 공유받은 URL 열면 해당 설정으로 자동 적용
-**Web Strength:** URL sharing - 웹의 가장 강력한 공유 메커니즘
-
----
-
-### 2. [MEDIUM] Fullscreen Mode
-**Why:** 시계를 전체 화면으로 보고 싶을 때 (프레젠테이션, 대기 화면)
-**Effort:** Small (30 min - 1 hour)
-**Value:** Medium - 특정 사용 사례에서 큰 가치
-**Scope:**
-- Fullscreen button 추가
-- Fullscreen API 사용
-- ESC로 종료 안내 표시
-- 전체화면에서 UI 최적화 (설정 버튼 숨기기 등)
-**Web Strength:** Fullscreen API - 네이티브처럼 사용 가능
-
----
-
-### 3. [MEDIUM] PWA Support (Install as App)
-**Why:** "앱처럼 설치해서 사용하고 싶다" - 북마크보다 접근성 높음
-**Effort:** Medium (2-3 hours)
-**Value:** High - 앱 같은 경험
-**Scope:**
-- manifest.json 생성 (아이콘, 이름, 테마 색상)
-- Service Worker 등록 (오프라인 동작)
-- Install prompt 추가
-- Standalone mode 최적화
-**Web Strength:** PWA - 설치 가능, 오프라인, 푸시 알림 가능
-
----
-
-### 4. [MEDIUM] Alarm / Timer Feature
+### 1. [MEDIUM] Alarm / Timer Feature
 **Why:** 시계의 핵심 기능 - 단순 시간 표시를 넘어서
 **Effort:** Medium-High (3-5 hours)
 **Value:** High - 실용적 기능
@@ -106,7 +150,7 @@
 
 ---
 
-### 5. [LOW] World Clock (Multi-timezone)
+### 2. [LOW] World Clock (Multi-timezone)
 **Why:** 글로벌 시대 - 여러 시간대 동시 확인
 **Effort:** Medium (3-4 hours)
 **Value:** Medium - 특정 사용자에게 큰 가치
@@ -119,7 +163,7 @@
 
 ---
 
-### 6. [LOW] Stopwatch Mode
+### 3. [LOW] Stopwatch Mode
 **Why:** 시계의 부가 기능 - 운동, 요리 등에 유용
 **Effort:** Medium (2-3 hours)
 **Value:** Medium - 특정 사용 사례
@@ -132,7 +176,7 @@
 
 ---
 
-### 7. [FUTURE] Animation Speed Control
+### 4. [FUTURE] Animation Speed Control
 **Why:** 시각적 선호도 - 빠른/느린 애니메이션
 **Effort:** Small (1 hour)
 **Value:** Low-Medium
@@ -144,7 +188,7 @@
 
 ---
 
-### 8. [FUTURE] 12h/24h Format Toggle
+### 5. [FUTURE] 12h/24h Format Toggle
 **Why:** 지역/개인 선호도
 **Effort:** Small (1 hour)
 **Value:** Low-Medium
@@ -158,27 +202,29 @@
 
 ## Recommended Next Task
 
-### 🎯 Next: Task #1 "URL-based Theme Sharing"
+### 🎯 Next: Task #1 "Alarm / Timer Feature"
 
 **Rationale:**
-- 테마 시스템이 완성되었으므로 공유 기능 추가
-- 빠른 구현 (1시간 정도)
-- 웹의 강력한 특성 활용 (URL sharing)
-- 사용자가 설정을 쉽게 공유 가능
+- 기본 UX와 PWA 완성으로 플랫폼 기반 완료
+- 시계의 핵심 실용 기능 추가
+- 웹의 강력한 특성 활용 (Notification API)
+- 백그라운드에서도 알림 가능
 
 **Implementation:**
-- Query params로 테마 인코딩 (`?theme=neon`)
-- URL 복사 버튼 추가
-- 페이지 로드 시 URL params 체크 및 적용
-- Effort: 1 hour
-- Files: main.js, (optional) index.html
+- 알람/타이머 설정 UI 디자인
+- 시간 선택 인터페이스 (시, 분)
+- localStorage로 알람 목록 저장
+- Notification API로 브라우저 알림
+- 반복 알람 옵션 (매일, 평일 등)
+- Effort: 3-5 hours
+- Files: index.html, main.js, styles.css, (new alarm-system section)
 
 ---
 
 ## Alternative Next Steps
-1. Task #2 (Fullscreen) - 빠른 win, 특정 사용 사례에서 큰 가치
-2. Task #3 (PWA) - 앱 경험으로 업그레이드
-3. Task #4 (Alarm) - 실용성 추가
+1. Task #2 (World Clock) - 글로벌 사용자에게 가치
+2. Task #3 (Stopwatch) - 부가 기능
+3. Task #4 (Animation Speed) - 빠른 구현
 
 ---
 

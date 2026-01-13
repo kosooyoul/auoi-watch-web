@@ -60,7 +60,9 @@ body {
 /* Container */
 .container {
     width: 100%;
+    height: 100%;
     max-width: 600px;
+    max-height: calc(100vh - 40px);
     padding: 20px;
     display: flex;
     align-items: center;
@@ -71,7 +73,9 @@ body {
 .clock-wrapper {
     position: relative;
     width: 100%;
-    max-width: 500px;
+    height: 100%;
+    max-width: min(500px, 90vw, calc(90vh - 120px));
+    max-height: min(500px, 90vw, calc(90vh - 120px));
     aspect-ratio: 1;
     display: flex;
     align-items: center;
@@ -122,7 +126,7 @@ body {
 }
 
 .time-value {
-    font-size: 1.5rem;
+    font-size: clamp(0.9rem, 3vmin, 1.5rem);
     font-weight: 300;
     letter-spacing: 0.05em;
     color: var(--text-primary);
@@ -132,7 +136,7 @@ body {
 }
 
 .time-label {
-    font-size: 0.65rem;
+    font-size: clamp(0.45rem, 1.3vmin, 0.65rem);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -143,10 +147,10 @@ body {
 /* Accessible text time display */
 .text-time {
     position: absolute;
-    bottom: -60px;
+    bottom: clamp(-50px, -12vmin, -60px);
     left: 50%;
     transform: translateX(-50%);
-    font-size: 1.2rem;
+    font-size: clamp(0.8rem, 2.5vmin, 1.2rem);
     font-weight: 300;
     letter-spacing: 0.1em;
     color: var(--text-time);
@@ -180,25 +184,118 @@ body {
 }
 
 @media (max-width: 480px) {
-    .time-value {
-        font-size: 1rem;
-    }
-
-    .time-label {
-        font-size: 0.5rem;
+    .container {
+        padding: 15px;
     }
 
     .time-labels {
         gap: 12px;
     }
+}
 
-    .text-time {
-        font-size: 0.9rem;
-        bottom: -40px;
+/* Height-based responsive adjustments */
+@media (max-height: 700px) {
+    .container {
+        padding: 15px;
     }
 
-    .ring-bg {
-        stroke-width: 0.5;
+    .time-labels {
+        gap: 15px;
+    }
+}
+
+@media (max-height: 600px) {
+    .container {
+        padding: 10px;
+        max-height: calc(100vh - 20px);
+    }
+
+    .clock-wrapper {
+        max-width: min(400px, 85vw, calc(85vh - 100px));
+        max-height: min(400px, 85vw, calc(85vh - 100px));
+    }
+
+    .time-labels {
+        gap: 10px;
+    }
+
+    .text-time {
+        font-size: clamp(0.7rem, 2vmin, 1rem);
+        bottom: clamp(-40px, -10vmin, -50px);
+    }
+}
+
+@media (max-height: 500px) {
+    .container {
+        padding: 5px;
+        max-height: calc(100vh - 10px);
+    }
+
+    .clock-wrapper {
+        max-width: min(300px, 75vw, calc(75vh - 80px));
+        max-height: min(300px, 75vw, calc(75vh - 80px));
+    }
+
+    .time-labels {
+        gap: 6px;
+    }
+
+    .text-time {
+        font-size: clamp(0.65rem, 1.8vmin, 0.85rem);
+        bottom: clamp(-35px, -8vmin, -40px);
+    }
+
+    .fullscreen-btn,
+    .settings-btn {
+        width: 36px;
+        height: 36px;
+        top: 8px;
+        font-size: 1.1rem;
+    }
+
+    .fullscreen-btn {
+        left: 8px;
+    }
+
+    .settings-btn {
+        right: 8px;
+    }
+}
+
+/* Very short heights - hide text time */
+@media (max-height: 400px) {
+    .container {
+        padding: 5px;
+        max-height: calc(100vh - 10px);
+    }
+
+    .clock-wrapper {
+        max-width: min(250px, 70vw, calc(70vh - 60px));
+        max-height: min(250px, 70vw, calc(70vh - 60px));
+    }
+
+    .text-time {
+        display: none;
+    }
+
+    .time-labels {
+        gap: 5px;
+    }
+
+    .fullscreen-btn,
+    .settings-btn {
+        width: 32px;
+        height: 32px;
+        top: 5px;
+        font-size: 1rem;
+    }
+
+    .fullscreen-btn {
+        left: 5px;
+    }
+
+    .settings-btn {
+        right: 5px;
     }
 }
 
