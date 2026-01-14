@@ -782,6 +782,9 @@ function updateClock() {
     // Update accessible text time
     textTime.textContent = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}.${padZero(milliseconds, 3)}`;
 
+    // Render alarm markers on clock rings
+    renderAlarmMarkers(hours, minutes, seconds);
+
     // Request next frame
     requestAnimationFrame(updateClock);
 }
@@ -1049,9 +1052,11 @@ async function requestNotificationPermission() {
 function addAlarm() {
     const hourInput = document.getElementById('alarmHour');
     const minuteInput = document.getElementById('alarmMinute');
+    const secondInput = document.getElementById('alarmSecond');
 
     const hour = parseInt(hourInput.value);
     const minute = parseInt(minuteInput.value);
+    const second = parseInt(secondInput.value) || 0; // Default to 0 if not provided
 
     // Validation
     if (isNaN(hour) || isNaN(minute)) {
@@ -1069,11 +1074,17 @@ function addAlarm() {
         return;
     }
 
+    if (second < 0 || second > 59) {
+        alert('Second must be between 0 and 59');
+        return;
+    }
+
     // Create alarm object
     const alarm = {
         id: Date.now(),
         hour: hour,
         minute: minute,
+        second: second,
         enabled: true
     };
 
@@ -1089,6 +1100,7 @@ function addAlarm() {
     // Clear inputs
     hourInput.value = '';
     minuteInput.value = '';
+    secondInput.value = '';
 }
 
 /**
@@ -1103,6 +1115,10 @@ function renderAlarms() {
         // Remove all alarm items
         const alarmItems = alarmList.querySelectorAll('.alarm-item');
         alarmItems.forEach(item => item.remove());
+
+        // Update markers immediately
+        const now = new Date();
+        renderAlarmMarkers(now.getHours(), now.getMinutes(), now.getSeconds());
         return;
     }
 
@@ -1111,7 +1127,8 @@ function renderAlarms() {
     // Sort alarms by time
     const sortedAlarms = [...alarms].sort((a, b) => {
         if (a.hour !== b.hour) return a.hour - b.hour;
-        return a.minute - b.minute;
+        if (a.minute !== b.minute) return a.minute - b.minute;
+        return (a.second || 0) - (b.second || 0);
     });
 
     // Clear existing items
@@ -1124,7 +1141,7 @@ function renderAlarms() {
         alarmItem.className = `alarm-item ${alarm.enabled ? '' : 'disabled'}`;
         alarmItem.dataset.id = alarm.id;
 
-        const timeStr = `${String(alarm.hour).padStart(2, '0')}:${String(alarm.minute).padStart(2, '0')}`;
+        const timeStr = `${String(alarm.hour).padStart(2, '0')}:${String(alarm.minute).padStart(2, '0')}:${String(alarm.second || 0).padStart(2, '0')}`;
 
         alarmItem.innerHTML = `
             <div class="alarm-time">${timeStr}</div>
@@ -1144,6 +1161,10 @@ function renderAlarms() {
 
         alarmList.appendChild(alarmItem);
     });
+
+    // Update markers immediately after rendering alarms
+    const now = new Date();
+    renderAlarmMarkers(now.getHours(), now.getMinutes(), now.getSeconds());
 }
 
 /**
@@ -1210,11 +1231,14 @@ function checkAlarms() {
     const currentMinute = now.getMinutes();
     const currentSecond = now.getSeconds();
 
-    // Only check at the start of each minute (0 seconds)
-    if (currentSecond !== 0) return;
-
+    // Check all alarms (including second-precision alarms)
     alarms.forEach(alarm => {
-        if (alarm.enabled && alarm.hour === currentHour && alarm.minute === currentMinute) {
+        const alarmSecond = alarm.second || 0; // Default to 0 if not set
+
+        if (alarm.enabled &&
+            alarm.hour === currentHour &&
+            alarm.minute === currentMinute &&
+            alarmSecond === currentSecond) {
             triggerAlarm(alarm);
         }
     });
@@ -1225,7 +1249,7 @@ function checkAlarms() {
  * @param {Object} alarm - The alarm object
  */
 function triggerAlarm(alarm) {
-    const timeStr = `${String(alarm.hour).padStart(2, '0')}:${String(alarm.minute).padStart(2, '0')}`;
+    const timeStr = `${String(alarm.hour).padStart(2, '0')}:${String(alarm.minute).padStart(2, '0')}:${String(alarm.second || 0).padStart(2, '0')}`;
 
     // Show notification
     if (Notification.permission === 'granted') {
@@ -1379,6 +1403,113 @@ function resetTimer() {
     document.getElementById('timerProgressBar').style.width = '0%';
     document.getElementById('startTimerBtn').textContent = 'Start Timer';
     document.getElementById('resetTimerBtn').disabled = true;
+}
+
+// ==================== ALARM MARKERS ON CLOCK ====================
+
+const alarmMarkersContainer = document.getElementById('alarmMarkers');
+
+/**
+ * Render alarm markers on clock rings
+ * @param {number} currentHour - Current hour
+ * @param {number} currentMinute - Current minute
+ * @param {number} currentSecond - Current second
+ */
+function renderAlarmMarkers(currentHour, currentMinute, currentSecond) {
+    if (!alarmMarkersContainer) return;
+
+    // Clear existing markers
+    alarmMarkersContainer.innerHTML = '';
+
+    // Render each enabled alarm
+    alarms.forEach(alarm => {
+        if (!alarm.enabled) return;
+
+        const alarmHour = alarm.hour;
+        const alarmMinute = alarm.minute;
+        const alarmSecond = alarm.second || 0;
+
+        let radius, progress, ringType;
+        let shouldShow = false;
+
+        // Determine which ring to show marker on
+        if (alarmHour === currentHour && alarmMinute === currentMinute) {
+            // Same hour and minute - show on second ring
+            radius = ARC_CONFIG.second.radius;
+            progress = alarmSecond / SECONDS_IN_MINUTE;
+            ringType = 'second';
+
+            // Show marker only if the comet hasn't passed it yet
+            const currentSecondProgress = currentSecond / SECONDS_IN_MINUTE;
+            shouldShow = progress > currentSecondProgress;
+        } else if (alarmHour === currentHour) {
+            // Same hour, different minute - show on minute ring
+            radius = ARC_CONFIG.minute.radius;
+            progress = alarmMinute / MINUTES_IN_HOUR;
+            ringType = 'minute';
+
+            // Show marker only if the comet hasn't passed it yet
+            // Current minute progress includes seconds for smooth flow
+            const currentMinuteProgress = (currentMinute + currentSecond / SECONDS_IN_MINUTE) / MINUTES_IN_HOUR;
+            shouldShow = progress > currentMinuteProgress;
+        } else {
+            // Different hour - show on hour ring
+            radius = ARC_CONFIG.hour.radius;
+            progress = alarmHour / HOURS_IN_DAY;
+            ringType = 'hour';
+
+            // Show marker only if the comet hasn't passed it yet
+            // Current hour progress includes minutes and seconds for smooth flow
+            const currentHourProgress = (currentHour + currentMinute / MINUTES_IN_HOUR) / HOURS_IN_DAY;
+            shouldShow = progress > currentHourProgress;
+        }
+
+        if (!shouldShow) return;
+
+        // Calculate angle
+        // SVG circle starts at right (0°) and rotates clockwise
+        // SVG is rotated -90deg, so right becomes top
+        // Progress 0 (0시) = right before rotation = top after rotation
+        // Progress 0.25 (6시) = bottom before rotation = right after rotation
+        // Progress 0.5 (12시) = left before rotation = bottom after rotation
+        // Progress 0.75 (18시) = top before rotation = left after rotation
+        const angle = progress * 360;
+        const angleRad = angle * (Math.PI / 180);
+
+        // Calculate marker position (standard SVG coordinates)
+        const centerX = 200;
+        const centerY = 200;
+        const markerX = centerX + radius * Math.cos(angleRad);
+        const markerY = centerY + radius * Math.sin(angleRad);
+
+        // Create marker dot
+        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dot.setAttribute('cx', markerX);
+        dot.setAttribute('cy', markerY);
+        const dotRadius = ringType === 'hour' ? '7' : ringType === 'minute' ? '6' : '5';
+        dot.setAttribute('r', dotRadius);
+        dot.classList.add('alarm-marker-dot');
+
+        // Create marker tick (short line pointing to center)
+        const tickLength = ringType === 'hour' ? 14 : ringType === 'minute' ? 12 : 10;
+        const innerRadius = radius - tickLength / 2;
+        const outerRadius = radius + tickLength / 2;
+
+        const innerX = centerX + innerRadius * Math.cos(angleRad);
+        const innerY = centerY + innerRadius * Math.sin(angleRad);
+        const outerX = centerX + outerRadius * Math.cos(angleRad);
+        const outerY = centerY + outerRadius * Math.sin(angleRad);
+
+        const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        tick.setAttribute('x1', innerX);
+        tick.setAttribute('y1', innerY);
+        tick.setAttribute('x2', outerX);
+        tick.setAttribute('y2', outerY);
+        tick.classList.add('alarm-marker');
+
+        alarmMarkersContainer.appendChild(tick);
+        alarmMarkersContainer.appendChild(dot);
+    });
 }
 
 // Start the clock when DOM is ready
