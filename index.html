@@ -108,6 +108,14 @@
             </div>
 
             <div class="settings-section">
+                <label class="settings-label">Time Format</label>
+                <div class="format-toggle">
+                    <button class="format-btn active" data-format="24h" aria-label="24-hour format">24h</button>
+                    <button class="format-btn" data-format="12h" aria-label="12-hour format">12h</button>
+                </div>
+            </div>
+
+            <div class="settings-section">
                 <label class="settings-label">Share Settings</label>
                 <button class="share-url-btn" id="shareUrlBtn" aria-label="Copy shareable URL">
                     <span class="share-icon">🔗</span>
@@ -154,6 +162,54 @@
                         <span class="time-separator">:</span>
                         <input type="number" class="time-input" id="alarmSecond" min="0" max="59" placeholder="SS" aria-label="Second">
                     </div>
+
+                    <!-- Repeat Options -->
+                    <div class="repeat-options">
+                        <label class="repeat-label">Repeat</label>
+                        <select class="repeat-select" id="alarmRepeat" aria-label="Repeat option">
+                            <option value="none">Once</option>
+                            <option value="daily">Every Day</option>
+                            <option value="weekdays">Weekdays (Mon-Fri)</option>
+                            <option value="weekends">Weekends (Sat-Sun)</option>
+                            <option value="custom">Custom Days...</option>
+                        </select>
+                    </div>
+
+                    <!-- Custom Days Picker (hidden by default) -->
+                    <div class="custom-days" id="customDays" style="display: none;">
+                        <label class="repeat-label">Select Days</label>
+                        <div class="days-grid">
+                            <label class="day-checkbox">
+                                <input type="checkbox" name="day" value="0">
+                                <span>Sun</span>
+                            </label>
+                            <label class="day-checkbox">
+                                <input type="checkbox" name="day" value="1">
+                                <span>Mon</span>
+                            </label>
+                            <label class="day-checkbox">
+                                <input type="checkbox" name="day" value="2">
+                                <span>Tue</span>
+                            </label>
+                            <label class="day-checkbox">
+                                <input type="checkbox" name="day" value="3">
+                                <span>Wed</span>
+                            </label>
+                            <label class="day-checkbox">
+                                <input type="checkbox" name="day" value="4">
+                                <span>Thu</span>
+                            </label>
+                            <label class="day-checkbox">
+                                <input type="checkbox" name="day" value="5">
+                                <span>Fri</span>
+                            </label>
+                            <label class="day-checkbox">
+                                <input type="checkbox" name="day" value="6">
+                                <span>Sat</span>
+                            </label>
+                        </div>
+                    </div>
+
                     <button class="add-alarm-btn" id="addAlarmBtn">+ Add Alarm</button>
                 </div>
 

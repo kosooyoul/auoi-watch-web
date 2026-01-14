@@ -77,6 +77,9 @@ const THEMES = {
 // Current theme
 let currentTheme = 'classic';
 
+// Time format (12h or 24h)
+let timeFormat = '24h';
+
 /**
  * Apply a theme to the page
  * @param {string} themeName - Name of the theme to apply
@@ -243,7 +246,8 @@ function showCopyFeedback(success) {
  */
 function saveSettings() {
     const settings = {
-        theme: currentTheme
+        theme: currentTheme,
+        timeFormat: timeFormat
     };
     localStorage.setItem('ringClockSettings', JSON.stringify(settings));
 }
@@ -257,24 +261,49 @@ function loadSettings() {
         const urlTheme = getThemeFromURL();
         if (urlTheme) {
             applyTheme(urlTheme);
-            return;
         }
 
         // Fallback to localStorage
         const saved = localStorage.getItem('ringClockSettings');
         if (saved) {
             const settings = JSON.parse(saved);
-            if (settings.theme && THEMES[settings.theme]) {
+            if (settings.theme && THEMES[settings.theme] && !urlTheme) {
                 applyTheme(settings.theme);
-                return;
+            }
+            if (settings.timeFormat) {
+                applyTimeFormat(settings.timeFormat);
             }
         }
 
-        // If no URL param or localStorage, use default theme and update URL
-        updateURL();
+        // If no URL param, update URL
+        if (!urlTheme) {
+            updateURL();
+        }
     } catch (error) {
         console.error('Error loading settings:', error);
     }
+}
+
+/**
+ * Apply time format setting
+ * @param {string} format - Time format ('12h' or '24h')
+ */
+function applyTimeFormat(format) {
+    timeFormat = format;
+
+    // Update UI - activate correct button
+    const formatBtns = document.querySelectorAll('.format-btn');
+    formatBtns.forEach(btn => {
+        if (btn.dataset.format === format) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    // Re-render alarm markers with new time format
+    const now = new Date();
+    renderAlarmMarkers(now.getHours(), now.getMinutes(), now.getSeconds());
 }
 
 /**
@@ -336,6 +365,16 @@ function initSettingsUI() {
     // Share URL button
     shareUrlBtn.addEventListener('click', () => {
         copyShareURL();
+    });
+
+    // Time format toggle
+    const formatBtns = document.querySelectorAll('.format-btn');
+    formatBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const format = btn.dataset.format;
+            applyTimeFormat(format);
+            saveSettings();
+        });
     });
 }
 
@@ -754,12 +793,24 @@ function updateClock() {
     const seconds = now.getSeconds();
     const milliseconds = now.getMilliseconds();
 
+    // Calculate display hours based on format
+    let displayHours = hours;
+    let period = '';
+
+    if (timeFormat === '12h') {
+        period = hours >= 12 ? 'PM' : 'AM';
+        displayHours = hours % 12 || 12; // Convert 0 to 12 for midnight
+    }
+
     // Calculate fractional progress for smooth water-like flow
     // Each unit includes fractional parts of smaller units to prevent jumps
     const msProgress = milliseconds / MS_IN_SECOND;
     const secondProgress = (seconds + msProgress) / SECONDS_IN_MINUTE;
     const minuteProgress = (minutes + secondProgress) / MINUTES_IN_HOUR;
-    const hourProgress = (hours + minuteProgress) / HOURS_IN_DAY;
+
+    // Hour progress depends on format
+    const hoursInCycle = timeFormat === '12h' ? 12 : HOURS_IN_DAY;
+    const hourProgress = ((hours % hoursInCycle) + minuteProgress) / hoursInCycle;
 
     // Calculate colors based on progress
     const hourColor = getColorForProgress(hourProgress, 'hour');
@@ -774,13 +825,16 @@ function updateClock() {
     updateArcSegments(msArcs, msProgress, msColor, ARC_CONFIG.ms.count, ARC_CONFIG.ms.trailLength);
 
     // Update text displays
-    hourValue.textContent = padZero(hours);
+    hourValue.textContent = padZero(displayHours);
     minuteValue.textContent = padZero(minutes);
     secondValue.textContent = padZero(seconds);
     msValue.textContent = padZero(milliseconds, 3);
 
     // Update accessible text time
-    textTime.textContent = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}.${padZero(milliseconds, 3)}`;
+    const timeStr = timeFormat === '12h'
+        ? `${padZero(displayHours)}:${padZero(minutes)}:${padZero(seconds)}.${padZero(milliseconds, 3)} ${period}`
+        : `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}.${padZero(milliseconds, 3)}`;
+    textTime.textContent = timeStr;
 
     // Render alarm markers on clock rings
     renderAlarmMarkers(hours, minutes, seconds);
@@ -962,6 +1016,18 @@ function initAlarmSystem() {
     // Enable notifications
     enableNotificationBtn.addEventListener('click', requestNotificationPermission);
 
+    // Repeat select toggle
+    const repeatSelect = document.getElementById('alarmRepeat');
+    const customDays = document.getElementById('customDays');
+
+    repeatSelect.addEventListener('change', () => {
+        if (repeatSelect.value === 'custom') {
+            customDays.style.display = 'block';
+        } else {
+            customDays.style.display = 'none';
+        }
+    });
+
     // Initialize timer controls
     initTimer();
 
@@ -1053,10 +1119,12 @@ function addAlarm() {
     const hourInput = document.getElementById('alarmHour');
     const minuteInput = document.getElementById('alarmMinute');
     const secondInput = document.getElementById('alarmSecond');
+    const repeatSelect = document.getElementById('alarmRepeat');
 
     const hour = parseInt(hourInput.value);
     const minute = parseInt(minuteInput.value);
     const second = parseInt(secondInput.value) || 0; // Default to 0 if not provided
+    const repeat = repeatSelect.value;
 
     // Validation
     if (isNaN(hour) || isNaN(minute)) {
@@ -1079,13 +1147,26 @@ function addAlarm() {
         return;
     }
 
+    // Get custom days if custom repeat is selected
+    let customDays = [];
+    if (repeat === 'custom') {
+        const dayCheckboxes = document.querySelectorAll('input[name="day"]:checked');
+        if (dayCheckboxes.length === 0) {
+            alert('Please select at least one day for custom repeat');
+            return;
+        }
+        customDays = Array.from(dayCheckboxes).map(cb => parseInt(cb.value));
+    }
+
     // Create alarm object
     const alarm = {
         id: Date.now(),
         hour: hour,
         minute: minute,
         second: second,
-        enabled: true
+        enabled: true,
+        repeat: repeat,
+        customDays: customDays
     };
 
     // Add to alarms array
@@ -1101,6 +1182,9 @@ function addAlarm() {
     hourInput.value = '';
     minuteInput.value = '';
     secondInput.value = '';
+    repeatSelect.value = 'none';
+    document.getElementById('customDays').style.display = 'none';
+    document.querySelectorAll('input[name="day"]').forEach(cb => cb.checked = false);
 }
 
 /**
@@ -1143,8 +1227,32 @@ function renderAlarms() {
 
         const timeStr = `${String(alarm.hour).padStart(2, '0')}:${String(alarm.minute).padStart(2, '0')}:${String(alarm.second || 0).padStart(2, '0')}`;
 
+        // Get repeat label
+        let repeatLabel = '';
+        if (alarm.repeat && alarm.repeat !== 'none') {
+            switch (alarm.repeat) {
+                case 'daily':
+                    repeatLabel = 'Every Day';
+                    break;
+                case 'weekdays':
+                    repeatLabel = 'Weekdays';
+                    break;
+                case 'weekends':
+                    repeatLabel = 'Weekends';
+                    break;
+                case 'custom':
+                    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                    const selectedDays = alarm.customDays.map(d => dayNames[d]).join(', ');
+                    repeatLabel = selectedDays;
+                    break;
+            }
+        }
+
         alarmItem.innerHTML = `
-            <div class="alarm-time">${timeStr}</div>
+            <div class="alarm-info">
+                <div class="alarm-time">${timeStr}</div>
+                ${repeatLabel ? `<div class="alarm-repeat">${repeatLabel}</div>` : ''}
+            </div>
             <div class="alarm-actions">
                 <button class="alarm-toggle ${alarm.enabled ? 'active' : ''}" aria-label="Toggle alarm"></button>
                 <button class="alarm-delete" aria-label="Delete alarm">Delete</button>
@@ -1230,15 +1338,45 @@ function checkAlarms() {
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
     const currentSecond = now.getSeconds();
+    const currentDay = now.getDay(); // 0 = Sunday, 6 = Saturday
 
     // Check all alarms (including second-precision alarms)
     alarms.forEach(alarm => {
         const alarmSecond = alarm.second || 0; // Default to 0 if not set
 
-        if (alarm.enabled &&
+        // Check time match
+        const timeMatches = alarm.enabled &&
             alarm.hour === currentHour &&
             alarm.minute === currentMinute &&
-            alarmSecond === currentSecond) {
+            alarmSecond === currentSecond;
+
+        if (!timeMatches) return;
+
+        // Check repeat pattern
+        const repeat = alarm.repeat || 'none';
+        let shouldTrigger = false;
+
+        switch (repeat) {
+            case 'none':
+                shouldTrigger = true;
+                break;
+            case 'daily':
+                shouldTrigger = true;
+                break;
+            case 'weekdays':
+                // Monday (1) to Friday (5)
+                shouldTrigger = currentDay >= 1 && currentDay <= 5;
+                break;
+            case 'weekends':
+                // Saturday (6) or Sunday (0)
+                shouldTrigger = currentDay === 0 || currentDay === 6;
+                break;
+            case 'custom':
+                shouldTrigger = alarm.customDays && alarm.customDays.includes(currentDay);
+                break;
+        }
+
+        if (shouldTrigger) {
             triggerAlarm(alarm);
         }
     });
@@ -1271,11 +1409,13 @@ function triggerAlarm(alarm) {
         // Ignore audio errors
     }
 
-    // Auto-disable alarm (one-time alarm)
-    // Comment out the next line if you want recurring alarms
-    // alarm.enabled = false;
-    // saveAlarms();
-    // renderAlarms();
+    // Auto-disable one-time alarms (repeat = 'none')
+    const repeat = alarm.repeat || 'none';
+    if (repeat === 'none') {
+        alarm.enabled = false;
+        saveAlarms();
+        renderAlarms();
+    }
 }
 
 // ==================== TIMER SYSTEM ====================
@@ -1455,12 +1595,18 @@ function renderAlarmMarkers(currentHour, currentMinute, currentSecond) {
         } else {
             // Different hour - show on hour ring
             radius = ARC_CONFIG.hour.radius;
-            progress = alarmHour / HOURS_IN_DAY;
+
+            // Calculate progress based on time format (12h or 24h)
+            const hoursInCycle = timeFormat === '12h' ? 12 : HOURS_IN_DAY;
+            const displayAlarmHour = timeFormat === '12h' ? (alarmHour % 12) : alarmHour;
+            const displayCurrentHour = timeFormat === '12h' ? (currentHour % 12) : currentHour;
+
+            progress = displayAlarmHour / hoursInCycle;
             ringType = 'hour';
 
             // Show marker only if the comet hasn't passed it yet
             // Current hour progress includes minutes and seconds for smooth flow
-            const currentHourProgress = (currentHour + currentMinute / MINUTES_IN_HOUR) / HOURS_IN_DAY;
+            const currentHourProgress = (displayCurrentHour + currentMinute / MINUTES_IN_HOUR) / hoursInCycle;
             shouldShow = progress > currentHourProgress;
         }
 
