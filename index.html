@@ -29,6 +29,11 @@
         ⛶
     </button>
 
+    <!-- Alarm Button -->
+    <button class="alarm-btn" id="alarmBtn" aria-label="Open alarm">
+        ⏰
+    </button>
+
     <!-- Settings Button -->
     <button class="settings-btn" id="settingsBtn" aria-label="Open settings">
         ⚙
@@ -109,6 +114,80 @@
                     <span class="share-text">Copy URL</span>
                 </button>
                 <p class="share-hint">Share your current theme settings via URL</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alarm Modal -->
+    <div class="alarm-modal" id="alarmModal" role="dialog" aria-labelledby="alarmTitle" aria-modal="true">
+        <div class="alarm-panel">
+            <div class="alarm-header">
+                <h2 class="alarm-title" id="alarmTitle">Alarms & Timers</h2>
+                <button class="close-btn" id="alarmCloseBtn" aria-label="Close alarm">×</button>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="tab-nav" role="tablist">
+                <button class="tab-btn active" id="alarmTab" role="tab" aria-selected="true" aria-controls="alarmPanel">
+                    Alarms
+                </button>
+                <button class="tab-btn" id="timerTab" role="tab" aria-selected="false" aria-controls="timerPanel">
+                    Timer
+                </button>
+            </div>
+
+            <!-- Alarm Panel -->
+            <div class="tab-panel active" id="alarmPanel" role="tabpanel" aria-labelledby="alarmTab">
+                <!-- Notification Permission -->
+                <div class="notification-permission" id="notificationPermission" style="display: none;">
+                    <p class="permission-text">⚠️ Enable notifications to receive alarm alerts</p>
+                    <button class="permission-btn" id="enableNotificationBtn">Enable Notifications</button>
+                </div>
+
+                <!-- Alarm Time Picker -->
+                <div class="time-picker">
+                    <label class="picker-label">Set Alarm Time</label>
+                    <div class="time-inputs">
+                        <input type="number" class="time-input" id="alarmHour" min="0" max="23" placeholder="HH" aria-label="Hour">
+                        <span class="time-separator">:</span>
+                        <input type="number" class="time-input" id="alarmMinute" min="0" max="59" placeholder="MM" aria-label="Minute">
+                    </div>
+                    <button class="add-alarm-btn" id="addAlarmBtn">+ Add Alarm</button>
+                </div>
+
+                <!-- Alarm List -->
+                <div class="alarm-list" id="alarmList">
+                    <p class="empty-state" id="emptyAlarmState">No alarms set</p>
+                </div>
+            </div>
+
+            <!-- Timer Panel -->
+            <div class="tab-panel" id="timerPanel" role="tabpanel" aria-labelledby="timerTab" hidden>
+                <!-- Timer Input -->
+                <div class="timer-input-section">
+                    <label class="picker-label">Set Timer Duration</label>
+                    <div class="time-inputs">
+                        <input type="number" class="time-input" id="timerHour" min="0" max="23" placeholder="HH" aria-label="Hours">
+                        <span class="time-separator">:</span>
+                        <input type="number" class="time-input" id="timerMinute" min="0" max="59" placeholder="MM" aria-label="Minutes">
+                        <span class="time-separator">:</span>
+                        <input type="number" class="time-input" id="timerSecond" min="0" max="59" placeholder="SS" aria-label="Seconds">
+                    </div>
+                </div>
+
+                <!-- Timer Controls -->
+                <div class="timer-controls">
+                    <button class="timer-btn start-btn" id="startTimerBtn">Start Timer</button>
+                    <button class="timer-btn reset-btn" id="resetTimerBtn" disabled>Reset</button>
+                </div>
+
+                <!-- Timer Display -->
+                <div class="timer-display" id="timerDisplay">
+                    <div class="timer-time">00:00:00</div>
+                    <div class="timer-progress">
+                        <div class="timer-progress-bar" id="timerProgressBar"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
