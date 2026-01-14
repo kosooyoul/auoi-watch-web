@@ -1,6 +1,6 @@
 # auoi-watch-web Tasks & Roadmap
 
-## Current State (v1.5.0)
+## Current State (v1.7.0)
 - ✅ Real-time clock with comet trail animation (ms/sec/min/hour rings)
 - ✅ SVG-based premium visual design
 - ✅ 60fps smooth animation
@@ -9,6 +9,9 @@
 - ✅ Theme system with 5 color presets
 - ✅ Settings panel UI with modal
 - ✅ localStorage persistence for user preferences
+- ✅ PWA support (offline, installable)
+- ✅ Alarm & Timer system with visual markers
+- ✅ Notification API integration
 
 ---
 
@@ -134,23 +137,51 @@
 
 ---
 
-## Remaining Tasks (Priority Order)
+### ✅ 5. Alarm & Timer System with Visual Markers (v1.7.0)
+**Completed:** 2026-01-14
+**Implemented:**
+- ✅ Alarm UI with second-precision input (HH:MM:SS format)
+- ✅ Timer countdown with progress bar
+- ✅ Visual alarm markers on clock rings
+  - Markers appear on hour/minute/second rings based on alarm time
+  - Markers disappear when comet trail passes (natural flow)
+  - Pulsing animation with glow effects
+  - Accurate 24-hour positioning with SVG rotation compensation
+- ✅ Notification API integration for browser alerts
+- ✅ Alarm management (add/delete/toggle/sort)
+- ✅ localStorage persistence for alarms
+- ✅ Premium UI design with glassmorphic effects
+- ✅ Responsive modal (85vh max-height, mobile-optimized)
+- ✅ Alarm button positioned on left side (no overlap with settings)
 
-### 1. [MEDIUM] Alarm / Timer Feature
-**Why:** 시계의 핵심 기능 - 단순 시간 표시를 넘어서
-**Effort:** Medium-High (3-5 hours)
-**Value:** High - 실용적 기능
-**Scope:**
-- 알람 설정 UI (시간 선택)
-- 타이머 카운트다운 UI
-- Notification API로 브라우저 알림
-- 알람/타이머 목록 관리
-- localStorage로 알람 저장
-**Web Strength:** Notification API - 백그라운드에서도 알림 가능
+**Marker Display Logic:**
+- Same hour & minute → second ring
+- Same hour only → minute ring
+- Different hour → hour ring
+- Markers scale with ring size (7px/6px/5px)
+
+**Functions Implemented:**
+- `addAlarm()` - Create alarm with hour/minute/second
+- `renderAlarms()` - Display alarm list with HH:MM:SS format
+- `checkAlarms()` - Check for triggered alarms every second
+- `triggerAlarm()` - Fire notification and play sound
+- `renderAlarmMarkers()` - Draw visual markers on clock rings
+- `toggleTimer()` - Start/pause timer
+- `resetTimer()` - Reset timer to zero
+- `updateTimer()` - Update timer display and progress bar
+
+**Files Modified:**
+- `index.html` - Added seconds input, alarm markers container
+- `main.js` - Alarm/timer system, marker rendering (110+ lines)
+- `styles.css` - Premium UI styling, marker animations (300+ lines)
+
+**Result:** Full-featured alarm and timer system with visual clock integration
 
 ---
 
-### 2. [LOW] World Clock (Multi-timezone)
+## Remaining Tasks (Priority Order)
+
+### 1. [LOW] World Clock (Multi-timezone)
 **Why:** 글로벌 시대 - 여러 시간대 동시 확인
 **Effort:** Medium (3-4 hours)
 **Value:** Medium - 특정 사용자에게 큰 가치
@@ -163,7 +194,7 @@
 
 ---
 
-### 3. [LOW] Stopwatch Mode
+### 2. [LOW] Stopwatch Mode
 **Why:** 시계의 부가 기능 - 운동, 요리 등에 유용
 **Effort:** Medium (2-3 hours)
 **Value:** Medium - 특정 사용 사례
@@ -173,6 +204,19 @@
 - 밀리초 정밀도
 - 모드 전환 UI (Clock ↔ Stopwatch)
 **Web Strength:** High-precision timing with performance.now()
+
+---
+
+### 3. [FUTURE] Recurring Alarms
+**Why:** 매일/평일 반복 알람 - 더 실용적
+**Effort:** Small (1-2 hours)
+**Value:** Medium - 알람 기능 확장
+**Scope:**
+- 반복 옵션 UI (매일, 평일, 주말, 커스텀)
+- 요일 선택 인터페이스
+- 반복 로직 구현
+- localStorage에 반복 설정 저장
+**Web Strength:** Date/Time API로 요일 계산
 
 ---
 
@@ -202,28 +246,17 @@
 
 ## Recommended Next Task
 
-### 🎯 Next: Task #1 "Alarm / Timer Feature"
+### 🎯 Next: Task #1 "World Clock (Multi-timezone)"
 
 **Rationale:**
-- 기본 UX와 PWA 완성으로 플랫폼 기반 완료
-- 시계의 핵심 실용 기능 추가
-- 웹의 강력한 특성 활용 (Notification API)
-- 백그라운드에서도 알림 가능
+- 알람/타이머 기능 완성으로 시계의 핵심 기능 완료
+- 글로벌 사용자를 위한 다음 단계
+- 웹의 강력한 특성 활용 (Intl API)
+- 여러 시간대 동시 표시로 실용성 증대
 
-**Implementation:**
-- 알람/타이머 설정 UI 디자인
-- 시간 선택 인터페이스 (시, 분)
-- localStorage로 알람 목록 저장
-- Notification API로 브라우저 알림
-- 반복 알람 옵션 (매일, 평일 등)
-- Effort: 3-5 hours
-- Files: index.html, main.js, styles.css, (new alarm-system section)
-
----
-
-## Alternative Next Steps
-1. Task #2 (World Clock) - 글로벌 사용자에게 가치
-2. Task #3 (Stopwatch) - 부가 기능
+**Alternative Next Steps:**
+1. Task #2 (Stopwatch) - 부가 기능
+2. Task #3 (Recurring Alarms) - 알람 기능 강화
 3. Task #4 (Animation Speed) - 빠른 구현
 
 ---

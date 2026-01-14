@@ -2,6 +2,184 @@
 
 ## Version History
 
+### v1.7.0 (2026-01-14)
+**Alarm & Timer System with Visual Markers**
+
+**New Features:**
+
+**1. Visual Alarm Markers on Clock Rings:**
+- Alarm markers displayed directly on clock rings
+  - Markers appear on hour/minute/second rings based on alarm time
+  - Same hour & minute → second ring
+  - Same hour only → minute ring
+  - Different hour → hour ring
+- Natural disappearance when comet trail passes
+  - Markers only show ahead of current time
+  - Automatically removed when time passes
+  - Smooth, natural flow integration
+- Pulsing animation with glow effects
+  - 2-second pulse cycle (opacity: 0.85 ↔ 1.0)
+  - Multiple drop-shadow layers for depth
+  - White stroke outline for visibility
+- Accurate 24-hour positioning
+  - SVG rotation compensation (rotate(-90deg))
+  - Precise angle calculation for 24-hour clock
+  - Progress-based positioning (0 = top, 0.25 = right, etc.)
+- Marker sizing scales with ring
+  - Hour ring: 7px dot, 14px tick
+  - Minute ring: 6px dot, 12px tick
+  - Second ring: 5px dot, 10px tick
+
+**2. Second-Precision Alarm System:**
+- HH:MM:SS format input (hour/minute/second)
+  - Three input fields with validation
+  - Second field optional (defaults to 0)
+  - Validation: hour (0-23), minute (0-59), second (0-59)
+- Alarm checking every second (not just every minute)
+  - Precise second-level triggering
+  - No delay or drift in alarm activation
+- Alarm list displays full HH:MM:SS format
+  - Sorted by hour → minute → second
+  - Visual indication of enabled/disabled state
+- localStorage persistence with seconds
+  - Backward compatible (existing alarms default to :00 seconds)
+
+**3. Premium UI Design:**
+- Alarm button repositioned to left side
+  - Avoids overlap with settings button (right side)
+  - Consistent positioning across screen sizes
+- Glassmorphic modal design
+  - Linear gradients with transparency
+  - Backdrop blur effects
+  - Premium shadows and borders
+- Enhanced input fields
+  - Gradient backgrounds
+  - Smooth hover/focus transitions
+  - Ring-color themed focus states (border + shadow + glow)
+- Improved buttons and controls
+  - Gradient backgrounds with shine effect
+  - Hover lift animations (translateY(-2px))
+  - Active press feedback (translateY(0))
+  - Disabled state with grayscale filter
+- Toggle switch refinement
+  - Gradient background when active
+  - Smooth 0.4s cubic-bezier transitions
+  - Drop-shadow glow effect when enabled
+  - White gradient on toggle knob
+
+**4. Responsive Modal Design:**
+- Adaptive sizing
+  - Max-height: 85vh (prevents overflow)
+  - Width: calc(100% - 40px) with max-width: 480px
+  - Automatic scrolling for overflow content
+- Mobile optimization (768px and below)
+  - Reduced padding: 24px → 20px
+  - Smaller input fields: 70px → 60px → 54px
+  - Adjusted font sizes for readability
+- Tablet optimization (480px and below)
+  - Border-radius: 20px → 16px
+  - Compact button padding
+  - Optimized tab navigation
+
+**5. Timer System Enhancement:**
+- Premium timer display
+  - Large timer font (3rem, font-weight: 200)
+  - Text shadow for depth
+  - Letter-spacing for clarity
+- Enhanced progress bar
+  - Triple-gradient (hour → minute → second colors)
+  - Rounded corners (10px)
+  - Glow effect matching ring colors
+  - Inset shadow for depth
+- Improved timer controls
+  - Start/Resume/Pause button states
+  - Reset button with proper disabled state
+  - Gradient backgrounds matching theme
+
+**Technical Implementation:**
+
+**Marker Rendering System:**
+- `renderAlarmMarkers(currentHour, currentMinute, currentSecond)`
+  - Clears and redraws all markers every frame
+  - Filters enabled alarms only
+  - Determines appropriate ring (hour/minute/second)
+  - Calculates if marker should show (ahead of comet)
+  - Creates SVG circle (dot) and line (tick) elements
+  - Applies pulsing animation CSS class
+- SVG coordinate calculation:
+  - Angle = progress × 360°
+  - AngleRad = angle × (π / 180)
+  - X = centerX + radius × cos(angleRad)
+  - Y = centerY + radius × sin(angleRad)
+- Real-time updates:
+  - Called in `updateClock()` every frame (60fps)
+  - Updates triggered on alarm add/delete/toggle
+  - Automatic cleanup of passed alarms
+
+**Alarm Management:**
+- `addAlarm()` - Creates alarm with second precision
+- `renderAlarms()` - Displays sorted alarm list (HH:MM:SS)
+- `checkAlarms()` - Checks every second for matches
+- `triggerAlarm()` - Fires notification + sound
+- `toggleAlarm()` - Enable/disable alarm
+- `deleteAlarm()` - Remove alarm from list
+- `saveAlarms()` / `loadAlarms()` - localStorage persistence
+
+**Functions Implemented:**
+- `renderAlarmMarkers()` - Draw visual markers on rings (80 lines)
+- `addAlarm()` - Enhanced with second validation
+- `renderAlarms()` - Enhanced with second display and instant marker update
+- `checkAlarms()` - Enhanced with second-precision matching
+- `triggerAlarm()` - Enhanced with second in notification
+- `toggleTimer()` - Start/pause/resume timer
+- `updateTimer()` - Update countdown and progress
+- `timerComplete()` - Handle timer finish with notification
+- `resetTimer()` - Reset timer state
+
+**Files Modified:**
+- `index.html`:
+  - Added seconds input field to alarm picker
+  - Added `<g id="alarmMarkers"></g>` container for SVG markers
+- `main.js`:
+  - Alarm/timer system (300+ lines)
+  - Marker rendering system (110+ lines)
+  - Second-precision alarm logic
+  - Real-time marker updates
+- `styles.css`:
+  - Alarm button repositioned (left side)
+  - Modal responsive sizing (85vh, calc(100% - 40px))
+  - Premium input field styling (gradients, transitions, glow)
+  - Enhanced button designs (shine effect, lift animations)
+  - Alarm marker animations (pulse, glow, multiple shadows)
+  - Timer display improvements (gradients, shadows, glow)
+  - Mobile/tablet optimizations (300+ lines)
+
+**Result:**
+- Full-featured alarm system with visual clock integration
+- Alarms visible as glowing markers on the clock face
+- Natural interaction as time flows past markers
+- Precise second-level alarm accuracy
+- Premium, responsive UI across all devices
+- Seamless integration with existing theme system
+
+**Verification:**
+✅ Alarm markers display on correct rings (hour/minute/second)
+✅ Markers disappear naturally when comet passes
+✅ Markers positioned accurately for 24-hour clock
+✅ Second-precision alarms trigger at exact second
+✅ Alarm list displays HH:MM:SS format correctly
+✅ localStorage saves/restores alarms with seconds
+✅ Alarm button positioned on left (no overlap)
+✅ Modal responsive on all screen sizes (mobile/tablet/desktop)
+✅ Premium UI matches clock aesthetic
+✅ Pulsing marker animation smooth and visible
+✅ Timer countdown and progress bar work correctly
+✅ Notification permission requested and notifications fire
+✅ 60fps performance maintained with markers
+✅ Markers update immediately on alarm add/delete/toggle
+
+---
+
 ### v1.6.0 (2026-01-12)
 **PWA Support - Progressive Web App**
 
@@ -346,8 +524,10 @@
 - ~~URL-based theme sharing (query params)~~ ✅ Completed in v1.5.0
 - ~~Fullscreen mode (Fullscreen API)~~ ✅ Completed in v1.5.0
 - ~~PWA support (manifest.json, service worker)~~ ✅ Completed in v1.6.0
-- Alarm/Timer features (Notification API) - Next priority
-- 12h/24h toggle
-- Animation speed control
+- ~~Alarm/Timer features (Notification API)~~ ✅ Completed in v1.7.0
+- ~~Visual alarm markers on clock rings~~ ✅ Completed in v1.7.0
+- Recurring alarms (daily, weekdays, custom)
 - World clock (multi-timezone)
 - Stopwatch mode
+- 12h/24h toggle
+- Animation speed control
