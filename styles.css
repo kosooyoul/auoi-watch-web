@@ -1426,3 +1426,297 @@ body {
         font-size: 0.9rem;
     }
 }
+
+/* ==================== WORLD CLOCK SYSTEM ==================== */
+
+/* World Clock Button */
+.world-clock-btn {
+    position: fixed;
+    top: 140px;
+    left: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.world-clock-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.1);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+}
+
+.world-clock-btn:active {
+    transform: scale(1);
+}
+
+/* World Clock Modal */
+.world-clock-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.world-clock-modal.show {
+    display: flex;
+}
+
+.world-clock-panel {
+    background: linear-gradient(135deg, rgba(30, 30, 46, 0.98) 0%, rgba(45, 45, 68, 0.98) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 32px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* World Clock Header */
+.world-clock-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.world-clock-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* Add City Section */
+.add-city-section {
+    margin-bottom: 32px;
+}
+
+.city-picker {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+}
+
+.city-select {
+    flex: 1;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.city-select:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.city-select:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--ring-hour-start);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.city-select option {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.add-city-btn {
+    padding: 14px 24px;
+    background: linear-gradient(135deg, var(--ring-hour-start) 0%, var(--ring-hour-mid) 100%);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.add-city-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+}
+
+.add-city-btn:active {
+    transform: translateY(0);
+}
+
+.add-city-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* World Clock List */
+.world-clock-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 1rem;
+    padding: 40px 20px;
+}
+
+/* Clock Card */
+.clock-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    animation: slideIn 0.3s ease-out;
+}
+
+.clock-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
+}
+
+.clock-info {
+    flex: 1;
+}
+
+.clock-city {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.clock-time {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 2px;
+}
+
+.clock-date {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.clock-offset {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.clock-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.delete-clock-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(255, 107, 129, 0.1);
+    border: 1px solid rgba(255, 107, 129, 0.2);
+    color: #ff6b81;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.delete-clock-btn:hover {
+    background: rgba(255, 107, 129, 0.2);
+    transform: scale(1.1);
+}
+
+.delete-clock-btn:active {
+    transform: scale(0.95);
+}
+
+/* Responsive Design for World Clock */
+@media (max-width: 768px) {
+    .world-clock-panel {
+        width: 95%;
+        padding: 24px 20px;
+    }
+
+    .world-clock-title {
+        font-size: 1.5rem;
+    }
+
+    .city-picker {
+        flex-direction: column;
+    }
+
+    .clock-time {
+        font-size: 1.5rem;
+    }
+
+    .clock-city {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .world-clock-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 1.3rem;
+    }
+
+    .world-clock-panel {
+        padding: 20px 16px;
+        width: calc(100% - 24px);
+        border-radius: 16px;
+    }
+
+    .world-clock-title {
+        font-size: 1.3rem;
+    }
+
+    .clock-time {
+        font-size: 1.3rem;
+    }
+
+    .clock-card {
+        padding: 16px 18px;
+    }
+}

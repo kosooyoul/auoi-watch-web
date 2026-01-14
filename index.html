@@ -34,6 +34,11 @@
         ⏰
     </button>
 
+    <!-- World Clock Button -->
+    <button class="world-clock-btn" id="worldClockBtn" aria-label="Open world clock">
+        🌍
+    </button>
+
     <!-- Settings Button -->
     <button class="settings-btn" id="settingsBtn" aria-label="Open settings">
         ⚙
@@ -246,6 +251,32 @@
                         <div class="timer-progress-bar" id="timerProgressBar"></div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- World Clock Modal -->
+    <div class="world-clock-modal" id="worldClockModal" role="dialog" aria-labelledby="worldClockTitle" aria-modal="true">
+        <div class="world-clock-panel">
+            <div class="world-clock-header">
+                <h2 class="world-clock-title" id="worldClockTitle">World Clocks</h2>
+                <button class="close-btn" id="worldClockCloseBtn" aria-label="Close world clock">×</button>
+            </div>
+
+            <!-- Add City Section -->
+            <div class="add-city-section">
+                <label class="picker-label">Add City</label>
+                <div class="city-picker">
+                    <select class="city-select" id="citySelect" aria-label="Select city">
+                        <option value="">Choose a city...</option>
+                    </select>
+                    <button class="add-city-btn" id="addCityBtn">+ Add City</button>
+                </div>
+            </div>
+
+            <!-- World Clock List -->
+            <div class="world-clock-list" id="worldClockList">
+                <p class="empty-state" id="emptyWorldClockState">No cities added</p>
             </div>
         </div>
     </div>
