@@ -39,6 +39,11 @@
         🌍
     </button>
 
+    <!-- Stopwatch Button -->
+    <button class="stopwatch-btn" id="stopwatchBtn" aria-label="Open stopwatch">
+        ⏱️
+    </button>
+
     <!-- Settings Button -->
     <button class="settings-btn" id="settingsBtn" aria-label="Open settings">
         ⚙
@@ -277,6 +282,45 @@
             <!-- World Clock List -->
             <div class="world-clock-list" id="worldClockList">
                 <p class="empty-state" id="emptyWorldClockState">No cities added</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stopwatch Modal -->
+    <div class="stopwatch-modal" id="stopwatchModal" role="dialog" aria-labelledby="stopwatchTitle" aria-modal="true">
+        <div class="stopwatch-panel">
+            <div class="stopwatch-header">
+                <h2 class="stopwatch-title" id="stopwatchTitle">Stopwatch</h2>
+                <button class="close-btn" id="stopwatchCloseBtn" aria-label="Close stopwatch">×</button>
+            </div>
+
+            <!-- Stopwatch Display -->
+            <div class="stopwatch-display">
+                <div class="stopwatch-time" id="stopwatchTime">00:00:00.000</div>
+            </div>
+
+            <!-- Stopwatch Controls -->
+            <div class="stopwatch-controls">
+                <button class="stopwatch-control-btn start-btn" id="stopwatchStartBtn">
+                    <span class="btn-icon">▶</span>
+                    <span class="btn-text">Start</span>
+                </button>
+                <button class="stopwatch-control-btn lap-btn" id="stopwatchLapBtn" disabled>
+                    <span class="btn-icon">⏱</span>
+                    <span class="btn-text">Lap</span>
+                </button>
+                <button class="stopwatch-control-btn reset-btn" id="stopwatchResetBtn" disabled>
+                    <span class="btn-icon">↻</span>
+                    <span class="btn-text">Reset</span>
+                </button>
+            </div>
+
+            <!-- Lap Times List -->
+            <div class="lap-times-section">
+                <h3 class="lap-times-title">Lap Times</h3>
+                <div class="lap-times-list" id="lapTimesList">
+                    <p class="empty-state" id="emptyLapState">No laps recorded</p>
+                </div>
             </div>
         </div>
     </div>
