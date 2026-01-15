@@ -2,6 +2,97 @@
 
 ## Version History
 
+### v1.10.0 (2026-01-15)
+**Modular Architecture Refactoring**
+
+**Major Refactoring:**
+
+**1. Codebase Modularization:**
+- Split monolithic main.js (2,232 lines) into 9 focused modules
+- Reduced main.js from 2,232 to 36 lines (98% reduction)
+- Improved code organization, maintainability, and testability
+- Proper dependency management with correct loading order
+
+**2. Module Structure:**
+- `js/constants.js` (113 lines) - Theme definitions, cities, config constants
+- `js/utils.js` (83 lines) - Helper functions (color conversion, formatting, etc.)
+- `js/theme.js` (302 lines) - Theme system, settings UI, localStorage persistence
+- `js/clock.js` (262 lines) - Core clock rendering, arc segments, animation loop
+- `js/fullscreen.js` (57 lines) - Fullscreen mode functionality
+- `js/pwa.js` (53 lines) - PWA service worker registration
+- `js/alarm.js` (733 lines) - Alarm system, timer, and visual markers on clock
+- `js/world-clock.js` (243 lines) - Multi-timezone world clock system
+- `js/stopwatch.js` (293 lines) - Stopwatch with lap timing
+- `main.js` (36 lines) - Application initialization only
+
+**3. Module Loading Order:**
+- Updated index.html to load modules in correct dependency order
+- Constants → Utils → Theme → Clock → Features → Main
+- All modules properly isolated with no circular dependencies
+
+**Technical Implementation:**
+- Each module is self-contained with clear responsibilities
+- Shared constants accessible across all modules
+- No code duplication (removed duplicate WORLD_CITIES definition)
+- Maintained all original functionality - zero breaking changes
+
+**Files Modified:**
+- `main.js` - Reduced to initialization code only
+- `index.html` - Added script tags for 9 new modules
+- Created 9 new module files in `/js` directory
+
+**Result:**
+- Dramatically improved code maintainability
+- Easier to locate and modify specific features
+- Better preparation for future feature additions
+- No functional changes - all features work identically
+
+**Verification:**
+✅ All features tested and working on Live Server
+✅ No console errors
+✅ 60fps performance maintained
+✅ All modules load in correct order
+✅ Theme system works correctly
+✅ Alarms, timers, world clock, stopwatch all functional
+✅ PWA still works (installable, offline capable)
+
+---
+
+### v1.9.0 (2026-01-15)
+**Stopwatch Mode with Lap Timing**
+
+**New Features:**
+
+**1. Stopwatch System:**
+- High-precision timing with performance.now()
+- Start/Stop/Reset/Lap controls
+- HH:MM:SS.mmm format display
+- 60fps smooth animation with requestAnimationFrame
+- Premium glassmorphic UI design
+
+**2. Lap Time Recording:**
+- Record unlimited lap times
+- Display both split time and total time
+- Automatic fastest/slowest lap highlighting
+- Fastest laps: green border
+- Slowest laps: red border
+- Real-time lap comparison
+
+**3. UI/UX:**
+- Stopwatch button (⏱️) on left side below world clock
+- Premium modal interface with glassmorphic design
+- Responsive design for mobile and desktop
+- Accessible keyboard navigation (ESC to close)
+
+**Files Modified:**
+- `index.html` - Stopwatch button and modal structure (44 lines)
+- `main.js` - Stopwatch timing system (297 lines)
+- `styles.css` - Premium UI styling (425 lines)
+
+**Result:** Full-featured stopwatch with millisecond precision and competitive lap timing
+
+---
+
 ### v1.8.0 (2026-01-15)
 **World Clock with Multi-Timezone Support**
 
