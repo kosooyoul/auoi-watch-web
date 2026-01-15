@@ -2,6 +2,172 @@
 
 ## Version History
 
+### v1.8.0 (2026-01-15)
+**World Clock with Multi-Timezone Support**
+
+**New Features:**
+
+**1. World Clock Button & Modal:**
+- World clock button (🌍) positioned on left side
+  - Below alarm button (top: 140px)
+  - Consistent glassmorphic design
+  - 48×48px circular button
+  - Hover/active animations
+- Premium modal UI
+  - Glassmorphic design with backdrop blur
+  - Max-height: 85vh (prevents overflow)
+  - Max-width: 600px
+  - Smooth fade-in/slide-up animations
+- Responsive layout
+  - Mobile-optimized (768px and below)
+  - Compact design for small screens
+
+**2. City Selection System:**
+- 20 major cities across all timezones
+  - Asia: Seoul, Tokyo, Hong Kong, Singapore, Shanghai, Dubai, Mumbai
+  - Europe: Moscow, Istanbul, Paris, London, Berlin
+  - Americas: New York, Los Angeles, Chicago, Toronto, Mexico City, São Paulo
+  - Oceania: Sydney, Auckland
+- Dropdown with searchable city list
+  - Format: "City Name (Country)"
+  - IANA timezone identifiers
+  - Country grouping for easy selection
+- Add button with gradient styling
+  - Disabled when no city selected
+  - Duplicate prevention with alert
+  - Resets dropdown after adding
+
+**3. Real-time Clock Display:**
+- Clock card for each city
+  - City name and country
+  - Time in HH:MM:SS format (24-hour)
+  - Full date with weekday (e.g., "Wed, Jan 15, 2026")
+  - UTC offset display (e.g., "GMT+9")
+- Intl API for accurate timezone conversion
+  - DateTimeFormat with timeZone option
+  - Automatic DST (daylight saving time) handling
+  - Locale-aware date formatting
+  - Short offset display (shortOffset)
+- Auto-update every second
+  - setInterval with 1000ms frequency
+  - Updates all visible clocks simultaneously
+  - Starts when modal opens
+  - Continues in background
+
+**4. Clock Management:**
+- Add city functionality
+  - Duplicate detection
+  - Unique ID generation (Date.now())
+  - Immediate rendering and update
+- Delete city button (🗑️)
+  - Per-clock delete button
+  - Smooth removal animation
+  - Updates localStorage
+- Empty state display
+  - "No cities added" message
+  - Shows when clock list is empty
+
+**5. localStorage Persistence:**
+- Automatic save on add/delete
+  - Key: `ringClockWorldClocks`
+  - Format: Array of clock objects
+  - Each clock: { id, timezone, cityName, country }
+- Load on initialization
+  - Restores all saved clocks
+  - Renders immediately
+  - Starts auto-update
+- Error handling
+  - Try-catch for localStorage operations
+  - Fallback to empty array
+  - Console error logging
+
+**Technical Implementation:**
+
+**Intl API Usage:**
+- `Intl.DateTimeFormat` for time conversion
+  - timeZone: IANA timezone identifier
+  - hour12: false (24-hour format)
+  - Separate formatters for time, date, offset
+- Time formatter options:
+  - hour: '2-digit', minute: '2-digit', second: '2-digit'
+- Date formatter options:
+  - weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+- Offset formatter options:
+  - timeZoneName: 'shortOffset' (e.g., "GMT+9")
+- formatToParts() for parsing offset
+
+**Data Structure:**
+```javascript
+WORLD_CITIES = [
+  { name: 'Seoul', timezone: 'Asia/Seoul', country: 'South Korea' },
+  // ... 19 more cities
+]
+
+worldClocks = [
+  { id: '1736899200000', timezone: 'Asia/Seoul', cityName: 'Seoul', country: 'South Korea' },
+  // ... user-added cities
+]
+```
+
+**Functions Implemented:**
+- `initWorldClockSystem()` - Initialize dropdown, event listeners, load saved clocks (50 lines)
+- `addWorldClock(timezone, cityName, country)` - Add new clock with validation (18 lines)
+- `deleteWorldClock(id)` - Remove clock by ID (5 lines)
+- `renderWorldClocks()` - Render all clock cards (25 lines)
+- `createClockCard(clock)` - Create individual clock card HTML (30 lines)
+- `updateWorldClocks()` - Update all clocks with current time (50 lines)
+- `saveWorldClocks()` - Save to localStorage (8 lines)
+- `loadWorldClocks()` - Load from localStorage (10 lines)
+
+**Files Modified:**
+- `index.html`:
+  - World clock button (4 lines)
+  - World clock modal structure (25 lines)
+  - City dropdown container
+  - Clock list container with empty state
+- `main.js`:
+  - World clock system (265 lines)
+  - WORLD_CITIES constant (20 cities)
+  - Clock management functions
+  - Intl API integration
+  - localStorage persistence
+  - initWorldClockSystem() call in init()
+- `styles.css`:
+  - World clock button styles (30 lines)
+  - World clock modal styles (70 lines)
+  - Clock card design (80 lines)
+  - City picker styles (50 lines)
+  - Responsive breakpoints (65 lines)
+  - Animations and transitions
+
+**Result:**
+- Fully functional multi-timezone world clock
+- 20 major cities covering all global timezones
+- Accurate time conversion with DST support
+- Real-time updates (1-second interval)
+- Premium UI matching clock aesthetic
+- localStorage persistence across sessions
+- Mobile-responsive design
+
+**Verification:**
+✅ World clock button displays below alarm button
+✅ Modal opens/closes smoothly
+✅ Dropdown populated with 20 cities
+✅ Add button adds city clock
+✅ Duplicate cities prevented with alert
+✅ Time displays accurately for each timezone
+✅ Date format includes weekday and full date
+✅ UTC offset displayed correctly
+✅ Clocks update every second
+✅ Delete button removes clocks
+✅ localStorage saves and restores clocks
+✅ Empty state shows when no clocks
+✅ Responsive on mobile/tablet/desktop
+✅ No console errors
+✅ 60fps performance maintained
+
+---
+
 ### v1.7.0 (2026-01-14)
 **Alarm & Timer System with Visual Markers**
 
@@ -526,8 +692,8 @@
 - ~~PWA support (manifest.json, service worker)~~ ✅ Completed in v1.6.0
 - ~~Alarm/Timer features (Notification API)~~ ✅ Completed in v1.7.0
 - ~~Visual alarm markers on clock rings~~ ✅ Completed in v1.7.0
+- ~~World clock (multi-timezone)~~ ✅ Completed in v1.8.0
 - Recurring alarms (daily, weekdays, custom)
-- World clock (multi-timezone)
 - Stopwatch mode
 - 12h/24h toggle
 - Animation speed control

@@ -1,6 +1,6 @@
 # auoi-watch-web Tasks & Roadmap
 
-## Current State (v1.7.0)
+## Current State (v1.8.0)
 - ✅ Real-time clock with comet trail animation (ms/sec/min/hour rings)
 - ✅ SVG-based premium visual design
 - ✅ 60fps smooth animation
@@ -12,6 +12,7 @@
 - ✅ PWA support (offline, installable)
 - ✅ Alarm & Timer system with visual markers
 - ✅ Notification API integration
+- ✅ World Clock with multi-timezone support
 
 ---
 
@@ -179,22 +180,49 @@
 
 ---
 
-## Remaining Tasks (Priority Order)
+### ✅ 6. World Clock (Multi-timezone) (v1.8.0)
+**Completed:** 2026-01-15
+**Implemented:**
+- ✅ World clock button (🌍) positioned on left side below alarm button
+- ✅ Modal UI with city selection dropdown
+- ✅ 20 major cities across all timezones (Seoul, Tokyo, NYC, London, Paris, Sydney, etc.)
+- ✅ Intl API for accurate timezone conversion
+- ✅ Real-time updates (1-second interval)
+- ✅ Display time (HH:MM:SS), date, and UTC offset for each city
+- ✅ Add/delete cities with duplicate prevention
+- ✅ localStorage persistence for selected timezones
+- ✅ Premium glassmorphic UI design
+- ✅ Responsive layout for mobile devices
+- ✅ Smooth animations and hover effects
 
-### 1. [LOW] World Clock (Multi-timezone)
-**Why:** 글로벌 시대 - 여러 시간대 동시 확인
-**Effort:** Medium (3-4 hours)
-**Value:** Medium - 특정 사용자에게 큰 가치
-**Scope:**
-- 시간대 선택 UI (주요 도시)
-- Intl API로 정확한 시간대 처리
-- 여러 시계 동시 표시 옵션
-- localStorage로 선택한 시간대 저장
-**Web Strength:** Intl API - 정확한 국제화/지역화
+**Cities Included:**
+- Asia: Seoul, Tokyo, Hong Kong, Singapore, Shanghai, Dubai, Mumbai
+- Europe: Moscow, Istanbul, Paris, London, Berlin
+- Americas: New York, Los Angeles, Chicago, Toronto, Mexico City, São Paulo
+- Oceania: Sydney, Auckland
+
+**Functions Implemented:**
+- `initWorldClockSystem()` - Initialize system with dropdown and event listeners
+- `addWorldClock()` - Add new city clock with duplicate check
+- `deleteWorldClock()` - Remove city clock
+- `renderWorldClocks()` - Render all clock cards
+- `createClockCard()` - Create individual clock card element
+- `updateWorldClocks()` - Update all clocks every second with Intl API
+- `saveWorldClocks()` - Persist to localStorage
+- `loadWorldClocks()` - Load from localStorage on init
+
+**Files Modified:**
+- `index.html` - World clock button, modal structure (25 lines)
+- `main.js` - World clock system (265+ lines)
+- `styles.css` - Premium UI styling, animations (295+ lines)
+
+**Result:** Fully functional world clock system with accurate timezone support using Web Intl API
 
 ---
 
-### 2. [LOW] Stopwatch Mode
+## Remaining Tasks (Priority Order)
+
+### 1. [LOW] Stopwatch Mode
 **Why:** 시계의 부가 기능 - 운동, 요리 등에 유용
 **Effort:** Medium (2-3 hours)
 **Value:** Medium - 특정 사용 사례
@@ -207,20 +235,19 @@
 
 ---
 
-### 3. [FUTURE] Recurring Alarms
+### 2. [FUTURE] Recurring Alarms
 **Why:** 매일/평일 반복 알람 - 더 실용적
 **Effort:** Small (1-2 hours)
 **Value:** Medium - 알람 기능 확장
 **Scope:**
-- 반복 옵션 UI (매일, 평일, 주말, 커스텀)
-- 요일 선택 인터페이스
+- 반복 옵션 UI 연결 (이미 HTML에 존재)
 - 반복 로직 구현
 - localStorage에 반복 설정 저장
 **Web Strength:** Date/Time API로 요일 계산
 
 ---
 
-### 4. [FUTURE] Animation Speed Control
+### 3. [FUTURE] Animation Speed Control
 **Why:** 시각적 선호도 - 빠른/느린 애니메이션
 **Effort:** Small (1 hour)
 **Value:** Low-Medium
@@ -232,7 +259,7 @@
 
 ---
 
-### 5. [FUTURE] 12h/24h Format Toggle
+### 4. [FUTURE] 12h/24h Format Toggle
 **Why:** 지역/개인 선호도
 **Effort:** Small (1 hour)
 **Value:** Low-Medium
@@ -246,18 +273,19 @@
 
 ## Recommended Next Task
 
-### 🎯 Next: Task #1 "World Clock (Multi-timezone)"
+### 🎯 Next: Task #1 "Stopwatch Mode"
 
 **Rationale:**
-- 알람/타이머 기능 완성으로 시계의 핵심 기능 완료
-- 글로벌 사용자를 위한 다음 단계
-- 웹의 강력한 특성 활용 (Intl API)
-- 여러 시간대 동시 표시로 실용성 증대
+- World Clock 완성으로 글로벌 시간 표시 기능 완료
+- Stopwatch는 시계의 핵심 부가 기능
+- 운동, 요리, 업무 등 다양한 사용 사례
+- performance.now()로 밀리초 정밀도 구현 가능
+- 모드 전환 UI로 사용자 경험 향상
 
 **Alternative Next Steps:**
-1. Task #2 (Stopwatch) - 부가 기능
-2. Task #3 (Recurring Alarms) - 알람 기능 강화
-3. Task #4 (Animation Speed) - 빠른 구현
+1. Task #2 (Recurring Alarms) - 알람 기능 강화
+2. Task #3 (Animation Speed) - 빠른 구현
+3. Task #4 (12h/24h Toggle) - 지역화 개선
 
 ---
 
