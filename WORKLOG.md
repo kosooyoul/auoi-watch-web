@@ -2,6 +2,76 @@
 
 ## Version History
 
+### v1.12.0 (2026-01-16)
+**12h/24h Time Format Toggle**
+
+**New Features:**
+
+**1. Time Format Toggle System:**
+- UI toggle buttons in Settings panel (12h / 24h)
+- Global timeFormat variable tracks current setting ('12h' or '24h')
+- Applies to all time displays throughout the application
+- Real-time updates without page reload
+- localStorage persistence across sessions
+
+**2. Format Application:**
+- **Main Clock**: Text display and hour ring progress calculation
+  - 12h: Shows 01-12 with AM/PM, ring cycles every 12 hours
+  - 24h: Shows 00-23, ring cycles every 24 hours
+- **Alarm List**: All alarm times formatted based on setting
+  - 12h: "02:30:00 PM" format
+  - 24h: "14:30:00" format
+- **Alarm Notifications**: Browser notifications show formatted time
+- **World Clock**: All timezone clocks use selected format
+  - Intl API hour12 option set dynamically
+
+**3. UI/UX:**
+- Settings panel buttons highlight active format
+- Instant visual update when format changes
+- All components re-render automatically
+- Consistent format across all features
+
+**4. Technical Implementation:**
+- `timeFormat` variable in theme.js controls global setting
+- `applyTimeFormat(format)` function updates format and re-renders components
+- `updateClock()` in clock.js uses timeFormat for display and ring calculation
+- `renderAlarms()` and `triggerAlarm()` in alarm.js format times conditionally
+- `updateWorldClocks()` in world-clock.js uses dynamic hour12 option
+- Settings saved to localStorage with theme preferences
+
+**Functions Modified:**
+- `renderAlarms()` (alarm.js:296-335) - Added 12h/24h formatting logic
+- `triggerAlarm()` (alarm.js:471-490) - Added 12h/24h notification formatting
+- `updateWorldClocks()` (world-clock.js:179-188) - Dynamic hour12 based on timeFormat
+- `applyTimeFormat()` (theme.js:215-241) - Enhanced to update all components
+
+**Files Modified:**
+- `js/theme.js` - Enhanced applyTimeFormat() to call renderAlarms() and updateWorldClocks()
+- `js/alarm.js` - Added conditional formatting in renderAlarms() and triggerAlarm()
+- `js/world-clock.js` - Changed Intl formatter to use dynamic hour12 option
+- `js/clock.js` - Already had 12h/24h support (no changes needed)
+- `index.html` - Already had toggle buttons (no changes needed)
+
+**Result:**
+- Complete 12h/24h time format support
+- Consistent formatting across all features
+- User preference persists across sessions
+- Seamless integration with existing features
+
+**Verification:**
+✅ Settings toggle buttons work correctly
+✅ Main clock text updates in real-time
+✅ Hour ring cycles correctly (12h vs 24h)
+✅ Alarm list shows formatted times
+✅ Alarm notifications display correct format
+✅ World clocks all update to selected format
+✅ localStorage saves and restores format
+✅ Page refresh maintains format setting
+✅ No console errors
+✅ 60fps performance maintained
+
+---
+
 ### v1.11.0 (2026-01-16)
 **Recurring Alarms Feature**
 

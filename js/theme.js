@@ -225,9 +225,19 @@ function applyTimeFormat(format) {
         }
     });
 
-    // Re-render alarm markers with new time format
+    // Re-render components with new time format
     const now = new Date();
     renderAlarmMarkers(now.getHours(), now.getMinutes(), now.getSeconds());
+
+    // Re-render alarm list if it exists
+    if (typeof renderAlarms === 'function') {
+        renderAlarms();
+    }
+
+    // Update world clocks if they exist
+    if (typeof updateWorldClocks === 'function') {
+        updateWorldClocks();
+    }
 }
 
 /**

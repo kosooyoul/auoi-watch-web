@@ -1,7 +1,7 @@
 // Service Worker for Ring Time Clock PWA
-// Version 1.11.0
+// Version 1.12.0
 
-const CACHE_NAME = 'ring-clock-v1.11.0';
+const CACHE_NAME = 'ring-clock-v1.12.0';
 const RUNTIME_CACHE = 'ring-clock-runtime';
 
 // Files to cache on install

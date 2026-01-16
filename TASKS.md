@@ -1,6 +1,6 @@
 # auoi-watch-web Tasks & Roadmap
 
-## Current State (v1.11.0)
+## Current State (v1.12.0)
 - ✅ Real-time clock with comet trail animation (ms/sec/min/hour rings)
 - ✅ SVG-based premium visual design
 - ✅ 60fps smooth animation
@@ -12,6 +12,7 @@
 - ✅ PWA support (offline, installable)
 - ✅ Alarm & Timer system with visual markers
 - ✅ **Recurring alarms** (once, daily, weekdays, weekends, custom days)
+- ✅ **12h/24h time format toggle** (applies to all time displays)
 - ✅ Notification API integration
 - ✅ World Clock with multi-timezone support
 - ✅ Stopwatch with lap timing and millisecond precision
@@ -318,6 +319,46 @@
 
 ---
 
+### ✅ 10. 12h/24h Time Format Toggle (v1.12.0)
+**Completed:** 2026-01-16
+**Implemented:**
+- ✅ Time format toggle in Settings panel (12h / 24h buttons)
+- ✅ Applies to all time displays throughout the app:
+  - Main clock text display
+  - Alarm list times
+  - Alarm notifications
+  - World clock times
+- ✅ 12h format shows AM/PM indicator
+- ✅ 24h format shows standard HH:MM:SS
+- ✅ localStorage persistence for format preference
+- ✅ Real-time update on format change (no page reload needed)
+- ✅ Hour ring progress adapts to 12h/24h cycle
+
+**Technical Implementation:**
+- `timeFormat` global variable in theme.js ('12h' or '24h')
+- clock.js: Main clock uses timeFormat for display and ring progress calculation
+- alarm.js: renderAlarms() and triggerAlarm() format times based on timeFormat
+- world-clock.js: Intl API hour12 option set dynamically based on timeFormat
+- theme.js: applyTimeFormat() updates all components when format changes
+- Settings saved/loaded via localStorage
+
+**Functions Modified:**
+- `updateClock()` in clock.js - Already implemented 12h/24h support
+- `renderAlarms()` in alarm.js - Added 12h/24h formatting
+- `triggerAlarm()` in alarm.js - Added 12h/24h notification formatting
+- `updateWorldClocks()` in world-clock.js - Dynamic hour12 option
+- `applyTimeFormat()` in theme.js - Re-renders all components on change
+
+**Files Modified:**
+- `js/theme.js` - Enhanced applyTimeFormat() to update all components
+- `js/alarm.js` - Added 12h/24h formatting to renderAlarms() and triggerAlarm()
+- `js/world-clock.js` - Dynamic hour12 based on timeFormat
+- `index.html` - Already has 12h/24h toggle buttons
+
+**Result:** Complete 12h/24h time format support across all features with instant updates
+
+---
+
 ## Remaining Tasks (Priority Order)
 
 ### 1. [FUTURE] Animation Speed Control
@@ -329,18 +370,6 @@
 - requestAnimationFrame delta 조정
 - localStorage로 저장
 **Web Strength:** requestAnimationFrame 정밀 제어
-
----
-
-### 2. [FUTURE] 12h/24h Format Toggle
-**Why:** 지역/개인 선호도
-**Effort:** Small (1 hour)
-**Value:** Low-Medium
-**Scope:**
-- 토글 버튼
-- 시간 표시 포맷 변경
-- localStorage로 저장
-**Web Strength:** Intl.DateTimeFormat로 자동 지역화 가능
 
 ---
 

@@ -2,7 +2,7 @@
 
 A web-based clock that displays time as animated circular progress rings with comet trail effects. Built with vanilla JavaScript for smooth, emotionally pleasing visuals.
 
-## Version 1.11.0
+## Version 1.12.0
 
 ## Features
 
@@ -16,6 +16,7 @@ A web-based clock that displays time as animated circular progress rings with co
 
 ### Themes & Customization
 - **5 Color Themes** - Classic, Warm Sunset, Ocean Breeze, Neon Night, Soft Pastel
+- **12h/24h Format Toggle** - Switch between 12-hour (AM/PM) and 24-hour time display
 - **Theme Sharing** - Share your theme via URL
 - **Settings Panel** - Easy customization with glassmorphic UI
 - **Fullscreen Mode** - Distraction-free display
