@@ -1,7 +1,8 @@
 {
   "name": "Ring Time Clock",
   "short_name": "Ring Clock",
-  "description": "A beautiful web-based clock with ring animations and comet trail effects",
+  "version": "1.11.0",
+  "description": "A beautiful web-based clock with ring animations, recurring alarms, world clock, and stopwatch",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1e1e2e",
