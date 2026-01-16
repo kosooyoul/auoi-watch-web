@@ -1,8 +1,8 @@
 {
   "name": "Ring Time Clock",
   "short_name": "Ring Clock",
-  "version": "1.12.0",
-  "description": "A beautiful web-based clock with ring animations, 12h/24h format, recurring alarms, world clock, and stopwatch",
+  "version": "1.13.0",
+  "description": "A beautiful web-based clock with ring animations, adjustable speed, 12h/24h format, recurring alarms, world clock, and stopwatch",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1e1e2e",

@@ -3,6 +3,7 @@
 // Current theme state
 let currentTheme = 'classic';
 let timeFormat = '24h';
+let animationSpeed = 1.0;
 
 /**
  * Apply a theme to the page
@@ -171,7 +172,8 @@ function showCopyFeedback(success) {
 function saveSettings() {
     const settings = {
         theme: currentTheme,
-        timeFormat: timeFormat
+        timeFormat: timeFormat,
+        animationSpeed: animationSpeed
     };
     localStorage.setItem('ringClockSettings', JSON.stringify(settings));
 }
@@ -196,6 +198,9 @@ function loadSettings() {
             }
             if (settings.timeFormat) {
                 applyTimeFormat(settings.timeFormat);
+            }
+            if (settings.animationSpeed !== undefined) {
+                applyAnimationSpeed(settings.animationSpeed);
             }
         }
 
@@ -237,6 +242,30 @@ function applyTimeFormat(format) {
     // Update world clocks if they exist
     if (typeof updateWorldClocks === 'function') {
         updateWorldClocks();
+    }
+}
+
+/**
+ * Apply animation speed setting
+ * @param {number} speed - Animation speed multiplier (0.5 - 2.0)
+ */
+function applyAnimationSpeed(speed) {
+    animationSpeed = parseFloat(speed);
+
+    // Update UI - slider and value display
+    const speedSlider = document.getElementById('speedSlider');
+    const speedValue = document.getElementById('speedValue');
+
+    if (speedSlider) {
+        speedSlider.value = animationSpeed;
+    }
+    if (speedValue) {
+        speedValue.textContent = `${animationSpeed.toFixed(1)}x`;
+    }
+
+    // Update color smooth factor in clock (if function exists)
+    if (typeof updateColorSmoothFactor === 'function') {
+        updateColorSmoothFactor(animationSpeed);
     }
 }
 
@@ -309,4 +338,23 @@ function initSettingsUI() {
             saveSettings();
         });
     });
+
+    // Animation speed slider
+    const speedSlider = document.getElementById('speedSlider');
+    const speedValue = document.getElementById('speedValue');
+
+    if (speedSlider && speedValue) {
+        // Update value display on slider input
+        speedSlider.addEventListener('input', () => {
+            const speed = parseFloat(speedSlider.value);
+            speedValue.textContent = `${speed.toFixed(1)}x`;
+        });
+
+        // Apply speed on slider change
+        speedSlider.addEventListener('change', () => {
+            const speed = parseFloat(speedSlider.value);
+            applyAnimationSpeed(speed);
+            saveSettings();
+        });
+    }
 }

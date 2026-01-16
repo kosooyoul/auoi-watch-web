@@ -2,6 +2,82 @@
 
 ## Version History
 
+### v1.13.0 (2026-01-16)
+**Animation Speed Control**
+
+**New Features:**
+
+**1. Animation Speed Slider:**
+- Speed control slider in Settings panel (0.5x - 2.0x range)
+- Real-time speed adjustment with instant visual feedback
+- Speed value display shows current multiplier (e.g., "1.5x")
+- Premium gradient styling matching theme aesthetic
+- Smooth slider interaction with hover effects
+
+**2. Speed Effects on Animation:**
+- **0.5x (Slow Motion)**:
+  - COLOR_SMOOTH_FACTOR = 0.075 (0.15 * 0.5)
+  - Smooth, calm color transitions
+  - Ideal for meditation, focus, or calming environment
+- **1.0x (Default Speed)**:
+  - COLOR_SMOOTH_FACTOR = 0.15
+  - Balanced animation speed
+  - Original design intention
+- **2.0x (Fast Motion)**:
+  - COLOR_SMOOTH_FACTOR = 0.3 (0.15 * 2.0)
+  - Dynamic, energetic color transitions
+  - Ideal for active, high-energy environment
+
+**3. Technical Implementation:**
+- `animationSpeed` global variable in theme.js (default: 1.0)
+- `BASE_COLOR_SMOOTH_FACTOR` constant (0.15) in clock.js
+- Dynamic `COLOR_SMOOTH_FACTOR` updates based on speed
+- `updateColorSmoothFactor(speed)` function in clock.js
+- `applyAnimationSpeed(speed)` function in theme.js
+- Slider event listeners: `input` (display update) and `change` (apply + save)
+
+**4. UI/UX:**
+- Slider positioned between "0.5x" and "2x" labels
+- Current speed displayed below slider in styled box
+- Real-time value update as user drags slider
+- Speed applied and saved on slider release
+- localStorage persistence across sessions
+
+**5. Settings Persistence:**
+- animationSpeed saved to localStorage with theme and timeFormat
+- Loaded on page initialization
+- Speed automatically applied on load
+
+**Functions Implemented:**
+- `applyAnimationSpeed(speed)` (theme.js:252-270) - Apply speed, update UI, call clock function
+- `updateColorSmoothFactor(speed)` (clock.js:269-271) - Update dynamic smooth factor
+- Slider event listeners in `initSettingsUI()` (theme.js:342-359)
+
+**Files Modified:**
+- `index.html` - Added speed slider section in Settings panel (8 lines)
+- `styles.css` - Added speed slider and value display styles (72 lines)
+- `js/theme.js` - Added animationSpeed variable, functions, event listeners (35 lines)
+- `js/clock.js` - Made COLOR_SMOOTH_FACTOR dynamic (3 lines changed, 7 lines added)
+
+**Result:**
+- Complete animation speed customization
+- Users can match animation speed to their mood
+- Smooth, responsive speed control
+- Settings persist across sessions
+
+**Verification:**
+✅ Slider appears in Settings panel
+✅ Speed value updates in real-time
+✅ 0.5x creates smooth, calm animations
+✅ 1.0x matches original animation speed
+✅ 2.0x creates fast, dynamic animations
+✅ localStorage saves and restores speed
+✅ Page refresh maintains speed setting
+✅ No console errors
+✅ 60fps performance maintained at all speeds
+
+---
+
 ### v1.12.0 (2026-01-16)
 **12h/24h Time Format Toggle**
 

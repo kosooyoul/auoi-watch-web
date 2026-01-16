@@ -8,7 +8,8 @@ const TAIL_STROKE_WIDTH = 4;
 const HEAD_LENGTH_MULTIPLIER = 0.7;
 const TAIL_LENGTH_MULTIPLIER = 1.4;
 const BLACK_BLEND_FACTOR = 0.85;
-const COLOR_SMOOTH_FACTOR = 0.15;
+const BASE_COLOR_SMOOTH_FACTOR = 0.15;
+let COLOR_SMOOTH_FACTOR = BASE_COLOR_SMOOTH_FACTOR;
 
 // DOM elements - Arc containers
 const hourArcsContainer = document.getElementById('hourArcs');
@@ -259,4 +260,12 @@ function updateClock() {
     renderAlarmMarkers(hours, minutes, seconds);
 
     requestAnimationFrame(updateClock);
+}
+
+/**
+ * Update color smooth factor based on animation speed
+ * @param {number} speed - Animation speed multiplier (0.5 - 2.0)
+ */
+function updateColorSmoothFactor(speed) {
+    COLOR_SMOOTH_FACTOR = BASE_COLOR_SMOOTH_FACTOR * speed;
 }
