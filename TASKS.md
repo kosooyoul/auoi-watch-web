@@ -1,6 +1,6 @@
 # auoi-watch-web Tasks & Roadmap
 
-## Current State (v1.10.0)
+## Current State (v1.11.0)
 - ✅ Real-time clock with comet trail animation (ms/sec/min/hour rings)
 - ✅ SVG-based premium visual design
 - ✅ 60fps smooth animation
@@ -11,6 +11,7 @@
 - ✅ localStorage persistence for user preferences
 - ✅ PWA support (offline, installable)
 - ✅ Alarm & Timer system with visual markers
+- ✅ **Recurring alarms** (once, daily, weekdays, weekends, custom days)
 - ✅ Notification API integration
 - ✅ World Clock with multi-timezone support
 - ✅ Stopwatch with lap timing and millisecond precision
@@ -286,21 +287,40 @@
 
 ---
 
-## Remaining Tasks (Priority Order)
+### ✅ 9. Recurring Alarms (v1.11.0)
+**Completed:** 2026-01-16
+**Implemented:**
+- ✅ Repeat mode selection (Once, Every Day, Weekdays, Weekends, Custom Days)
+- ✅ Custom days picker with checkboxes for each weekday (Sun-Sat)
+- ✅ Repeat logic in checkAlarms() function:
+  - **Once**: Triggers one time only, auto-disables after alarm fires
+  - **Daily**: Triggers every day at set time
+  - **Weekdays**: Triggers Monday through Friday only
+  - **Weekends**: Triggers Saturday and Sunday only
+  - **Custom**: Triggers on selected days only (e.g., Mon, Wed, Fri)
+- ✅ Repeat label display in alarm list ("Every Day", "Weekdays", "Mon, Wed, Fri", etc.)
+- ✅ localStorage persistence for repeat settings (repeat mode + custom days)
+- ✅ Day of week calculation using Date.getDay() (0=Sunday, 6=Saturday)
+- ✅ UI toggle: Custom days picker shows/hides when "Custom Days..." is selected
 
-### 2. [FUTURE] Recurring Alarms
-**Why:** 매일/평일 반복 알람 - 더 실용적
-**Effort:** Small (1-2 hours)
-**Value:** Medium - 알람 기능 확장
-**Scope:**
-- 반복 옵션 UI 연결 (이미 HTML에 존재)
-- 반복 로직 구현
-- localStorage에 반복 설정 저장
-**Web Strength:** Date/Time API로 요일 계산
+**Technical Implementation:**
+- Alarm object structure includes `repeat` and `customDays` fields
+- checkAlarms() validates current day against repeat pattern before triggering
+- renderAlarms() displays appropriate repeat label based on repeat mode
+- Custom days stored as array of day indices (0-6)
+- Auto-disable for one-time alarms after triggering
+
+**Files Modified:**
+- `js/alarm.js` - Already implemented repeat logic (no changes needed)
+- `index.html` - Already has repeat UI elements (no changes needed)
+
+**Result:** Fully functional recurring alarm system with flexible scheduling options
 
 ---
 
-### 3. [FUTURE] Animation Speed Control
+## Remaining Tasks (Priority Order)
+
+### 1. [FUTURE] Animation Speed Control
 **Why:** 시각적 선호도 - 빠른/느린 애니메이션
 **Effort:** Small (1 hour)
 **Value:** Low-Medium
@@ -312,7 +332,7 @@
 
 ---
 
-### 4. [FUTURE] 12h/24h Format Toggle
+### 2. [FUTURE] 12h/24h Format Toggle
 **Why:** 지역/개인 선호도
 **Effort:** Small (1 hour)
 **Value:** Low-Medium
@@ -326,19 +346,18 @@
 
 ## Recommended Next Task
 
-### 🎯 Next: Task #2 "Recurring Alarms"
+### 🎯 Next: Business Planning & Commercialization Strategy
 
 **Rationale:**
-- Stopwatch 완성으로 시계의 핵심 부가 기능 완료
-- 반복 알람은 실용성을 크게 향상시킴
-- HTML UI가 이미 존재하여 구현이 빠름
-- 매일/평일 알람은 가장 많이 요청되는 기능
-- Date/Time API를 활용한 자연스러운 구현
+- ✅ All core clock features complete (v1.11.0)
+- ✅ 5 themes, PWA, alarms, world clock, stopwatch, recurring alarms
+- 🎯 Time to focus on monetization and user growth
+- Product is ready for market launch
 
 **Alternative Next Steps:**
-1. Task #3 (Animation Speed Control) - 빠른 구현 (1시간)
-2. Task #4 (12h/24h Format Toggle) - 지역화 개선 (1시간)
-3. Business planning - 수익화 전략 수립
+1. Task #1 (Animation Speed Control) - 빠른 구현 (1시간)
+2. Task #2 (12h/24h Format Toggle) - 지역화 개선 (1시간)
+3. ⭐ **Business planning** (RECOMMENDED) - 수익화 전략, 경쟁사 분석, Go-to-Market
 
 ---
 

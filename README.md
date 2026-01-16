@@ -1,15 +1,42 @@
 # Ring Time Clock
 
-A web-based clock that displays time as animated circular progress rings. Built with vanilla JavaScript for smooth, emotionally pleasing visuals.
+A web-based clock that displays time as animated circular progress rings with comet trail effects. Built with vanilla JavaScript for smooth, emotionally pleasing visuals.
+
+## Version 1.11.0
 
 ## Features
 
+### Core Clock
 - **4 Animated Rings** - Hours, Minutes, Seconds, Milliseconds
+- **Comet Trail Effect** - Arc-based animation with natural flowing motion
 - **Smooth 60fps Animation** - Uses `requestAnimationFrame` for fluid motion
 - **Premium Design** - Subtle gradients, glow effects, and calm aesthetics
 - **Responsive** - Works on desktop, tablet, and mobile
 - **Accessible** - Includes text-based time display
+
+### Themes & Customization
+- **5 Color Themes** - Classic, Warm Sunset, Ocean Breeze, Neon Night, Soft Pastel
+- **Theme Sharing** - Share your theme via URL
+- **Settings Panel** - Easy customization with glassmorphic UI
+- **Fullscreen Mode** - Distraction-free display
+
+### Alarms & Timers
+- **Recurring Alarms** - Once, Daily, Weekdays, Weekends, or Custom days
+- **Visual Markers** - Alarm indicators displayed on clock rings
+- **Timer System** - Countdown timer with progress bar
+- **Notification Alerts** - Browser notifications when alarms trigger
+- **Second Precision** - Set alarms with HH:MM:SS accuracy
+
+### Advanced Features
+- **World Clock** - Multi-timezone support with 20 major cities
+- **Stopwatch** - Millisecond precision with lap timing
+- **PWA Support** - Install as app, works offline
+- **localStorage** - All settings and alarms persist across sessions
+
+### Technical
 - **No Framework** - Pure HTML, CSS, and JavaScript
+- **Modular Architecture** - 9 focused modules for maintainability
+- **60fps Performance** - Optimized rendering and animations
 
 ## Demo
 
@@ -39,14 +66,30 @@ npx serve
 ## Tech Stack
 
 - **HTML5** - SVG circles for ring rendering
-- **CSS3** - Gradients, filters, responsive design
+- **CSS3** - CSS variables for theming, gradients, filters, responsive design
 - **Vanilla JavaScript** - No frameworks or dependencies
+- **Web APIs** - Notification API, Fullscreen API, Intl API, Service Worker
 
 ## Architecture
 
-- **Time Calculation**: Uses `Date.now()` for accurate real-time values (no drift when tab is inactive)
-- **Animation**: `requestAnimationFrame` loop updates SVG `stroke-dashoffset`
-- **Rendering**: 4 SVG circles with `stroke-dasharray` progress indicators
+### Modular Structure
+- `js/constants.js` - Theme definitions, city list, configuration
+- `js/utils.js` - Helper functions (color conversion, formatting)
+- `js/theme.js` - Theme system and settings UI
+- `js/clock.js` - Core clock rendering and animation loop
+- `js/fullscreen.js` - Fullscreen mode functionality
+- `js/pwa.js` - PWA service worker registration
+- `js/alarm.js` - Alarm and timer system with visual markers
+- `js/world-clock.js` - Multi-timezone world clock
+- `js/stopwatch.js` - Stopwatch with lap timing
+- `main.js` - Application initialization (36 lines)
+
+### Core Systems
+- **Time Calculation**: Uses `Date.now()` and `performance.now()` for accurate real-time values (no drift when tab is inactive)
+- **Animation**: `requestAnimationFrame` loop updates SVG arc segments
+- **Rendering**: Multiple arc segments per ring create comet trail effect
+- **Persistence**: localStorage for themes, alarms, timezones, settings
+- **Offline**: Service worker caches assets for offline functionality
 
 ## Browser Support
 
