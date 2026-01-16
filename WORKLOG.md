@@ -2,6 +2,152 @@
 
 ## Version History
 
+### v1.13.0 (2026-01-16)
+**Animation Speed Control**
+
+**New Features:**
+
+**1. Animation Speed Slider:**
+- Speed control slider in Settings panel (0.5x - 2.0x range)
+- Real-time speed adjustment with instant visual feedback
+- Speed value display shows current multiplier (e.g., "1.5x")
+- Premium gradient styling matching theme aesthetic
+- Smooth slider interaction with hover effects
+
+**2. Speed Effects on Animation:**
+- **0.5x (Slow Motion)**:
+  - COLOR_SMOOTH_FACTOR = 0.075 (0.15 * 0.5)
+  - Smooth, calm color transitions
+  - Ideal for meditation, focus, or calming environment
+- **1.0x (Default Speed)**:
+  - COLOR_SMOOTH_FACTOR = 0.15
+  - Balanced animation speed
+  - Original design intention
+- **2.0x (Fast Motion)**:
+  - COLOR_SMOOTH_FACTOR = 0.3 (0.15 * 2.0)
+  - Dynamic, energetic color transitions
+  - Ideal for active, high-energy environment
+
+**3. Technical Implementation:**
+- `animationSpeed` global variable in theme.js (default: 1.0)
+- `BASE_COLOR_SMOOTH_FACTOR` constant (0.15) in clock.js
+- Dynamic `COLOR_SMOOTH_FACTOR` updates based on speed
+- `updateColorSmoothFactor(speed)` function in clock.js
+- `applyAnimationSpeed(speed)` function in theme.js
+- Slider event listeners: `input` (display update) and `change` (apply + save)
+
+**4. UI/UX:**
+- Slider positioned between "0.5x" and "2x" labels
+- Current speed displayed below slider in styled box
+- Real-time value update as user drags slider
+- Speed applied and saved on slider release
+- localStorage persistence across sessions
+
+**5. Settings Persistence:**
+- animationSpeed saved to localStorage with theme and timeFormat
+- Loaded on page initialization
+- Speed automatically applied on load
+
+**Functions Implemented:**
+- `applyAnimationSpeed(speed)` (theme.js:252-270) - Apply speed, update UI, call clock function
+- `updateColorSmoothFactor(speed)` (clock.js:269-271) - Update dynamic smooth factor
+- Slider event listeners in `initSettingsUI()` (theme.js:342-359)
+
+**Files Modified:**
+- `index.html` - Added speed slider section in Settings panel (8 lines)
+- `styles.css` - Added speed slider and value display styles (72 lines)
+- `js/theme.js` - Added animationSpeed variable, functions, event listeners (35 lines)
+- `js/clock.js` - Made COLOR_SMOOTH_FACTOR dynamic (3 lines changed, 7 lines added)
+
+**Result:**
+- Complete animation speed customization
+- Users can match animation speed to their mood
+- Smooth, responsive speed control
+- Settings persist across sessions
+
+**Verification:**
+✅ Slider appears in Settings panel
+✅ Speed value updates in real-time
+✅ 0.5x creates smooth, calm animations
+✅ 1.0x matches original animation speed
+✅ 2.0x creates fast, dynamic animations
+✅ localStorage saves and restores speed
+✅ Page refresh maintains speed setting
+✅ No console errors
+✅ 60fps performance maintained at all speeds
+
+---
+
+### v1.12.0 (2026-01-16)
+**12h/24h Time Format Toggle**
+
+**New Features:**
+
+**1. Time Format Toggle System:**
+- UI toggle buttons in Settings panel (12h / 24h)
+- Global timeFormat variable tracks current setting ('12h' or '24h')
+- Applies to all time displays throughout the application
+- Real-time updates without page reload
+- localStorage persistence across sessions
+
+**2. Format Application:**
+- **Main Clock**: Text display and hour ring progress calculation
+  - 12h: Shows 01-12 with AM/PM, ring cycles every 12 hours
+  - 24h: Shows 00-23, ring cycles every 24 hours
+- **Alarm List**: All alarm times formatted based on setting
+  - 12h: "02:30:00 PM" format
+  - 24h: "14:30:00" format
+- **Alarm Notifications**: Browser notifications show formatted time
+- **World Clock**: All timezone clocks use selected format
+  - Intl API hour12 option set dynamically
+
+**3. UI/UX:**
+- Settings panel buttons highlight active format
+- Instant visual update when format changes
+- All components re-render automatically
+- Consistent format across all features
+
+**4. Technical Implementation:**
+- `timeFormat` variable in theme.js controls global setting
+- `applyTimeFormat(format)` function updates format and re-renders components
+- `updateClock()` in clock.js uses timeFormat for display and ring calculation
+- `renderAlarms()` and `triggerAlarm()` in alarm.js format times conditionally
+- `updateWorldClocks()` in world-clock.js uses dynamic hour12 option
+- Settings saved to localStorage with theme preferences
+
+**Functions Modified:**
+- `renderAlarms()` (alarm.js:296-335) - Added 12h/24h formatting logic
+- `triggerAlarm()` (alarm.js:471-490) - Added 12h/24h notification formatting
+- `updateWorldClocks()` (world-clock.js:179-188) - Dynamic hour12 based on timeFormat
+- `applyTimeFormat()` (theme.js:215-241) - Enhanced to update all components
+
+**Files Modified:**
+- `js/theme.js` - Enhanced applyTimeFormat() to call renderAlarms() and updateWorldClocks()
+- `js/alarm.js` - Added conditional formatting in renderAlarms() and triggerAlarm()
+- `js/world-clock.js` - Changed Intl formatter to use dynamic hour12 option
+- `js/clock.js` - Already had 12h/24h support (no changes needed)
+- `index.html` - Already had toggle buttons (no changes needed)
+
+**Result:**
+- Complete 12h/24h time format support
+- Consistent formatting across all features
+- User preference persists across sessions
+- Seamless integration with existing features
+
+**Verification:**
+✅ Settings toggle buttons work correctly
+✅ Main clock text updates in real-time
+✅ Hour ring cycles correctly (12h vs 24h)
+✅ Alarm list shows formatted times
+✅ Alarm notifications display correct format
+✅ World clocks all update to selected format
+✅ localStorage saves and restores format
+✅ Page refresh maintains format setting
+✅ No console errors
+✅ 60fps performance maintained
+
+---
+
 ### v1.11.0 (2026-01-16)
 **Recurring Alarms Feature**
 

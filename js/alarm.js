@@ -299,7 +299,15 @@ function renderAlarms() {
         alarmItem.className = `alarm-item ${alarm.enabled ? '' : 'disabled'}`;
         alarmItem.dataset.id = alarm.id;
 
-        const timeStr = `${String(alarm.hour).padStart(2, '0')}:${String(alarm.minute).padStart(2, '0')}:${String(alarm.second || 0).padStart(2, '0')}`;
+        // Format time based on timeFormat setting
+        let timeStr;
+        if (timeFormat === '12h') {
+            const hour12 = alarm.hour % 12 || 12;
+            const period = alarm.hour >= 12 ? 'PM' : 'AM';
+            timeStr = `${String(hour12).padStart(2, '0')}:${String(alarm.minute).padStart(2, '0')}:${String(alarm.second || 0).padStart(2, '0')} ${period}`;
+        } else {
+            timeStr = `${String(alarm.hour).padStart(2, '0')}:${String(alarm.minute).padStart(2, '0')}:${String(alarm.second || 0).padStart(2, '0')}`;
+        }
 
         // Get repeat label
         let repeatLabel = '';
@@ -461,7 +469,15 @@ function checkAlarms() {
  * @param {Object} alarm - The alarm object
  */
 function triggerAlarm(alarm) {
-    const timeStr = `${String(alarm.hour).padStart(2, '0')}:${String(alarm.minute).padStart(2, '0')}:${String(alarm.second || 0).padStart(2, '0')}`;
+    // Format time based on timeFormat setting
+    let timeStr;
+    if (timeFormat === '12h') {
+        const hour12 = alarm.hour % 12 || 12;
+        const period = alarm.hour >= 12 ? 'PM' : 'AM';
+        timeStr = `${String(hour12).padStart(2, '0')}:${String(alarm.minute).padStart(2, '0')}:${String(alarm.second || 0).padStart(2, '0')} ${period}`;
+    } else {
+        timeStr = `${String(alarm.hour).padStart(2, '0')}:${String(alarm.minute).padStart(2, '0')}:${String(alarm.second || 0).padStart(2, '0')}`;
+    }
 
     // Show notification
     if (Notification.permission === 'granted') {

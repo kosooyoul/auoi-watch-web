@@ -1,9 +1,10 @@
 # auoi-watch-web Tasks & Roadmap
 
-## Current State (v1.11.0)
+## Current State (v1.13.0)
 - ✅ Real-time clock with comet trail animation (ms/sec/min/hour rings)
 - ✅ SVG-based premium visual design
 - ✅ 60fps smooth animation
+- ✅ **Animation speed control** (0.5x - 2x adjustable speed)
 - ✅ Accessible text time display
 - ✅ Responsive design
 - ✅ Theme system with 5 color presets
@@ -12,6 +13,7 @@
 - ✅ PWA support (offline, installable)
 - ✅ Alarm & Timer system with visual markers
 - ✅ **Recurring alarms** (once, daily, weekdays, weekends, custom days)
+- ✅ **12h/24h time format toggle** (applies to all time displays)
 - ✅ Notification API integration
 - ✅ World Clock with multi-timezone support
 - ✅ Stopwatch with lap timing and millisecond precision
@@ -318,29 +320,94 @@
 
 ---
 
-## Remaining Tasks (Priority Order)
+### ✅ 10. 12h/24h Time Format Toggle (v1.12.0)
+**Completed:** 2026-01-16
+**Implemented:**
+- ✅ Time format toggle in Settings panel (12h / 24h buttons)
+- ✅ Applies to all time displays throughout the app:
+  - Main clock text display
+  - Alarm list times
+  - Alarm notifications
+  - World clock times
+- ✅ 12h format shows AM/PM indicator
+- ✅ 24h format shows standard HH:MM:SS
+- ✅ localStorage persistence for format preference
+- ✅ Real-time update on format change (no page reload needed)
+- ✅ Hour ring progress adapts to 12h/24h cycle
 
-### 1. [FUTURE] Animation Speed Control
-**Why:** 시각적 선호도 - 빠른/느린 애니메이션
-**Effort:** Small (1 hour)
-**Value:** Low-Medium
-**Scope:**
-- 속도 슬라이더 (0.5x ~ 2x)
-- requestAnimationFrame delta 조정
-- localStorage로 저장
-**Web Strength:** requestAnimationFrame 정밀 제어
+**Technical Implementation:**
+- `timeFormat` global variable in theme.js ('12h' or '24h')
+- clock.js: Main clock uses timeFormat for display and ring progress calculation
+- alarm.js: renderAlarms() and triggerAlarm() format times based on timeFormat
+- world-clock.js: Intl API hour12 option set dynamically based on timeFormat
+- theme.js: applyTimeFormat() updates all components when format changes
+- Settings saved/loaded via localStorage
+
+**Functions Modified:**
+- `updateClock()` in clock.js - Already implemented 12h/24h support
+- `renderAlarms()` in alarm.js - Added 12h/24h formatting
+- `triggerAlarm()` in alarm.js - Added 12h/24h notification formatting
+- `updateWorldClocks()` in world-clock.js - Dynamic hour12 option
+- `applyTimeFormat()` in theme.js - Re-renders all components on change
+
+**Files Modified:**
+- `js/theme.js` - Enhanced applyTimeFormat() to update all components
+- `js/alarm.js` - Added 12h/24h formatting to renderAlarms() and triggerAlarm()
+- `js/world-clock.js` - Dynamic hour12 based on timeFormat
+- `index.html` - Already has 12h/24h toggle buttons
+
+**Result:** Complete 12h/24h time format support across all features with instant updates
 
 ---
 
-### 2. [FUTURE] 12h/24h Format Toggle
-**Why:** 지역/개인 선호도
-**Effort:** Small (1 hour)
-**Value:** Low-Medium
-**Scope:**
-- 토글 버튼
-- 시간 표시 포맷 변경
-- localStorage로 저장
-**Web Strength:** Intl.DateTimeFormat로 자동 지역화 가능
+### ✅ 11. Animation Speed Control (v1.13.0)
+**Completed:** 2026-01-16
+**Implemented:**
+- ✅ Animation speed slider in Settings panel (0.5x - 2.0x range)
+- ✅ Real-time speed adjustment with visual feedback
+- ✅ Speed multiplier affects color transition smoothness
+- ✅ localStorage persistence for speed preference
+- ✅ Speed value display shows current multiplier (e.g., "1.5x")
+- ✅ Slider with premium gradient styling
+
+**Speed Effects:**
+- **0.5x (Slow)**: Smooth, calm color transitions - meditation/focus mode
+- **1.0x (Default)**: Balanced animation speed
+- **2.0x (Fast)**: Dynamic, energetic color transitions - active mode
+
+**Technical Implementation:**
+- `animationSpeed` global variable in theme.js (0.5 - 2.0)
+- `BASE_COLOR_SMOOTH_FACTOR` constant and dynamic `COLOR_SMOOTH_FACTOR` in clock.js
+- `updateColorSmoothFactor(speed)` function updates smoothing based on speed
+- `applyAnimationSpeed(speed)` function in theme.js updates UI and settings
+- COLOR_SMOOTH_FACTOR = BASE_COLOR_SMOOTH_FACTOR * animationSpeed
+- Settings saved/loaded via localStorage
+
+**Functions Implemented:**
+- `applyAnimationSpeed(speed)` in theme.js - Apply speed and update UI
+- `updateColorSmoothFactor(speed)` in clock.js - Update color transition speed
+- Slider event listeners in initSettingsUI() - Real-time updates
+
+**Files Modified:**
+- `index.html` - Added speed slider UI in Settings panel
+- `styles.css` - Added speed slider and value display styles
+- `js/theme.js` - Added animationSpeed variable, applyAnimationSpeed(), event listeners
+- `js/clock.js` - Made COLOR_SMOOTH_FACTOR dynamic based on speed
+
+**Result:** Users can customize animation speed to match their mood and preference
+
+---
+
+## Remaining Tasks (Priority Order)
+
+### None - All planned features complete! 🎉
+
+**Product Status:**
+- ✅ All core features implemented
+- ✅ Full customization options (themes, formats, speed)
+- ✅ Complete time management tools (alarms, timers, world clock, stopwatch)
+- ✅ PWA support with offline capability
+- ✅ Modular, maintainable codebase
 
 ---
 

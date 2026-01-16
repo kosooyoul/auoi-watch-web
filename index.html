@@ -126,6 +126,16 @@
             </div>
 
             <div class="settings-section">
+                <label class="settings-label">Animation Speed</label>
+                <div class="speed-control">
+                    <span class="speed-label">0.5x</span>
+                    <input type="range" class="speed-slider" id="speedSlider" min="0.5" max="2" step="0.1" value="1" aria-label="Animation speed">
+                    <span class="speed-label">2x</span>
+                </div>
+                <p class="speed-value" id="speedValue">1.0x</p>
+            </div>
+
+            <div class="settings-section">
                 <label class="settings-label">Share Settings</label>
                 <button class="share-url-btn" id="shareUrlBtn" aria-label="Copy shareable URL">
                     <span class="share-icon">🔗</span>
