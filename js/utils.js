@@ -81,3 +81,98 @@ function getTargetColor(palette, progress) {
         return interpolateColor(palette[1], palette[2], (progress - 0.5) * 2);
     }
 }
+
+/**
+ * Initialize modal with common open/close behavior
+ * @param {Object} config - Modal configuration
+ * @param {HTMLElement} config.openButton - Button to open modal
+ * @param {HTMLElement} config.modal - Modal element
+ * @param {HTMLElement} config.closeButton - Button to close modal
+ * @param {string} config.activeClass - Class to add when modal is active (default: 'show')
+ * @param {Function} config.onOpen - Optional callback when modal opens
+ * @param {Function} config.onClose - Optional callback when modal closes
+ */
+function initModal(config) {
+    const {
+        openButton,
+        modal,
+        closeButton,
+        activeClass = 'show',
+        onOpen = null,
+        onClose = null
+    } = config;
+
+    if (!openButton || !modal || !closeButton) {
+        console.error('initModal: Missing required elements');
+        return;
+    }
+
+    // Close modal function
+    const closeModal = () => {
+        modal.classList.remove(activeClass);
+        if (onClose) onClose();
+    };
+
+    // Open modal
+    openButton.addEventListener('click', () => {
+        modal.classList.add(activeClass);
+        if (onOpen) onOpen();
+    });
+
+    // Close button
+    closeButton.addEventListener('click', closeModal);
+
+    // Close on backdrop click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains(activeClass)) {
+            closeModal();
+        }
+    });
+
+    // Return closeModal function for external use
+    return { closeModal };
+}
+
+/**
+ * Save data to localStorage with error handling
+ * @param {string} key - localStorage key (will be prefixed with 'ringClock')
+ * @param {*} data - Data to save (will be JSON.stringify'd)
+ * @returns {boolean} - true if successful, false otherwise
+ */
+function saveToStorage(key, data) {
+    try {
+        const fullKey = `ringClock${key}`;
+        localStorage.setItem(fullKey, JSON.stringify(data));
+        return true;
+    } catch (error) {
+        console.error(`Error saving to localStorage (${key}):`, error);
+        return false;
+    }
+}
+
+/**
+ * Load data from localStorage with error handling
+ * @param {string} key - localStorage key (will be prefixed with 'ringClock')
+ * @param {*} defaultValue - Default value if load fails or key doesn't exist
+ * @returns {*} - Parsed data or defaultValue
+ */
+function loadFromStorage(key, defaultValue = null) {
+    try {
+        const fullKey = `ringClock${key}`;
+        const saved = localStorage.getItem(fullKey);
+        if (saved) {
+            return JSON.parse(saved);
+        }
+        return defaultValue;
+    } catch (error) {
+        console.error(`Error loading from localStorage (${key}):`, error);
+        return defaultValue;
+    }
+}

@@ -33,31 +33,13 @@ function initAlarmSystem() {
     // Check notification permission
     checkNotificationPermission();
 
-    // Open alarm modal
-    alarmBtn.addEventListener('click', () => {
-        alarmModal.classList.add('active');
-        checkNotificationPermission();
-    });
-
-    // Close alarm modal
-    const closeAlarmModal = () => {
-        alarmModal.classList.remove('active');
-    };
-
-    alarmCloseBtn.addEventListener('click', closeAlarmModal);
-
-    // Close on backdrop click
-    alarmModal.addEventListener('click', (e) => {
-        if (e.target === alarmModal) {
-            closeAlarmModal();
-        }
-    });
-
-    // Close on Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && alarmModal.classList.contains('active')) {
-            closeAlarmModal();
-        }
+    // Initialize alarm modal with utility function
+    initModal({
+        openButton: alarmBtn,
+        modal: alarmModal,
+        closeButton: alarmCloseBtn,
+        activeClass: 'active',
+        onOpen: checkNotificationPermission
     });
 
     // Tab switching
@@ -384,21 +366,17 @@ function deleteAlarm(alarmId) {
  * Save alarms to localStorage
  */
 function saveAlarms() {
-    localStorage.setItem('ringClockAlarms', JSON.stringify(alarms));
+    saveToStorage('Alarms', alarms);
 }
 
 /**
  * Load alarms from localStorage
  */
 function loadAlarms() {
-    try {
-        const saved = localStorage.getItem('ringClockAlarms');
-        if (saved) {
-            alarms = JSON.parse(saved);
-            renderAlarms();
-        }
-    } catch (error) {
-        console.error('Error loading alarms:', error);
+    const saved = loadFromStorage('Alarms', []);
+    if (saved.length > 0) {
+        alarms = saved;
+        renderAlarms();
     }
 }
 

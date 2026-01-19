@@ -64,37 +64,31 @@ function applyTheme(themeName) {
 }
 
 /**
+ * Update a single SVG gradient with colors
+ * @param {string} gradientId - ID of the gradient element
+ * @param {Object} colors - Object with start and mid color properties
+ */
+function updateGradient(gradientId, colors) {
+    const gradient = document.getElementById(gradientId);
+    if (gradient && gradient.children.length >= 2) {
+        gradient.children[0].setAttribute('style', `stop-color:${colors.start};stop-opacity:1`);
+        gradient.children[1].setAttribute('style', `stop-color:${colors.mid};stop-opacity:1`);
+    }
+}
+
+/**
  * Update SVG gradient definitions with theme colors
  * @param {Object} theme - Theme object
  */
 function updateSVGGradients(theme) {
-    // Hour gradient
-    const hourGradient = document.getElementById('hourGradient');
-    if (hourGradient) {
-        hourGradient.children[0].setAttribute('style', `stop-color:${theme.ringHour.start};stop-opacity:1`);
-        hourGradient.children[1].setAttribute('style', `stop-color:${theme.ringHour.mid};stop-opacity:1`);
-    }
+    const gradients = [
+        { id: 'hourGradient', colors: theme.ringHour },
+        { id: 'minuteGradient', colors: theme.ringMinute },
+        { id: 'secondGradient', colors: theme.ringSecond },
+        { id: 'msGradient', colors: theme.ringMs }
+    ];
 
-    // Minute gradient
-    const minuteGradient = document.getElementById('minuteGradient');
-    if (minuteGradient) {
-        minuteGradient.children[0].setAttribute('style', `stop-color:${theme.ringMinute.start};stop-opacity:1`);
-        minuteGradient.children[1].setAttribute('style', `stop-color:${theme.ringMinute.mid};stop-opacity:1`);
-    }
-
-    // Second gradient
-    const secondGradient = document.getElementById('secondGradient');
-    if (secondGradient) {
-        secondGradient.children[0].setAttribute('style', `stop-color:${theme.ringSecond.start};stop-opacity:1`);
-        secondGradient.children[1].setAttribute('style', `stop-color:${theme.ringSecond.mid};stop-opacity:1`);
-    }
-
-    // MS gradient
-    const msGradient = document.getElementById('msGradient');
-    if (msGradient) {
-        msGradient.children[0].setAttribute('style', `stop-color:${theme.ringMs.start};stop-opacity:1`);
-        msGradient.children[1].setAttribute('style', `stop-color:${theme.ringMs.mid};stop-opacity:1`);
-    }
+    gradients.forEach(({ id, colors }) => updateGradient(id, colors));
 }
 
 /**
@@ -175,41 +169,34 @@ function saveSettings() {
         timeFormat: timeFormat,
         animationSpeed: animationSpeed
     };
-    localStorage.setItem('ringClockSettings', JSON.stringify(settings));
+    saveToStorage('Settings', settings);
 }
 
 /**
  * Load settings from URL params (priority) or localStorage
  */
 function loadSettings() {
-    try {
-        // Check URL params first (higher priority)
-        const urlTheme = getThemeFromURL();
-        if (urlTheme) {
-            applyTheme(urlTheme);
-        }
+    // Check URL params first (higher priority)
+    const urlTheme = getThemeFromURL();
+    if (urlTheme) {
+        applyTheme(urlTheme);
+    }
 
-        // Fallback to localStorage
-        const saved = localStorage.getItem('ringClockSettings');
-        if (saved) {
-            const settings = JSON.parse(saved);
-            if (settings.theme && THEMES[settings.theme] && !urlTheme) {
-                applyTheme(settings.theme);
-            }
-            if (settings.timeFormat) {
-                applyTimeFormat(settings.timeFormat);
-            }
-            if (settings.animationSpeed !== undefined) {
-                applyAnimationSpeed(settings.animationSpeed);
-            }
-        }
+    // Fallback to localStorage
+    const settings = loadFromStorage('Settings', {});
+    if (settings.theme && THEMES[settings.theme] && !urlTheme) {
+        applyTheme(settings.theme);
+    }
+    if (settings.timeFormat) {
+        applyTimeFormat(settings.timeFormat);
+    }
+    if (settings.animationSpeed !== undefined) {
+        applyAnimationSpeed(settings.animationSpeed);
+    }
 
-        // If no URL param, update URL
-        if (!urlTheme) {
-            updateURL();
-        }
-    } catch (error) {
-        console.error('Error loading settings:', error);
+    // If no URL param, update URL
+    if (!urlTheme) {
+        updateURL();
     }
 }
 

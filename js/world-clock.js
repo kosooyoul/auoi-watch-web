@@ -24,24 +24,16 @@ function initWorldClockSystem() {
     // Load saved world clocks
     loadWorldClocks();
 
-    // Modal open/close
+    // Initialize world clock modal
     const worldClockBtn = document.getElementById('worldClockBtn');
     const worldClockModal = document.getElementById('worldClockModal');
     const worldClockCloseBtn = document.getElementById('worldClockCloseBtn');
 
-    worldClockBtn.addEventListener('click', () => {
-        worldClockModal.classList.add('show');
-        updateWorldClocks(); // Update times when modal opens
-    });
-
-    worldClockCloseBtn.addEventListener('click', () => {
-        worldClockModal.classList.remove('show');
-    });
-
-    worldClockModal.addEventListener('click', (e) => {
-        if (e.target === worldClockModal) {
-            worldClockModal.classList.remove('show');
-        }
+    initModal({
+        openButton: worldClockBtn,
+        modal: worldClockModal,
+        closeButton: worldClockCloseBtn,
+        onOpen: updateWorldClocks
     });
 
     // Add city button
@@ -220,25 +212,15 @@ function updateWorldClocks() {
  * Save world clocks to localStorage
  */
 function saveWorldClocks() {
-    try {
-        localStorage.setItem('ringClockWorldClocks', JSON.stringify(worldClocks));
-    } catch (error) {
-        console.error('Error saving world clocks:', error);
-    }
+    saveToStorage('WorldClocks', worldClocks);
 }
 
 /**
  * Load world clocks from localStorage
  */
 function loadWorldClocks() {
-    try {
-        const saved = localStorage.getItem('ringClockWorldClocks');
-        if (saved) {
-            worldClocks = JSON.parse(saved);
-            renderWorldClocks();
-        }
-    } catch (error) {
-        console.error('Error loading world clocks:', error);
-        worldClocks = [];
+    worldClocks = loadFromStorage('WorldClocks', []);
+    if (worldClocks.length > 0) {
+        renderWorldClocks();
     }
 }
