@@ -674,6 +674,18 @@ body {
     transform: translateY(0);
 }
 
+.buy-pack-btn.purchased {
+    background: rgba(67, 233, 123, 0.3);
+    border-color: rgba(67, 233, 123, 0.5);
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.buy-pack-btn.purchased:hover {
+    transform: none;
+    box-shadow: none;
+}
+
 .premium-theme-grid {
     margin-top: 8px;
 }

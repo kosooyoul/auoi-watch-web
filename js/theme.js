@@ -400,14 +400,83 @@ function initSettingsUI() {
 }
 
 /**
- * Check if a theme is unlocked (always returns false for now, will be implemented in Task 2)
+ * Get purchases data from localStorage
+ * @returns {Object} Purchases object
+ */
+function getPurchases() {
+    return loadFromStorage('Purchases', {
+        luxury: { purchased: false },
+        nature: { purchased: false },
+        neon: { purchased: false },
+        bundle: { purchased: false }
+    });
+}
+
+/**
+ * Save purchases data to localStorage
+ * @param {Object} purchases - Purchases object
+ */
+function savePurchases(purchases) {
+    saveToStorage('Purchases', purchases);
+}
+
+/**
+ * Check if a theme is unlocked
  * @param {string} themeId - Theme ID to check
  * @returns {boolean} Whether theme is unlocked
  */
 function isThemeUnlocked(themeId) {
-    // TODO: Check localStorage for purchases in Task 2
-    // For now, all premium themes are locked
-    return false;
+    // Free themes are always unlocked
+    if (THEMES[themeId]) {
+        return true;
+    }
+
+    // Check if premium theme
+    const premiumTheme = PREMIUM_THEMES.find(t => t.id === themeId);
+    if (!premiumTheme) {
+        return true; // Unknown theme, assume unlocked
+    }
+
+    // Check if pack or bundle is purchased
+    const purchases = getPurchases();
+    return purchases[premiumTheme.pack]?.purchased || purchases.bundle?.purchased;
+}
+
+/**
+ * Unlock a theme pack
+ * @param {string} packId - Pack ID to unlock ('luxury', 'nature', 'neon', or 'bundle')
+ * @param {Object} options - Optional purchase details (price, date, receipt)
+ */
+function unlockPack(packId, options = {}) {
+    const purchases = getPurchases();
+
+    purchases[packId] = {
+        purchased: true,
+        date: options.date || new Date().toISOString(),
+        price: options.price || THEME_PACKS[packId]?.price || 0,
+        receipt: options.receipt || null
+    };
+
+    savePurchases(purchases);
+
+    // Re-render premium themes to update UI
+    const container = document.getElementById('premiumThemesContainer');
+    if (container) {
+        container.innerHTML = '';
+        renderPremiumThemes();
+    }
+
+    return true;
+}
+
+/**
+ * Check if a pack is purchased
+ * @param {string} packId - Pack ID to check
+ * @returns {boolean} Whether pack is purchased
+ */
+function isPackPurchased(packId) {
+    const purchases = getPurchases();
+    return purchases[packId]?.purchased || false;
 }
 
 /**
@@ -435,14 +504,25 @@ function renderPremiumThemes() {
         const packSection = document.createElement('div');
         packSection.className = 'premium-pack-section';
 
+        const isPurchased = isPackPurchased(packId);
+
         // Pack header
         const packHeader = document.createElement('div');
         packHeader.className = 'premium-pack-header';
-        packHeader.innerHTML = `
-            <span class="pack-name">${pack.name}</span>
-            <span class="pack-price">$${pack.price.toFixed(2)}</span>
-            <button class="buy-pack-btn" data-pack="${packId}">Buy Pack</button>
-        `;
+
+        if (isPurchased) {
+            packHeader.innerHTML = `
+                <span class="pack-name">${pack.name}</span>
+                <span class="pack-price">$${pack.price.toFixed(2)}</span>
+                <button class="buy-pack-btn purchased" disabled>✓ Purchased</button>
+            `;
+        } else {
+            packHeader.innerHTML = `
+                <span class="pack-name">${pack.name}</span>
+                <span class="pack-price">$${pack.price.toFixed(2)}</span>
+                <button class="buy-pack-btn" data-pack="${packId}">Buy Pack</button>
+            `;
+        }
         packSection.appendChild(packHeader);
 
         // Theme grid for this pack
@@ -529,10 +609,85 @@ function createPremiumThemeCard(theme, isUnlocked) {
 }
 
 /**
- * Handle purchase pack button click (placeholder for Task 4)
+ * Handle purchase pack button click
+ * For now, this unlocks the pack immediately for testing
+ * In Task 4, this will redirect to Stripe payment
  * @param {string} packId - Pack ID to purchase
  */
 function handlePurchasePack(packId) {
-    // TODO: Implement Stripe payment integration in Task 4
-    alert(`Purchase functionality coming soon!\n\nYou selected: ${packId} pack\n\nThis will be implemented in Task 4 with Stripe integration.`);
+    // For testing: unlock immediately
+    // TODO: In Task 4, redirect to Stripe payment instead
+    const confirmed = confirm(
+        `[TEST MODE]\n\n` +
+        `Unlock ${THEME_PACKS[packId]?.name || packId} for testing?\n\n` +
+        `This simulates a successful purchase.\n` +
+        `In Task 4, this will redirect to Stripe payment.`
+    );
+
+    if (confirmed) {
+        unlockPack(packId);
+        alert(`✓ ${THEME_PACKS[packId]?.name || packId} unlocked!\n\nYou can now use these premium themes.`);
+    }
+}
+
+// ==================== DEVELOPER TESTING HELPERS ====================
+
+/**
+ * Reset all purchases (for testing)
+ * Call in browser console: resetPurchases()
+ */
+function resetPurchases() {
+    savePurchases({
+        luxury: { purchased: false },
+        nature: { purchased: false },
+        neon: { purchased: false },
+        bundle: { purchased: false }
+    });
+
+    // Re-render premium themes
+    const container = document.getElementById('premiumThemesContainer');
+    if (container) {
+        container.innerHTML = '';
+        renderPremiumThemes();
+    }
+
+    console.log('✓ All purchases reset');
+}
+
+/**
+ * Unlock all packs (for testing)
+ * Call in browser console: unlockAllPacks()
+ */
+function unlockAllPacks() {
+    ['luxury', 'nature', 'neon'].forEach(packId => {
+        unlockPack(packId);
+    });
+    console.log('✓ All packs unlocked');
+}
+
+/**
+ * Show purchase status (for testing)
+ * Call in browser console: showPurchaseStatus()
+ */
+function showPurchaseStatus() {
+    const purchases = getPurchases();
+    console.log('📦 Purchase Status:', purchases);
+
+    Object.entries(purchases).forEach(([packId, data]) => {
+        const status = data.purchased ? '✓ Purchased' : '🔒 Locked';
+        const name = THEME_PACKS[packId]?.name || packId;
+        console.log(`  ${status} ${name}`);
+        if (data.purchased && data.date) {
+            console.log(`    Date: ${data.date}`);
+        }
+    });
+}
+
+// Expose helpers to window for console access
+if (typeof window !== 'undefined') {
+    window.resetPurchases = resetPurchases;
+    window.unlockAllPacks = unlockAllPacks;
+    window.showPurchaseStatus = showPurchaseStatus;
+    window.unlockPack = unlockPack;
+    window.getPurchases = getPurchases;
 }
