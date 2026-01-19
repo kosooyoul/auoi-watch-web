@@ -282,19 +282,13 @@ body {
     }
 
     .fullscreen-btn,
-    .settings-btn {
-        width: 36px;
-        height: 36px;
-        top: 8px;
+    .settings-btn,
+    .alarm-btn,
+    .world-clock-btn,
+    .stopwatch-btn {
+        width: 44px;
+        height: 44px;
         font-size: 1.1rem;
-    }
-
-    .fullscreen-btn {
-        left: 8px;
-    }
-
-    .settings-btn {
-        right: 8px;
     }
 }
 
@@ -319,19 +313,59 @@ body {
     }
 
     .fullscreen-btn,
-    .settings-btn {
-        width: 32px;
-        height: 32px;
-        top: 5px;
+    .settings-btn,
+    .alarm-btn,
+    .world-clock-btn,
+    .stopwatch-btn {
+        width: 40px;
+        height: 40px;
         font-size: 1rem;
+        bottom: 12px;
     }
 
+    /* Extra tight spacing on very short screens */
     .fullscreen-btn {
-        left: 5px;
+        transform: translateX(-100px);
+    }
+
+    .fullscreen-btn:hover {
+        transform: translateX(-100px) scale(1.05);
+    }
+
+    .alarm-btn {
+        transform: translateX(-50px);
+    }
+
+    .alarm-btn:hover {
+        transform: translateX(-50px) scale(1.05);
+    }
+
+    .world-clock-btn {
+        transform: translateX(0);
+    }
+
+    .world-clock-btn:hover {
+        transform: translateX(0) scale(1.05);
+    }
+
+    .stopwatch-btn {
+        transform: translateX(50px);
+    }
+
+    .stopwatch-btn:hover {
+        transform: translateX(50px) scale(1.05);
     }
 
     .settings-btn {
-        right: 5px;
+        transform: translateX(100px);
+    }
+
+    .settings-btn:hover {
+        transform: translateX(100px) rotate(0deg) scale(1.05);
+    }
+
+    .container {
+        padding-bottom: 70px;
     }
 }
 
@@ -369,7 +403,13 @@ body {
 
 .fullscreen-btn:hover {
     background: rgba(255, 255, 255, 0.15);
-    transform: scale(1.1);
+}
+
+/* Desktop only hover effect */
+@media (min-width: 769px) and (min-height: 601px) {
+    .fullscreen-btn:hover {
+        transform: scale(1.1);
+    }
 }
 
 .fullscreen-btn:focus {
@@ -400,7 +440,13 @@ body {
 
 .settings-btn:hover {
     background: rgba(255, 255, 255, 0.15);
-    transform: rotate(90deg);
+}
+
+/* Desktop only hover effect */
+@media (min-width: 769px) and (min-height: 601px) {
+    .settings-btn:hover {
+        transform: rotate(90deg);
+    }
 }
 
 .settings-btn:focus {
@@ -573,6 +619,100 @@ body {
     color: var(--text-secondary);
 }
 
+/* Premium Themes Section */
+.premium-pack-section {
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 20px;
+}
+
+.premium-pack-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.premium-pack-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding: 8px 0;
+}
+
+.pack-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.pack-price {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.buy-pack-btn {
+    padding: 8px 16px;
+    background: linear-gradient(135deg, rgba(67, 233, 123, 0.2) 0%, rgba(56, 249, 215, 0.2) 100%);
+    border: 2px solid rgba(67, 233, 123, 0.3);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.buy-pack-btn:hover {
+    background: linear-gradient(135deg, rgba(67, 233, 123, 0.3) 0%, rgba(56, 249, 215, 0.3) 100%);
+    border-color: rgba(67, 233, 123, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(67, 233, 123, 0.3);
+}
+
+.buy-pack-btn:active {
+    transform: translateY(0);
+}
+
+.premium-theme-grid {
+    margin-top: 8px;
+}
+
+/* Locked theme styles */
+.theme-option.locked {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.theme-option.locked:hover {
+    transform: none;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.theme-preview {
+    position: relative;
+}
+
+.lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.lock-icon {
+    font-size: 24px;
+    opacity: 0.9;
+}
+
 /* Share URL Button */
 .share-url-btn {
     width: 100%;
@@ -734,6 +874,75 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Responsive - Button Container for Mobile */
+@media (max-width: 768px), (max-height: 600px) {
+    /* Move all buttons to bottom on small screens */
+    .fullscreen-btn,
+    .settings-btn,
+    .alarm-btn,
+    .world-clock-btn,
+    .stopwatch-btn {
+        position: fixed;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: 20px;
+        width: 52px;
+        height: 52px;
+        z-index: 150;
+    }
+
+    .fullscreen-btn {
+        left: 50%;
+        transform: translateX(-130px);
+    }
+
+    .fullscreen-btn:hover {
+        transform: translateX(-130px) scale(1.05);
+    }
+
+    .alarm-btn {
+        left: 50%;
+        transform: translateX(-65px);
+    }
+
+    .alarm-btn:hover {
+        transform: translateX(-65px) scale(1.05);
+    }
+
+    .world-clock-btn {
+        left: 50%;
+        transform: translateX(0);
+    }
+
+    .world-clock-btn:hover {
+        transform: translateX(0) scale(1.05);
+    }
+
+    .stopwatch-btn {
+        left: 50%;
+        transform: translateX(65px);
+    }
+
+    .stopwatch-btn:hover {
+        transform: translateX(65px) scale(1.05);
+    }
+
+    .settings-btn {
+        left: 50%;
+        transform: translateX(130px);
+    }
+
+    .settings-btn:hover {
+        transform: translateX(130px) rotate(0deg) scale(1.05);
+    }
+
+    /* Adjust clock position to avoid bottom buttons */
+    .container {
+        padding-bottom: 100px;
+    }
+}
+
 /* Responsive adjustments for settings */
 @media (max-width: 768px) {
     .settings-panel {
@@ -750,18 +959,59 @@ body {
 }
 
 @media (max-width: 480px) {
+    .fullscreen-btn,
+    .alarm-btn,
+    .world-clock-btn,
+    .stopwatch-btn,
+    .settings-btn {
+        width: 48px;
+        height: 48px;
+        bottom: 16px;
+    }
+
+    /* Tighter spacing on very small screens */
     .fullscreen-btn {
-        width: 44px;
-        height: 44px;
-        top: 16px;
-        left: 16px;
+        transform: translateX(-120px);
+    }
+
+    .fullscreen-btn:hover {
+        transform: translateX(-120px) scale(1.05);
+    }
+
+    .alarm-btn {
+        transform: translateX(-60px);
+    }
+
+    .alarm-btn:hover {
+        transform: translateX(-60px) scale(1.05);
+    }
+
+    .world-clock-btn {
+        transform: translateX(0);
+    }
+
+    .world-clock-btn:hover {
+        transform: translateX(0) scale(1.05);
+    }
+
+    .stopwatch-btn {
+        transform: translateX(60px);
+    }
+
+    .stopwatch-btn:hover {
+        transform: translateX(60px) scale(1.05);
     }
 
     .settings-btn {
-        width: 44px;
-        height: 44px;
-        top: 16px;
-        right: 16px;
+        transform: translateX(120px);
+    }
+
+    .settings-btn:hover {
+        transform: translateX(120px) rotate(0deg) scale(1.05);
+    }
+
+    .container {
+        padding-bottom: 90px;
     }
 
     .settings-panel {
@@ -840,7 +1090,13 @@ body {
 
 .alarm-btn:hover {
     background: rgba(255, 255, 255, 0.15);
-    transform: scale(1.1);
+}
+
+/* Desktop only hover effect */
+@media (min-width: 769px) and (min-height: 601px) {
+    .alarm-btn:hover {
+        transform: scale(1.1);
+    }
 }
 
 .alarm-btn:focus {
@@ -1403,30 +1659,13 @@ body {
 /* Responsive - Alarm Button */
 @media (max-height: 500px) {
     .alarm-btn {
-        width: 36px;
-        height: 36px;
-        top: 52px;
-        left: 8px;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
 }
 
 @media (max-height: 400px) {
     .alarm-btn {
-        width: 32px;
-        height: 32px;
-        top: 42px;
-        left: 5px;
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .alarm-btn {
-        width: 44px;
-        height: 44px;
-        top: 76px;
-        left: 16px;
+        font-size: 1.1rem;
     }
 }
 
@@ -1526,12 +1765,21 @@ body {
 
 .world-clock-btn:hover {
     background: rgba(255, 255, 255, 0.15);
-    transform: scale(1.1);
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
 }
 
-.world-clock-btn:active {
-    transform: scale(1);
+/* Desktop only hover effect */
+@media (min-width: 769px) and (min-height: 601px) {
+    .world-clock-btn:hover {
+        transform: scale(1.1);
+    }
+}
+
+/* Desktop only active effect */
+@media (min-width: 769px) and (min-height: 601px) {
+    .world-clock-btn:active {
+        transform: scale(1);
+    }
 }
 
 /* World Clock Modal */
@@ -1770,8 +2018,6 @@ body {
 
 @media (max-width: 480px) {
     .world-clock-btn {
-        width: 44px;
-        height: 44px;
         font-size: 1.3rem;
     }
 
@@ -1820,12 +2066,21 @@ body {
 
 .stopwatch-btn:hover {
     background: rgba(255, 255, 255, 0.15);
-    transform: scale(1.1);
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
 }
 
-.stopwatch-btn:active {
-    transform: scale(1);
+/* Desktop only hover effect */
+@media (min-width: 769px) and (min-height: 601px) {
+    .stopwatch-btn:hover {
+        transform: scale(1.1);
+    }
+}
+
+/* Desktop only active effect */
+@media (min-width: 769px) and (min-height: 601px) {
+    .stopwatch-btn:active {
+        transform: scale(1);
+    }
 }
 
 .stopwatch-btn:focus {
@@ -2144,10 +2399,7 @@ body {
 
 @media (max-width: 480px) {
     .stopwatch-btn {
-        width: 44px;
-        height: 44px;
-        top: 196px;
-        left: 16px;
+        font-size: 1.3rem;
     }
 
     .stopwatch-panel {
@@ -2201,20 +2453,12 @@ body {
 
 @media (max-height: 500px) {
     .stopwatch-btn {
-        width: 36px;
-        height: 36px;
-        top: 100px;
-        left: 8px;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
 }
 
 @media (max-height: 400px) {
     .stopwatch-btn {
-        width: 32px;
-        height: 32px;
-        top: 80px;
-        left: 5px;
-        font-size: 1rem;
+        font-size: 1.1rem;
     }
 }

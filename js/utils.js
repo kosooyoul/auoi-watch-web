@@ -176,3 +176,45 @@ function loadFromStorage(key, defaultValue = null) {
         return defaultValue;
     }
 }
+
+/**
+ * Convert RGB array to hex color string
+ * @param {Array} rgb - RGB array [r, g, b]
+ * @returns {string} Hex color string (e.g. "#667eea")
+ */
+function rgbToHex(rgb) {
+    const toHex = (n) => {
+        const hex = Math.max(0, Math.min(255, n)).toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+    };
+    return `#${toHex(rgb[0])}${toHex(rgb[1])}${toHex(rgb[2])}`;
+}
+
+/**
+ * Adjust color brightness
+ * @param {string} hex - Hex color string
+ * @param {number} percent - Brightness adjustment (-100 to 100)
+ * @returns {string} Adjusted hex color
+ */
+function adjustBrightness(hex, percent) {
+    const rgb = hexToRgb(hex);
+    const adjusted = rgb.map(c => {
+        const newValue = c + (c * percent / 100);
+        return Math.max(0, Math.min(255, Math.round(newValue)));
+    });
+    return rgbToHex(adjusted);
+}
+
+/**
+ * Create gradient object from single color
+ * Used for premium themes to generate start/mid/end gradient
+ * @param {string} color - Hex color string
+ * @returns {Object} Gradient object with start, mid, end
+ */
+function createGradient(color) {
+    return {
+        start: adjustBrightness(color, -15),
+        mid: color,
+        end: adjustBrightness(color, 15)
+    };
+}

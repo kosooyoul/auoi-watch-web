@@ -400,31 +400,497 @@
 
 ## Remaining Tasks (Priority Order)
 
-### None - All planned features complete! 🎉
+### 🚀 PHASE 2: MONETIZATION (Ready for Development)
 
-**Product Status:**
-- ✅ All core features implemented
-- ✅ Full customization options (themes, formats, speed)
-- ✅ Complete time management tools (alarms, timers, world clock, stopwatch)
-- ✅ PWA support with offline capability
-- ✅ Modular, maintainable codebase
+**Business Context:**
+- ✅ Core product complete (v1.13.0)
+- ✅ 5 free themes implemented
+- ✅ Business strategy complete (competitor analysis, revenue model, marketing plan)
+- 🎯 **Next:** Implement premium themes + payment system
+- 🎯 **Revenue Target:** $3K (6 months), $15K (12 months)
+
+**Specifications Ready:**
+- 📄 Premium Themes Spec: `business/strategy/premium-themes-spec.md`
+- 📄 Payment System PRD: `business/strategy/payment-system-prd.md`
+
+---
+
+## Task 1: Premium Themes Implementation
+
+**Priority:** P0 (Blocks revenue)
+**Owner:** Developer
+**Estimated Effort:** 4-6 hours
+**Status:** 🔴 Not Started
+**Dependencies:** None
+
+### Goal
+Implement 9 premium themes (3 packs) defined in business specification
+
+### Deliverables
+1. ✅ Add 9 premium theme objects to `js/constants.js`
+2. ✅ Create `PREMIUM_THEMES` array with pack metadata
+3. ✅ Test all 9 themes render correctly
+4. ✅ Verify ring colors are distinct and visible
+5. ✅ Test on multiple screen sizes
+
+### Theme Packs to Implement
+**Luxury Pack ($4.99):**
+- Golden Hour (gold gradient)
+- Midnight Marble (gray-silver gradient)
+- Rose Gold Elegance (rose-pink gradient)
+
+**Nature Pack ($3.99):**
+- Forest Twilight (forest green gradient)
+- Ocean Depths (ocean blue gradient)
+- Desert Dawn (terracotta-sand gradient)
+
+**Neon Pack ($3.99):**
+- Cyberpunk Magenta (magenta-pink gradient)
+- Electric Lime (lime green gradient)
+- Neon Ultraviolet (purple-lavender gradient)
+
+### Technical Spec
+See: `business/strategy/premium-themes-spec.md`
+- Color palettes for all 9 themes
+- Visual character descriptions
+- Implementation requirements
+
+### Acceptance Criteria
+- [ ] 9 premium themes added to constants.js
+- [ ] Each theme follows existing structure (background, text, 4 ring colors)
+- [ ] Themes render correctly in theme selector UI
+- [ ] No console errors
+- [ ] Tested on Live Server
+- [ ] Committed to `dev` branch
+
+---
+
+## Task 2: Theme Lock/Unlock System
+
+**Priority:** P0 (Blocks revenue)
+**Owner:** Developer
+**Estimated Effort:** 3-4 hours
+**Status:** 🔴 Not Started
+**Dependencies:** Task 1 complete
+
+### Goal
+Implement system to lock premium themes and unlock after purchase
+
+### Deliverables
+1. ✅ Create `isPremiumTheme(themeName)` function
+2. ✅ Create `isThemeUnlocked(themeName)` function
+3. ✅ Create `unlockPack(packId)` function
+4. ✅ Update theme selector UI to show lock icons
+5. ✅ Store purchase data in localStorage
+6. ✅ Add "Buy Pack" buttons for locked themes
+
+### Technical Spec
+
+**localStorage Structure:**
+```javascript
+{
+  purchases: {
+    luxury: { purchased: true, date: '2026-01-19', price: 4.99 },
+    nature: { purchased: false },
+    neon: { purchased: false },
+    bundle: { purchased: false }
+  }
+}
+```
+
+**Lock Logic:**
+```javascript
+// In js/theme.js or new js/purchase.js
+function isThemeUnlocked(themeName) {
+  const theme = PREMIUM_THEMES.find(t => t.name === themeName);
+  if (!theme) return true; // Free themes always unlocked
+
+  const purchases = JSON.parse(localStorage.getItem('purchases') || '{}');
+  return purchases[theme.pack]?.purchased || purchases.bundle?.purchased;
+}
+```
+
+### UI Changes
+- Locked themes: Show lock icon (🔒), gray overlay, "Buy Pack" button
+- Unlocked themes: Normal appearance, clickable to apply
+- Free themes: Always unlocked
+
+### Acceptance Criteria
+- [ ] Premium themes locked by default
+- [ ] Lock icons visible on locked themes
+- [ ] "Buy Pack" button appears for locked themes
+- [ ] Free themes always unlocked and clickable
+- [ ] Purchase data persists in localStorage
+- [ ] Page refresh maintains unlock state
+- [ ] No console errors
+
+---
+
+## Task 3: Premium Theme Gallery UI
+
+**Priority:** P0 (Blocks revenue)
+**Owner:** Developer
+**Estimated Effort:** 3-4 hours
+**Status:** 🔴 Not Started
+**Dependencies:** Task 2 complete
+
+### Goal
+Create premium theme gallery section in Settings modal
+
+### Deliverables
+1. ✅ Add "Premium Themes" section to Settings modal
+2. ✅ Display theme cards with preview colors
+3. ✅ Show pack badges and prices
+4. ✅ Add "Buy Pack" buttons for each pack
+5. ✅ Add "Buy Bundle" button (save 20%)
+6. ✅ Responsive layout for mobile
+
+### UI Mockup
+```
+┌──────────────────────────────────────────┐
+│ Settings                                  │
+├──────────────────────────────────────────┤
+│ [Free Themes] (existing)                  │
+│                                           │
+│ ──────────────────────────────────────── │
+│                                           │
+│ Premium Themes                            │
+│                                           │
+│ Luxury Pack · $4.99          [Buy Pack]  │
+│ ┌────────┐ ┌────────┐ ┌────────┐        │
+│ │  🔒    │ │  🔒    │ │  🔒    │        │
+│ │ Golden │ │Midnight│ │  Rose  │        │
+│ │  Hour  │ │ Marble │ │  Gold  │        │
+│ └────────┘ └────────┘ └────────┘        │
+│                                           │
+│ Nature Pack · $3.99          [Buy Pack]  │
+│ ┌────────┐ ┌────────┐ ┌────────┐        │
+│ │  🔒    │ │  🔒    │ │  🔒    │        │
+│ │ Forest │ │ Ocean  │ │ Desert │        │
+│ └────────┘ └────────┘ └────────┘        │
+│                                           │
+│ All Themes Bundle · $12.99    ⭐ Save 20%│
+│                      [Buy Bundle]         │
+└──────────────────────────────────────────┘
+```
+
+### CSS Styling
+- Premium section: Separated with divider line
+- Pack headers: Bold, show price prominently
+- Theme cards: Show preview colors (ring gradient)
+- Lock overlay: Semi-transparent black with lock icon
+- Buy buttons: Gradient style matching theme aesthetic
+- Bundle section: Special highlight (border, star icon)
+
+### Acceptance Criteria
+- [ ] Premium section visible in Settings modal
+- [ ] 3 pack sections displayed (Luxury, Nature, Neon)
+- [ ] Each pack shows 3 theme preview cards
+- [ ] Prices displayed correctly ($4.99, $3.99, $12.99)
+- [ ] Lock icons visible on locked themes
+- [ ] Buy buttons functional (call purchase function)
+- [ ] Bundle section shows 20% discount badge
+- [ ] Responsive on mobile (cards stack vertically)
+- [ ] Premium UI styling matches existing design
+
+---
+
+## Task 4: Stripe Payment Integration
+
+**Priority:** P0 (Blocks revenue)
+**Owner:** Developer
+**Estimated Effort:** 6-8 hours
+**Status:** 🔴 Not Started
+**Dependencies:** Task 3 complete
+
+### Goal
+Integrate Stripe Checkout for payment processing
+
+### Deliverables
+1. ✅ Set up Stripe account (test mode first)
+2. ✅ Create Stripe products (4 products: 3 packs + bundle)
+3. ✅ Implement Stripe Checkout redirect flow
+4. ✅ Create serverless function for checkout session
+5. ✅ Handle success/cancel redirects
+6. ✅ Unlock themes after successful payment
+7. ✅ Test with Stripe test cards
+
+### Technical Approach (Recommended: Stripe Checkout)
+
+**Frontend (js/payment.js):**
+```javascript
+async function purchasePack(packId, packPrice) {
+  // Call serverless function
+  const response = await fetch('/api/create-checkout-session', {
+    method: 'POST',
+    body: JSON.stringify({ packId, price: packPrice }),
+    headers: { 'Content-Type': 'application/json' }
+  });
+
+  const { sessionId } = await response.json();
+
+  // Redirect to Stripe
+  const stripe = Stripe('pk_test_...');
+  await stripe.redirectToCheckout({ sessionId });
+}
+```
+
+**Backend (Vercel/Netlify function):**
+```javascript
+// /api/create-checkout-session.js
+import Stripe from 'stripe';
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+export default async function handler(req, res) {
+  const { packId, price } = req.body;
+
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: [{
+      price_data: {
+        currency: 'usd',
+        product_data: { name: packId + ' Pack' },
+        unit_amount: Math.round(price * 100)
+      },
+      quantity: 1
+    }],
+    mode: 'payment',
+    success_url: `${req.headers.origin}?purchase=success&pack=${packId}`,
+    cancel_url: `${req.headers.origin}?purchase=cancel`
+  });
+
+  res.json({ sessionId: session.id });
+}
+```
+
+**Success Handler (js/payment.js):**
+```javascript
+// On page load, check for purchase success
+function handlePurchaseRedirect() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('purchase') === 'success') {
+    const pack = params.get('pack');
+    unlockPack(pack);
+    showSuccessMessage('Thank you! Your themes are unlocked.');
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+}
+```
+
+### Stripe Setup Steps
+1. Create account at stripe.com
+2. Go to Products → Add 4 products
+3. Developers → API Keys → Copy keys
+4. Set environment variables:
+   - `STRIPE_SECRET_KEY=sk_test_...`
+   - `STRIPE_PUBLISHABLE_KEY=pk_test_...`
+5. Deploy serverless function (Vercel/Netlify)
+
+### Testing
+- Use test card: `4242 4242 4242 4242`
+- Test all 4 products (3 packs + bundle)
+- Verify redirect to Stripe Checkout
+- Verify success redirect unlocks themes
+- Test cancel flow (should not unlock)
+
+### Acceptance Criteria
+- [ ] Stripe account created and verified
+- [ ] 4 products created in Stripe Dashboard
+- [ ] Serverless function deployed
+- [ ] Environment variables configured
+- [ ] "Buy Pack" button redirects to Stripe Checkout
+- [ ] Payment success unlocks correct themes
+- [ ] Payment cancel returns to app without unlocking
+- [ ] Success message displayed after purchase
+- [ ] Purchase persists after page refresh
+- [ ] Tested with all 4 products
+- [ ] Tested on test mode (before live launch)
+- [ ] No console errors
+
+---
+
+## Task 5: Purchase Confirmation & UI Polish
+
+**Priority:** P1 (Nice to have)
+**Owner:** Developer
+**Estimated Effort:** 2-3 hours
+**Status:** 🔴 Not Started
+**Dependencies:** Task 4 complete
+
+### Goal
+Add success confirmation and polish purchase experience
+
+### Deliverables
+1. ✅ Success modal after purchase
+2. ✅ Checkmark animation
+3. ✅ "Explore Your Themes" CTA button
+4. ✅ Toast notification for errors
+5. ✅ Loading states during payment redirect
+
+### UI Features
+- Success modal: Checkmark icon, congratulations message, theme preview
+- Error handling: Network errors, payment declined, payment cancelled
+- Loading spinner: Show while redirecting to Stripe
+- Theme unlock animation: Smooth fade-in when lock removed
+
+### Acceptance Criteria
+- [ ] Success modal appears after purchase
+- [ ] Checkmark animation plays
+- [ ] "Explore Themes" button scrolls to premium section
+- [ ] Error messages clear and actionable
+- [ ] Loading state shows during Stripe redirect
+- [ ] Premium themes highlight after unlock
+- [ ] Smooth animations (no jank)
+
+---
+
+## Task 6: Analytics & Tracking (Optional)
+
+**Priority:** P2 (Can add later)
+**Owner:** Developer
+**Estimated Effort:** 1-2 hours
+**Status:** 🔴 Not Started
+**Dependencies:** Task 4 complete
+
+### Goal
+Track conversion funnel for monetization optimization
+
+### Events to Track
+1. `theme_gallery_view` - User opens Settings modal
+2. `premium_theme_view` - User scrolls to premium section
+3. `buy_button_click` - User clicks "Buy Pack"
+4. `stripe_checkout_redirect` - User redirected to Stripe
+5. `purchase_success` - Payment completed
+6. `purchase_cancel` - User cancelled payment
+7. `theme_unlock` - Premium theme applied
+
+### Implementation (Simple)
+- Use Google Analytics or Plausible
+- Add event tracking with `gtag()` or `plausible()`
+
+### Acceptance Criteria
+- [ ] Analytics tool integrated
+- [ ] 7 key events tracked
+- [ ] Funnel visible in analytics dashboard
+- [ ] No PII tracked (GDPR compliant)
+
+---
+
+## SUMMARY: Monetization Implementation Plan
+
+### Total Estimated Effort: 19-27 hours
+
+| Task | Priority | Effort | Status |
+|------|----------|--------|--------|
+| 1. Premium Themes Implementation | P0 | 4-6h | 🔴 Not Started |
+| 2. Lock/Unlock System | P0 | 3-4h | 🔴 Not Started |
+| 3. Premium Gallery UI | P0 | 3-4h | 🔴 Not Started |
+| 4. Stripe Payment | P0 | 6-8h | 🔴 Not Started |
+| 5. Purchase Confirmation | P1 | 2-3h | 🔴 Not Started |
+| 6. Analytics Tracking | P2 | 1-2h | 🔴 Not Started |
+
+### Critical Path (MVP):
+1. Task 1 → 2 → 3 → 4 (16-22 hours)
+2. Launch with basic payment flow
+3. Add Task 5 & 6 in v2
+
+### Launch Readiness Checklist:
+- [ ] All P0 tasks complete (Tasks 1-4)
+- [ ] Tested with Stripe test cards
+- [ ] Verified on Live Server (desktop + mobile)
+- [ ] No console errors
+- [ ] Purchase flow <30 seconds
+- [ ] Themes unlock instantly
+- [ ] README updated with "Premium Themes Available"
+
+### Post-Launch:
+- [ ] Switch Stripe from test mode to live mode
+- [ ] Monitor Stripe Dashboard for transactions
+- [ ] Track conversion rate (theme gallery views → purchases)
+- [ ] Gather user feedback
+- [ ] Iterate based on data
+
+---
+
+## Developer Questions Before Starting
+
+**Please answer these before implementation:**
+
+1. **Hosting for serverless functions:**
+   - Are you using Vercel, Netlify, or custom?
+   - Do you have experience with serverless functions?
+
+2. **Stripe experience:**
+   - Have you integrated Stripe before?
+   - Do you need help setting up Stripe account?
+
+3. **Estimated timeline:**
+   - How many hours per day can you allocate?
+   - Expected completion date? (e.g., 1 week, 2 weeks?)
+
+4. **Concerns or blockers:**
+   - Any technical concerns about this implementation?
+   - Need clarification on any requirements?
+
+**Contact Business Planner with questions:**
+- See: `business/strategy/premium-themes-spec.md` (theme details)
+- See: `business/strategy/payment-system-prd.md` (payment details)
+- WORKLOG: `business/WORKLOG.md` (context & decisions)
+
+### Developer Answers (2026-01-19)
+
+1. **Hosting for serverless functions:**
+   - **Answer**: Local development only (no deployment yet)
+   - **Implication**: Will implement Tasks 1-3 first (no backend needed), defer Stripe integration (Task 4) until deployment environment is decided
+
+2. **Stripe experience:**
+   - **Answer**: Need help setting up Stripe account
+   - **Implication**: Business Planner will assist with Stripe account creation when ready for Task 4
+
+3. **Estimated timeline:**
+   - **Answer**: Flexible hours per day
+   - **Implication**: Will work at own pace, update WORKLOG.md after each task completion
+
+4. **Security approach:**
+   - **Answer**: MVP approach (URL parameter method)
+   - **Implication**: Simple localStorage-based unlock for MVP, can add license key system in v2 if needed
+
+### Implementation Strategy (Phased Approach)
+
+**Phase 1: Frontend-only (No backend needed) - Start Now**
+- ✅ Task 1: Add 9 premium themes to constants.js (4-6h)
+- ✅ Task 2: Implement lock/unlock system with localStorage (3-4h)
+- ✅ Task 3: Build premium gallery UI (3-4h)
+- **Estimated**: 10-14 hours total
+- **Result**: Premium themes visible and functional, but no real payment yet
+
+**Phase 2: Payment Integration - Later (After deployment decision)**
+- ⏸️ Task 4: Stripe payment integration (requires serverless function or backend)
+- **Options**:
+  - Option A: Deploy to Vercel/Netlify (free tier available)
+  - Option B: Use Stripe Payment Links (no code, manual unlock)
+  - Option C: Mock payment for testing (switch to real Stripe later)
+- **Decision**: Defer until Phase 1 complete
+
+**Recommendation**: Start with Task 1 now. Premium themes can work locally without payment system, and we can add real payments when deployment environment is ready.
 
 ---
 
 ## Recommended Next Task
 
-### 🎯 Next: Business Planning & Commercialization Strategy
+### 🎯 Start with Task 1: Premium Themes Implementation
 
-**Rationale:**
-- ✅ All core clock features complete (v1.11.0)
-- ✅ 5 themes, PWA, alarms, world clock, stopwatch, recurring alarms
-- 🎯 Time to focus on monetization and user growth
-- Product is ready for market launch
+**Why start here:**
+- ✅ Self-contained (no external dependencies)
+- ✅ Quick win (4-6 hours)
+- ✅ Provides visual feedback (can see new themes)
+- ✅ No payment setup needed yet
+- ✅ Can test immediately on Live Server
 
-**Alternative Next Steps:**
-1. Task #1 (Animation Speed Control) - 빠른 구현 (1시간)
-2. Task #2 (12h/24h Format Toggle) - 지역화 개선 (1시간)
-3. ⭐ **Business planning** (RECOMMENDED) - 수익화 전략, 경쟁사 분석, Go-to-Market
+**After Task 1 complete:**
+- Business Planner will review theme colors
+- Get user feedback on theme designs
+- Proceed to Task 2 (Lock/Unlock System)
 
 ---
 

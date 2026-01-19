@@ -111,3 +111,164 @@ const HOURS_IN_DAY = CLOCK_CONFIG.HOURS_IN_DAY;
 const MINUTES_IN_HOUR = CLOCK_CONFIG.MINUTES_IN_HOUR;
 const SECONDS_IN_MINUTE = CLOCK_CONFIG.SECONDS_IN_MINUTE;
 const MS_IN_SECOND = CLOCK_CONFIG.MS_IN_SECOND;
+
+// ==================== PREMIUM THEMES ====================
+
+/**
+ * Premium theme packs for monetization
+ * Each theme uses simplified structure that will be expanded to full structure on application
+ * See: business/strategy/premium-themes-spec.md
+ */
+const PREMIUM_THEMES = [
+    // ===== LUXURY PACK ($4.99) =====
+    {
+        id: 'goldenHour',
+        name: 'Golden Hour',
+        pack: 'luxury',
+        price: 4.99,
+        description: 'Opulent gold with warm amber tones',
+        background: '#1a1410',
+        text: '#f4e4c1',
+        hourRing: '#d4af37',
+        minuteRing: '#ffd700',
+        secondRing: '#ffed4e',
+        millisecondRing: '#fff8dc'
+    },
+    {
+        id: 'midnightMarble',
+        name: 'Midnight Marble',
+        pack: 'luxury',
+        price: 4.99,
+        description: 'Dark marble with silver and blue-gray accents',
+        background: '#0f0f13',
+        text: '#d8dce6',
+        hourRing: '#4a5568',
+        minuteRing: '#718096',
+        secondRing: '#a0aec0',
+        millisecondRing: '#cbd5e0'
+    },
+    {
+        id: 'roseGoldElegance',
+        name: 'Rose Gold Elegance',
+        pack: 'luxury',
+        price: 4.99,
+        description: 'Feminine rose gold with warm pink tones',
+        background: '#1c1315',
+        text: '#f5e6e8',
+        hourRing: '#b76e79',
+        minuteRing: '#d4a5a5',
+        secondRing: '#e8c4bc',
+        millisecondRing: '#f7e7e5'
+    },
+
+    // ===== NATURE PACK ($3.99) =====
+    {
+        id: 'forestTwilight',
+        name: 'Forest Twilight',
+        pack: 'nature',
+        price: 3.99,
+        description: 'Deep forest greens with moss and sage tones',
+        background: '#0d1b0f',
+        text: '#d4e4d4',
+        hourRing: '#2d5016',
+        minuteRing: '#4a7c59',
+        secondRing: '#6b9b7e',
+        millisecondRing: '#a8d5ba'
+    },
+    {
+        id: 'oceanDepths',
+        name: 'Ocean Depths',
+        pack: 'nature',
+        price: 3.99,
+        description: 'Deep ocean blues with turquoise and aqua accents',
+        background: '#0a1118',
+        text: '#d4f1f9',
+        hourRing: '#1e3a5f',
+        minuteRing: '#2c5f8d',
+        secondRing: '#4a9aba',
+        millisecondRing: '#7ec8e3'
+    },
+    {
+        id: 'desertDawn',
+        name: 'Desert Dawn',
+        pack: 'nature',
+        price: 3.99,
+        description: 'Warm desert sands with terracotta and amber',
+        background: '#1a1410',
+        text: '#f9f3e8',
+        hourRing: '#8b5a2b',
+        minuteRing: '#b8733c',
+        secondRing: '#d4a373',
+        millisecondRing: '#e8d5b7'
+    },
+
+    // ===== NEON PACK ($3.99) =====
+    {
+        id: 'cyberpunkMagenta',
+        name: 'Cyberpunk Magenta',
+        pack: 'neon',
+        price: 3.99,
+        description: 'Electric magenta with hot pink and purple',
+        background: '#0d0221',
+        text: '#f9d7ff',
+        hourRing: '#a40e4c',
+        minuteRing: '#d81e5b',
+        secondRing: '#f15bb5',
+        millisecondRing: '#fda4d8'
+    },
+    {
+        id: 'electricLime',
+        name: 'Electric Lime',
+        pack: 'neon',
+        price: 3.99,
+        description: 'Vibrant lime green with neon yellow accents',
+        background: '#0a0e09',
+        text: '#e8ffd4',
+        hourRing: '#3d8b37',
+        minuteRing: '#5fbf4c',
+        secondRing: '#8fde82',
+        millisecondRing: '#c0f2b4'
+    },
+    {
+        id: 'neonUltraviolet',
+        name: 'Neon Ultraviolet',
+        pack: 'neon',
+        price: 3.99,
+        description: 'Deep ultraviolet with electric purple and blue',
+        background: '#0d0221',
+        text: '#e9d5ff',
+        hourRing: '#5b21b6',
+        minuteRing: '#7c3aed',
+        secondRing: '#a78bfa',
+        millisecondRing: '#c4b5fd'
+    }
+];
+
+// Pack metadata for monetization
+const THEME_PACKS = {
+    luxury: {
+        name: 'Luxury Pack',
+        price: 4.99,
+        themes: ['goldenHour', 'midnightMarble', 'roseGoldElegance'],
+        description: '3 opulent themes: Golden Hour, Midnight Marble, Rose Gold Elegance'
+    },
+    nature: {
+        name: 'Nature Pack',
+        price: 3.99,
+        themes: ['forestTwilight', 'oceanDepths', 'desertDawn'],
+        description: '3 natural themes: Forest Twilight, Ocean Depths, Desert Dawn'
+    },
+    neon: {
+        name: 'Neon Pack',
+        price: 3.99,
+        themes: ['cyberpunkMagenta', 'electricLime', 'neonUltraviolet'],
+        description: '3 vibrant themes: Cyberpunk Magenta, Electric Lime, Neon Ultraviolet'
+    },
+    bundle: {
+        name: 'All Themes Bundle',
+        price: 12.99,
+        themes: ['goldenHour', 'midnightMarble', 'roseGoldElegance', 'forestTwilight', 'oceanDepths', 'desertDawn', 'cyberpunkMagenta', 'electricLime', 'neonUltraviolet'],
+        description: 'All 9 premium themes - Save 20%',
+        discount: 0.20
+    }
+};
