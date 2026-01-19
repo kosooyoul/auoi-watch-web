@@ -2,6 +2,228 @@
 
 ## Version History
 
+### v1.15.0 (2026-01-19)
+**Monetization Phase 1 - Premium Themes & Lock/Unlock System**
+
+**🎯 Business Goal: Revenue Generation via Premium Theme Packs**
+
+This release implements the foundation for monetization by adding 9 premium themes organized into 3 purchasable packs. Users can unlock premium themes through a localStorage-based system (payment integration coming in next phase).
+
+---
+
+#### Task 1: Premium Themes Implementation (4-6 hours)
+**Status:** ✅ Complete
+**Commit:** `3784b8f`
+
+**Features:**
+- Added 9 premium themes to `js/constants.js`:
+  - **Luxury Pack** ($4.99): Golden Hour, Midnight Marble, Rose Gold Elegance
+  - **Nature Pack** ($3.99): Forest Twilight, Ocean Depths, Desert Dawn
+  - **Neon Pack** ($3.99): Cyberpunk Magenta, Electric Lime, Neon Ultraviolet
+- Created `PREMIUM_THEMES` array with pack metadata
+- Created `THEME_PACKS` object with pricing and descriptions
+
+**Technical Implementation:**
+
+1. **Helper Functions (js/utils.js):**
+   - `rgbToHex(rgb)` - Convert RGB array to hex string
+   - `adjustBrightness(hex, percent)` - Adjust color brightness
+   - `createGradient(color)` - Generate start/mid/end gradient from single color
+
+2. **Theme System Updates (js/theme.js):**
+   - `convertPremiumThemeToFull()` - Convert simplified theme to full structure
+   - `findTheme(themeId)` - Search both free and premium themes
+   - `renderPremiumThemes()` - Dynamic rendering of premium theme gallery
+   - Updated `applyTheme()` to support both free and premium themes
+
+3. **UI Components:**
+   - Premium Themes section in Settings modal
+   - Theme cards with preview colors (4 ring colors)
+   - Lock overlays with 🔒 icon for locked themes
+   - Pack headers with name, price, and "Buy Pack" buttons
+
+4. **CSS Styling (styles.css):**
+   - `.premium-pack-section` - Pack container styling
+   - `.premium-pack-header` - Pack header layout
+   - `.buy-pack-btn` - Purchase button styling with hover effects
+   - `.theme-option.locked` - Locked theme visual state
+   - `.lock-overlay` - Semi-transparent overlay with blur effect
+
+**Files Modified:**
+- `js/constants.js` (+160 lines) - Premium theme definitions
+- `js/utils.js` (+42 lines) - Color utilities
+- `js/theme.js` (+138 lines) - Premium theme support
+- `index.html` (+6 lines) - Premium container
+- `styles.css` (+93 lines) - Premium UI styles
+
+**Result:** Premium themes visible in Settings modal, all locked by default, ready for unlock system.
+
+---
+
+#### Task 2: Lock/Unlock System (3-4 hours)
+**Status:** ✅ Complete
+**Commit:** `549682c`
+
+**Features:**
+- localStorage-based purchase tracking
+- Pack-level unlock (luxury, nature, neon, bundle)
+- Automatic UI updates after unlock
+- Test mode for immediate unlock (simulates purchase)
+- Developer console helpers for testing
+
+**Technical Implementation:**
+
+1. **Purchase Management (js/theme.js):**
+   - `getPurchases()` - Load purchase data from localStorage
+   - `savePurchases(purchases)` - Save purchase data
+   - `isThemeUnlocked(themeId)` - Check if theme is unlocked
+   - `unlockPack(packId, options)` - Unlock pack and update UI
+   - `isPackPurchased(packId)` - Check pack purchase status
+
+2. **localStorage Structure:**
+```javascript
+// Key: ringClockPurchases
+{
+  "luxury": {
+    "purchased": true,
+    "date": "2026-01-19T10:00:00Z",
+    "price": 4.99,
+    "receipt": null
+  },
+  "nature": { "purchased": false },
+  "neon": { "purchased": false },
+  "bundle": { "purchased": false }
+}
+```
+
+3. **UI Updates:**
+   - Purchased packs show "✓ Purchased" button (disabled)
+   - Unlocked themes remove lock overlay
+   - Unlocked themes become clickable and apply on click
+   - Locked themes show alert on click
+
+4. **Test Mode:**
+   - "Buy Pack" button shows test confirmation dialog
+   - Confirms → unlocks pack immediately
+   - Success alert with unlock confirmation
+
+5. **Developer Testing Helpers:**
+```javascript
+showPurchaseStatus()  // View current purchases
+unlockPack(packId)    // Unlock specific pack
+unlockAllPacks()      // Unlock all packs
+resetPurchases()      // Reset to locked state
+getPurchases()        // Get raw purchase data
+```
+
+**Files Modified:**
+- `js/theme.js` (+108 lines) - Lock/unlock logic + helpers
+- `styles.css` (+12 lines) - Purchased button styles
+- `TESTING.md` (new file, +180 lines) - Complete testing guide
+
+**Result:** Fully functional lock/unlock system with test mode. Purchases persist across page refreshes. Ready for Stripe integration.
+
+---
+
+#### Testing & Quality Assurance
+
+**Manual Testing Checklist:**
+- ✅ All 9 premium themes render correctly
+- ✅ Lock icons display on locked themes
+- ✅ "Buy Pack" buttons functional
+- ✅ Purchase unlocks correct themes
+- ✅ Purchase persists after refresh
+- ✅ Unlocked themes apply correctly
+- ✅ Developer console helpers work
+- ✅ No console errors
+
+**Browser Console Commands:**
+```javascript
+// Quick tests
+showPurchaseStatus()       // Check current state
+unlockPack('luxury')       // Test single unlock
+unlockAllPacks()           // Test all unlocks
+resetPurchases()           // Test reset
+```
+
+See `TESTING.md` for complete testing guide.
+
+---
+
+#### Architecture & Code Quality
+
+**Design Decisions:**
+
+1. **Simplified Premium Theme Structure:**
+   - Premium themes use simple structure (background, text, 4 ring colors)
+   - Converted to full structure at runtime via `convertPremiumThemeToFull()`
+   - Benefits: Easier to maintain, less repetition in constants.js
+
+2. **localStorage-based Purchase Tracking:**
+   - Per-device storage (no server needed for MVP)
+   - Fast unlock/check operations (no network latency)
+   - Simple implementation for Phase 1
+   - Future: Can migrate to cloud sync with backend
+
+3. **Pack-level Unlock:**
+   - Users unlock entire packs, not individual themes
+   - Simplifies purchase flow (fewer choices)
+   - Better value proposition (3 themes per pack)
+   - Bundle option unlocks all themes (20% discount)
+
+4. **Test Mode First:**
+   - Immediate unlock for testing/validation
+   - No Stripe dependency for Phase 1 development
+   - Easy to test UI/UX before payment integration
+   - Will be replaced with Stripe redirect in Task 4
+
+**Code Statistics:**
+- Lines added: ~538
+- Lines modified: ~30
+- New files: 2 (TESTING.md, updates to existing)
+- Functions added: 15
+
+---
+
+#### Business Impact
+
+**Revenue Readiness:**
+- ✅ Premium content created (9 themes)
+- ✅ Pricing defined ($3.99 - $4.99 per pack, $12.99 bundle)
+- ✅ Lock/unlock system functional
+- ⏸️ Payment integration pending (Task 4)
+
+**Target Customers:**
+- Luxury Pack → Professionals, executives, design lovers
+- Nature Pack → Eco-conscious, mindfulness practitioners
+- Neon Pack → Gamers, creators, night owls
+
+**Expected Metrics (Post-Launch):**
+- Preview rate: 30-50% (users curious about premium)
+- Conversion rate: 5-10% (after previewing)
+- Most popular pack: Luxury (aspirational appeal)
+- Bundle adoption: 20-30% (value-conscious buyers)
+
+---
+
+#### Next Steps
+
+**Phase 2: Payment Integration (Task 4)**
+- Set up Stripe account (test mode)
+- Create Stripe products (3 packs + bundle)
+- Implement Stripe Checkout redirect flow
+- Create serverless function for session creation
+- Handle success/cancel redirects
+- Switch from test mode to live payments
+
+**Estimated Effort:** 6-8 hours
+**Priority:** P0 (blocks revenue)
+**Dependencies:** Hosting environment (Vercel/Netlify)
+
+See: `business/strategy/payment-system-prd.md`
+
+---
+
 ### v1.14.0 (2026-01-19)
 **Code Refactoring - Utilities & DRY Improvements**
 
@@ -1136,7 +1358,9 @@ worldClocks = [
 - ~~Alarm/Timer features (Notification API)~~ ✅ Completed in v1.7.0
 - ~~Visual alarm markers on clock rings~~ ✅ Completed in v1.7.0
 - ~~World clock (multi-timezone)~~ ✅ Completed in v1.8.0
-- Recurring alarms (daily, weekdays, custom)
-- Stopwatch mode
-- 12h/24h toggle
-- Animation speed control
+- ~~Recurring alarms (daily, weekdays, custom)~~ ✅ Completed in v1.11.0
+- ~~Stopwatch mode~~ ✅ Completed in v1.9.0
+- ~~12h/24h toggle~~ ✅ Completed in v1.12.0
+- ~~Animation speed control~~ ✅ Completed in v1.13.0
+- ~~Premium themes (monetization)~~ ✅ Completed in v1.14.0
+- Payment integration (Stripe) - In Progress
