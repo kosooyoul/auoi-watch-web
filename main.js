@@ -8,6 +8,9 @@ function init() {
     initSettingsUI();
     loadSettings(); // Load saved theme from localStorage
 
+    // Initialize payment system
+    initPaymentSystem();
+
     // Initialize fullscreen
     initFullscreen();
 

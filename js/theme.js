@@ -615,18 +615,12 @@ function createPremiumThemeCard(theme, isUnlocked) {
  * @param {string} packId - Pack ID to purchase
  */
 function handlePurchasePack(packId) {
-    // For testing: unlock immediately
-    // TODO: In Task 4, redirect to Stripe payment instead
-    const confirmed = confirm(
-        `[TEST MODE]\n\n` +
-        `Unlock ${THEME_PACKS[packId]?.name || packId} for testing?\n\n` +
-        `This simulates a successful purchase.\n` +
-        `In Task 4, this will redirect to Stripe payment.`
-    );
-
-    if (confirmed) {
-        unlockPack(packId);
-        alert(`✓ ${THEME_PACKS[packId]?.name || packId} unlocked!\n\nYou can now use these premium themes.`);
+    // Redirect to Stripe Payment Link
+    if (typeof window.purchasePack === 'function') {
+        window.purchasePack(packId);
+    } else {
+        console.error('Payment system not loaded. Make sure js/payment.js is included.');
+        alert('Payment system is not available. Please refresh the page.');
     }
 }
 
