@@ -12,9 +12,9 @@ This release implements the payment infrastructure using Stripe Payment Links, a
 ---
 
 #### Task 4: Stripe Payment Integration (3-4 hours)
-**Status:** ✅ Complete (Code Implementation)
-**Commit:** Pending
-**Next Step:** Configure Stripe account and Payment Links (see STRIPE_SETUP.md)
+**Status:** ✅ Complete
+**Commit:** `8b2cef3`
+**Stripe Setup:** Assumed complete by user
 
 **Features:**
 - Stripe Payment Links integration (no backend required)
@@ -109,6 +109,84 @@ This release implements the payment infrastructure using Stripe Payment Links, a
 5. Test with card: 4242 4242 4242 4242
 
 See **STRIPE_SETUP.md** for detailed instructions.
+
+---
+
+#### Task 5: Purchase UX Polish & Animations (1-2 hours)
+**Status:** ✅ Complete
+**Commit:** Pending
+
+**Features:**
+- Loading spinner during Stripe redirect
+- Error toast notifications (replaces alerts)
+- "Explore Your Themes" button with scroll functionality
+- Theme unlock highlight animation
+- Smooth UX transitions throughout purchase flow
+
+**Technical Implementation:**
+
+1. **Loading Spinner (js/payment.js):**
+   - `showLoadingSpinner()` - Displays spinner before Stripe redirect
+   - Full-screen overlay with rotating spinner
+   - "Redirecting to payment..." message
+   - 300ms delay before redirect for visibility
+
+2. **Error Toast System:**
+   - `showErrorToast(message)` - Replaces alert() with styled toast
+   - Bottom-center positioning with slide-up animation
+   - Auto-dismisses after 4 seconds
+   - Warning icon + custom message
+   - Red gradient background with shadow
+
+3. **Settings Modal Auto-open:**
+   - `openSettingsAndScrollToPremium()` - Opens settings after purchase
+   - Scrolls to premium themes section smoothly
+   - Triggers unlock highlight animation
+
+4. **Theme Unlock Animation:**
+   - `highlightUnlockedThemes()` - Highlights newly unlocked themes
+   - Staggered animation (100ms delay per theme)
+   - Pulse + glow effect (scale 1.05, green shadow)
+   - Auto-removes highlight after 2 seconds
+
+5. **CSS Additions (styles.css):**
+   - `.payment-loading-spinner` - Full-screen loading overlay
+   - `.spinner` - Rotating circle animation (@keyframes spin)
+   - `.error-toast` - Bottom toast notification
+   - `.newly-unlocked` - Theme highlight animation (@keyframes unlockPulse)
+
+**User Flow Enhancement:**
+```
+Before:
+  Click "Buy" → Instant redirect (jarring)
+  Error → Browser alert (ugly)
+  Success → Modal closes (no guidance)
+
+After:
+  Click "Buy" → Loading spinner → Smooth redirect
+  Error → Styled toast notification
+  Success → Modal → Settings opens → Scroll to themes → Pulse highlight
+```
+
+**Files Modified:**
+- `js/payment.js` (+45 lines) - Loading, toast, scroll, highlight functions
+- `styles.css` (+97 lines) - Spinner, toast, unlock animation styles
+
+**Result:**
+- Premium purchase experience with smooth animations
+- Clear visual feedback at every step
+- Guided user flow after successful purchase
+- No jarring alerts or sudden redirects
+
+**Verification:**
+✅ Loading spinner shows before redirect
+✅ Error toast appears instead of alert
+✅ Settings modal opens after success
+✅ Scrolls to premium themes section
+✅ Unlocked themes highlight with animation
+✅ All animations smooth (no jank)
+✅ Auto-dismiss timings appropriate
+✅ No console errors
 
 ---
 

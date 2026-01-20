@@ -15,16 +15,21 @@ function purchasePack(packId) {
     const paymentLink = PAYMENT_LINKS[packId];
 
     if (!paymentLink || paymentLink.includes('PLACEHOLDER')) {
-        alert('Payment system is not configured yet. Please set up Stripe Payment Links first.\n\nSee instructions in STRIPE_SETUP.md');
+        showErrorToast('Payment system is not configured yet. Please set up Stripe Payment Links first.');
         console.error('Payment link not configured for pack:', packId);
         return;
     }
 
+    // Show loading spinner
+    showLoadingSpinner();
+
     // Store pack ID in localStorage (to identify which pack was purchased after redirect)
     localStorage.setItem('pendingPurchase', packId);
 
-    // Redirect to Stripe Payment Link
-    window.location.href = paymentLink;
+    // Redirect to Stripe Payment Link (with slight delay for loading spinner visibility)
+    setTimeout(() => {
+        window.location.href = paymentLink;
+    }, 300);
 }
 
 // Handle successful payment (called after redirect back from Stripe)
@@ -51,7 +56,7 @@ function handlePurchaseSuccess() {
         localStorage.removeItem('pendingPurchase');
 
         // Show cancel message
-        alert('Payment cancelled. Your themes remain locked.');
+        showErrorToast('Payment cancelled. Your themes remain locked.');
 
         // Clean URL
         const cleanUrl = window.location.origin + window.location.pathname;
@@ -94,13 +99,92 @@ function showPurchaseSuccessMessage(packId) {
     }, 5000);
 }
 
-// Close success modal
+// Close success modal and optionally open settings
 function closePurchaseSuccessModal() {
     const modal = document.querySelector('.purchase-success-modal');
     if (modal) {
         modal.classList.remove('active');
-        setTimeout(() => modal.remove(), 300);
+        setTimeout(() => {
+            modal.remove();
+
+            // Open settings modal and scroll to premium themes
+            openSettingsAndScrollToPremium();
+        }, 300);
     }
+}
+
+// Open settings modal and scroll to premium themes section
+function openSettingsAndScrollToPremium() {
+    const settingsModal = document.getElementById('settingsModal');
+    const premiumContainer = document.getElementById('premiumThemesContainer');
+
+    if (settingsModal && premiumContainer) {
+        // Open settings modal
+        settingsModal.classList.add('active');
+
+        // Scroll to premium themes section
+        setTimeout(() => {
+            premiumContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // Add highlight animation to newly unlocked themes
+            highlightUnlockedThemes();
+        }, 300);
+    }
+}
+
+// Highlight newly unlocked themes with fade-in animation
+function highlightUnlockedThemes() {
+    const unlockedThemes = document.querySelectorAll('.premium-theme:not(.locked)');
+
+    unlockedThemes.forEach((theme, index) => {
+        // Add highlight class with staggered delay
+        setTimeout(() => {
+            theme.classList.add('newly-unlocked');
+
+            // Remove highlight after animation
+            setTimeout(() => {
+                theme.classList.remove('newly-unlocked');
+            }, 2000);
+        }, index * 100);
+    });
+}
+
+// Show loading spinner during Stripe redirect
+function showLoadingSpinner() {
+    const spinner = document.createElement('div');
+    spinner.className = 'payment-loading-spinner';
+    spinner.innerHTML = `
+        <div class="spinner-content">
+            <div class="spinner"></div>
+            <p>Redirecting to payment...</p>
+        </div>
+    `;
+
+    document.body.appendChild(spinner);
+
+    // Fade in
+    setTimeout(() => spinner.classList.add('active'), 10);
+}
+
+// Show error toast notification
+function showErrorToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'error-toast';
+    toast.innerHTML = `
+        <div class="toast-icon">⚠️</div>
+        <div class="toast-message">${message}</div>
+    `;
+
+    document.body.appendChild(toast);
+
+    // Fade in
+    setTimeout(() => toast.classList.add('active'), 10);
+
+    // Auto-dismiss after 4 seconds
+    setTimeout(() => {
+        toast.classList.remove('active');
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
 }
 
 // Initialize payment system

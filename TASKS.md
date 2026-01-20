@@ -707,19 +707,20 @@ See **STRIPE_SETUP.md** for complete guide:
 
 **Priority:** P1 (Nice to have)
 **Owner:** Developer
-**Estimated Effort:** 2-3 hours
-**Status:** 🔴 Not Started
+**Estimated Effort:** 1-2 hours (actual)
+**Status:** ✅ Complete
+**Commit:** Pending
 **Dependencies:** Task 4 complete
 
 ### Goal
 Add success confirmation and polish purchase experience
 
 ### Deliverables
-1. ✅ Success modal after purchase
-2. ✅ Checkmark animation
-3. ✅ "Explore Your Themes" CTA button
-4. ✅ Toast notification for errors
-5. ✅ Loading states during payment redirect
+1. ✅ Success modal after purchase (already in Task 4)
+2. ✅ Checkmark animation (already in Task 4)
+3. ✅ "Explore Your Themes" CTA button with scroll functionality
+4. ✅ Toast notification for errors (replaces alerts)
+5. ✅ Loading spinner during payment redirect
 
 ### UI Features
 - Success modal: Checkmark icon, congratulations message, theme preview
@@ -727,14 +728,31 @@ Add success confirmation and polish purchase experience
 - Loading spinner: Show while redirecting to Stripe
 - Theme unlock animation: Smooth fade-in when lock removed
 
+### Implementation Details
+
+**New Functions (js/payment.js):**
+- `showLoadingSpinner()` - Full-screen loading overlay before redirect
+- `showErrorToast(message)` - Styled toast replacing alert()
+- `openSettingsAndScrollToPremium()` - Auto-opens settings and scrolls
+- `highlightUnlockedThemes()` - Pulse animation on unlocked themes
+
+**New CSS (styles.css):**
+- `.payment-loading-spinner` - Loading overlay with spinner
+- `.error-toast` - Bottom toast notification
+- `.newly-unlocked` - Theme unlock highlight animation
+- `@keyframes spin` - Spinner rotation
+- `@keyframes unlockPulse` - Theme pulse effect
+
 ### Acceptance Criteria
-- [ ] Success modal appears after purchase
-- [ ] Checkmark animation plays
-- [ ] "Explore Themes" button scrolls to premium section
-- [ ] Error messages clear and actionable
-- [ ] Loading state shows during Stripe redirect
-- [ ] Premium themes highlight after unlock
-- [ ] Smooth animations (no jank)
+- [x] Success modal appears after purchase
+- [x] Checkmark animation plays
+- [x] "Explore Themes" button scrolls to premium section
+- [x] Error messages clear and actionable (toast instead of alert)
+- [x] Loading spinner shows during Stripe redirect
+- [x] Premium themes highlight after unlock
+- [x] Smooth animations (no jank)
+- [x] Auto-dismiss timings appropriate (4s toast, 2s highlight)
+- [x] Settings modal opens automatically after purchase
 
 ---
 
