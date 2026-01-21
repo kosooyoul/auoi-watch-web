@@ -108,6 +108,11 @@ function applyTheme(themeId) {
 
     // Update active theme option in UI
     updateThemeUI(themeId);
+
+    // Analytics: Track theme unlock (Event 7) - only for premium themes
+    if (result.isPremium && isThemeUnlocked(themeId)) {
+        Analytics.trackThemeUnlock(themeId);
+    }
 }
 
 /**
@@ -320,6 +325,9 @@ function initSettingsUI() {
     settingsBtn.addEventListener('click', () => {
         settingsModal.classList.add('active');
         document.querySelector('.theme-option').focus();
+
+        // Analytics: Track theme gallery view
+        Analytics.trackThemeGalleryView();
     });
 
     // Close modal
@@ -397,6 +405,26 @@ function initSettingsUI() {
 
     // Render premium themes
     renderPremiumThemes();
+
+    // Analytics: Track premium section view (Event 2)
+    // Use IntersectionObserver to detect when premium section scrolls into view
+    const premiumContainer = document.getElementById('premiumThemesContainer');
+    if (premiumContainer && typeof IntersectionObserver !== 'undefined') {
+        let hasTracked = false; // Track only once per session
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !hasTracked) {
+                    Analytics.trackPremiumThemeView();
+                    hasTracked = true;
+                    // Optional: unobserve after first view
+                    observer.unobserve(premiumContainer);
+                }
+            });
+        }, {
+            threshold: 0.5 // Trigger when 50% of section is visible
+        });
+        observer.observe(premiumContainer);
+    }
 }
 
 /**
@@ -615,6 +643,12 @@ function createPremiumThemeCard(theme, isUnlocked) {
  * @param {string} packId - Pack ID to purchase
  */
 function handlePurchasePack(packId) {
+    // Analytics: Track buy button click (Event 3)
+    const pack = THEME_PACKS[packId];
+    if (pack) {
+        Analytics.trackBuyButtonClick(packId, pack.price);
+    }
+
     // Redirect to Stripe Payment Link
     if (typeof window.purchasePack === 'function') {
         window.purchasePack(packId);

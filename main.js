@@ -4,6 +4,9 @@
  * Initialize the application
  */
 function init() {
+    // Initialize analytics (first, so other modules can track events)
+    Analytics.init();
+
     // Initialize settings system
     initSettingsUI();
     loadSettings(); // Load saved theme from localStorage

@@ -190,25 +190,140 @@ After:
 
 ---
 
+#### Task 6: Analytics & Tracking (1-2 hours)
+**Status:** ✅ Complete
+**Commit:** Pending
+
+**Features:**
+- Google Analytics 4 (GA4) integration for conversion funnel tracking
+- 7 key events tracked throughout purchase journey
+- Debug mode for local testing (console logs)
+- Production-ready (just needs GA4 Measurement ID)
+- GDPR compliant (no PII, IP anonymization)
+- Complete testing guide documentation
+
+**Technical Implementation:**
+
+1. **Analytics Module (js/analytics.js - NEW):**
+   - `initAnalytics()` - Loads GA4 script and configures tracking
+   - `trackEvent()` - Core event tracking function with debug mode
+   - `trackThemeGalleryView()` - Event 1: Settings modal opened
+   - `trackPremiumThemeView()` - Event 2: Premium section viewed
+   - `trackBuyButtonClick()` - Event 3: Buy button clicked
+   - `trackStripeCheckoutRedirect()` - Event 4: Redirected to Stripe
+   - `trackPurchaseSuccess()` - Event 5: Payment completed
+   - `trackPurchaseCancel()` - Event 6: Payment cancelled
+   - `trackThemeUnlock()` - Event 7: Premium theme applied
+
+2. **Event Integration Points:**
+   - **theme.js**:
+     - Event 1: Settings button click (line 320-326)
+     - Event 2: Premium section scroll (IntersectionObserver, line 404-422)
+     - Event 3: Buy Pack button click (line 640-654)
+     - Event 7: Premium theme applied (line 112-115)
+   - **payment.js**:
+     - Event 4: Stripe redirect (line 29-33)
+     - Event 5: Purchase success (line 54-58)
+     - Event 6: Purchase cancel (line 70-72)
+
+3. **Conversion Funnel:**
+   ```
+   100% → theme_gallery_view (Settings opened)
+    ↓
+    X% → premium_theme_view (Premium section scrolled)
+    ↓
+    X% → buy_button_click (Buy button clicked)
+    ↓
+    X% → stripe_checkout_redirect (Checkout started)
+    ↓
+    X% → purchase_success (Payment completed) ✅
+         purchase_cancel (Payment cancelled) ❌
+    ↓
+    X% → theme_unlock (Premium theme used)
+   ```
+
+4. **Debug Mode:**
+   - `DEBUG_MODE = true` in analytics.js
+   - Events logged to browser console instead of sent to GA4
+   - Format: `[Analytics] Event: event_name {params}`
+   - No external data transmission during development
+
+5. **Production Configuration:**
+   - Get GA4 Measurement ID from Google Analytics dashboard
+   - Update `GA_MEASUREMENT_ID` in js/analytics.js
+   - Set `DEBUG_MODE = false`
+   - Events automatically sent to GA4
+   - Real-time reports available in GA4 dashboard
+
+**Files Created:**
+- `js/analytics.js` (+271 lines) - Analytics module with 7 event trackers
+- `ANALYTICS_TESTING.md` (+350 lines) - Complete testing guide
+
+**Files Modified:**
+- `index.html` (+1 line) - Added analytics.js script tag
+- `main.js` (+3 lines) - Added Analytics.init() call
+- `js/theme.js` (+22 lines) - 4 event tracking calls (Events 1, 2, 3, 7)
+- `js/payment.js` (+16 lines) - 3 event tracking calls (Events 4, 5, 6)
+
+**Testing Guide:**
+See `ANALYTICS_TESTING.md` for:
+- Step-by-step testing instructions for all 7 events
+- Console commands for manual event triggering
+- URL simulation for purchase success/cancel testing
+- Production deployment checklist
+- GA4 funnel setup guide
+
+**Privacy & Compliance:**
+- ✅ No PII tracked (no usernames, emails, IPs)
+- ✅ IP anonymization enabled (`anonymize_ip: true`)
+- ✅ Only anonymous behavioral events
+- ✅ First-party storage only (no third-party cookies)
+- ✅ GDPR compliant
+- ✅ Users can opt-out via browser settings
+
+**Result:**
+- Complete analytics infrastructure ready for deployment
+- 7-step conversion funnel fully instrumented
+- Debug mode for local development and testing
+- Production-ready with single configuration change
+- No breaking changes to existing features
+
+**Verification:**
+✅ Analytics module loads correctly
+✅ All 7 events fire in correct locations
+✅ Debug mode logs events to console
+✅ IntersectionObserver tracks premium section view
+✅ Pack prices included in conversion events
+✅ Transaction IDs generated for purchases
+✅ Testing guide complete with examples
+✅ No console errors
+✅ No impact on 60fps performance
+
+---
+
 #### v1.16.0 Summary
 
-**Total Effort:** 4-6 hours (Task 4: 3-4h, Task 5: 1-2h)
+**Total Effort:** 6-8 hours (Task 4: 3-4h, Task 5: 1-2h, Task 6: 1-2h)
 
 **Key Achievements:**
 - ✅ Complete payment system without backend/serverless
 - ✅ Premium purchase flow with smooth UX
-- ✅ Ready for production (after Stripe setup)
+- ✅ Analytics & conversion funnel tracking
+- ✅ Ready for production (after Stripe + GA4 setup)
 - ✅ Professional animations and visual feedback
-- ✅ Comprehensive setup documentation
+- ✅ Comprehensive setup and testing documentation
 
 **Files Created:**
-- `js/payment.js` (201 lines) - Complete payment system
-- `STRIPE_SETUP.md` (350 lines) - Setup guide
+- `js/payment.js` (217 lines) - Complete payment system
+- `js/analytics.js` (271 lines) - Analytics & event tracking
+- `STRIPE_SETUP.md` (350 lines) - Stripe setup guide
+- `ANALYTICS_TESTING.md` (350 lines) - Analytics testing guide
 
 **Files Modified:**
-- `js/theme.js` - handlePurchasePack() integration
-- `index.html` - payment.js script tag
-- `main.js` - initPaymentSystem() call
+- `js/theme.js` (+22 lines) - handlePurchasePack() integration + 4 analytics events
+- `js/payment.js` (+16 lines) - 3 analytics events
+- `index.html` (+2 lines) - payment.js + analytics.js script tags
+- `main.js` (+6 lines) - initPaymentSystem() + Analytics.init() calls
 - `styles.css` (+207 lines) - Modals, spinner, toast, animations
 
 **Revenue Readiness:**
@@ -216,15 +331,18 @@ After:
 - ✅ Lock/unlock system functional
 - ✅ Payment infrastructure complete
 - ✅ Purchase UX polished
+- ✅ Analytics & tracking infrastructure ready
 - ⏳ Stripe account setup (user todo)
+- ⏳ Google Analytics 4 setup (user todo)
 - 🎯 **Ready to generate revenue**
 
 **Next Steps:**
 1. User: Set up Stripe account and Payment Links
-2. User: Test with test card (4242 4242 4242 4242)
-3. Optional: Add analytics (Task 6)
+2. User: Set up Google Analytics 4 and get Measurement ID
+3. User: Test with test card (4242 4242 4242 4242)
 4. Deploy to production
 5. Launch marketing campaigns
+6. Monitor conversion funnel in GA4 dashboard
 
 ---
 

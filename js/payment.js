@@ -26,6 +26,12 @@ function purchasePack(packId) {
     // Store pack ID in localStorage (to identify which pack was purchased after redirect)
     localStorage.setItem('pendingPurchase', packId);
 
+    // Analytics: Track Stripe checkout redirect (Event 4)
+    const pack = THEME_PACKS[packId];
+    if (pack) {
+        Analytics.trackStripeCheckoutRedirect(packId, pack.price);
+    }
+
     // Redirect to Stripe Payment Link (with slight delay for loading spinner visibility)
     setTimeout(() => {
         window.location.href = paymentLink;
@@ -45,6 +51,12 @@ function handlePurchaseSuccess() {
         // Clear pending purchase
         localStorage.removeItem('pendingPurchase');
 
+        // Analytics: Track purchase success (Event 5)
+        const pack = THEME_PACKS[packId];
+        if (pack) {
+            Analytics.trackPurchaseSuccess(packId, pack.price);
+        }
+
         // Show success message
         showPurchaseSuccessMessage(packId);
 
@@ -54,6 +66,10 @@ function handlePurchaseSuccess() {
     } else if (purchaseStatus === 'cancel') {
         // User cancelled payment
         localStorage.removeItem('pendingPurchase');
+
+        // Analytics: Track purchase cancel (Event 6)
+        const pendingPackId = localStorage.getItem('pendingPurchase') || 'unknown';
+        Analytics.trackPurchaseCancel(pendingPackId);
 
         // Show cancel message
         showErrorToast('Payment cancelled. Your themes remain locked.');
