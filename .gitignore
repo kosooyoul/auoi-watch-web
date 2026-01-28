@@ -11,6 +11,12 @@ Thumbs.db
 test-*.html
 test-*.js
 
+# Backup files
+*.bak
+*.backup
+*.tmp
+*~
+
 # Logs
 *.log
 npm-debug.log*
