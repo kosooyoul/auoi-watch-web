@@ -2,7 +2,7 @@
 
 A web-based clock that displays time as animated circular progress rings with comet trail effects. Built with vanilla JavaScript for smooth, emotionally pleasing visuals.
 
-## Version 1.13.0
+## Version 1.16.0 - Premium Themes & Payment System
 
 ## Features
 
@@ -15,7 +15,14 @@ A web-based clock that displays time as animated circular progress rings with co
 - **Accessible** - Includes text-based time display
 
 ### Themes & Customization
-- **5 Color Themes** - Classic, Warm Sunset, Ocean Breeze, Neon Night, Soft Pastel
+- **14 Color Themes** - 5 free themes + 9 premium themes
+  - **Free**: Classic, Warm Sunset, Ocean Breeze, Neon Night, Soft Pastel
+  - **Premium**: Luxury Pack, Nature Pack, Neon Pack (3 themes each)
+- **Premium Theme Packs** - Purchase exclusive theme collections
+  - Luxury Pack ($4.99) - Golden Hour, Midnight Marble, Rose Gold Elegance
+  - Nature Pack ($3.99) - Forest Twilight, Ocean Depths, Desert Dawn
+  - Neon Pack ($3.99) - Cyberpunk Magenta, Electric Lime, Neon Ultraviolet
+  - Bundle ($12.99) - All 9 premium themes (save 20%)
 - **12h/24h Format Toggle** - Switch between 12-hour (AM/PM) and 24-hour time display
 - **Animation Speed Control** - Adjust animation speed from 0.5x (calm) to 2.0x (energetic)
 - **Theme Sharing** - Share your theme via URL
@@ -78,13 +85,14 @@ npx serve
 - `js/constants.js` - Theme definitions, city list, configuration
 - `js/utils.js` - Helper functions (color conversion, formatting)
 - `js/theme.js` - Theme system and settings UI
+- `js/payment.js` - Payment system (Stripe integration)
 - `js/clock.js` - Core clock rendering and animation loop
 - `js/fullscreen.js` - Fullscreen mode functionality
 - `js/pwa.js` - PWA service worker registration
 - `js/alarm.js` - Alarm and timer system with visual markers
 - `js/world-clock.js` - Multi-timezone world clock
 - `js/stopwatch.js` - Stopwatch with lap timing
-- `main.js` - Application initialization (36 lines)
+- `main.js` - Application initialization (39 lines)
 
 ### Core Systems
 - **Time Calculation**: Uses `Date.now()` and `performance.now()` for accurate real-time values (no drift when tab is inactive)

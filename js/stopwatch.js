@@ -23,30 +23,15 @@ function initStopwatchSystem() {
         return;
     }
 
-    // Open stopwatch modal
-    stopwatchBtn.addEventListener('click', () => {
-        stopwatchModal.classList.add('show');
-        if (stopwatchRunning) {
-            startStopwatchAnimation();
-        }
-    });
-
-    // Close stopwatch modal
-    stopwatchCloseBtn.addEventListener('click', () => {
-        stopwatchModal.classList.remove('show');
-    });
-
-    // Close on backdrop click
-    stopwatchModal.addEventListener('click', (e) => {
-        if (e.target === stopwatchModal) {
-            stopwatchModal.classList.remove('show');
-        }
-    });
-
-    // Close on Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && stopwatchModal.classList.contains('show')) {
-            stopwatchModal.classList.remove('show');
+    // Initialize stopwatch modal
+    initModal({
+        openButton: stopwatchBtn,
+        modal: stopwatchModal,
+        closeButton: stopwatchCloseBtn,
+        onOpen: () => {
+            if (stopwatchRunning) {
+                startStopwatchAnimation();
+            }
         }
     });
 

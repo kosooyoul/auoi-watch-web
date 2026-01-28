@@ -1,0 +1,33 @@
+# IDE settings
+.vscode/
+.idea/
+*.sublime-*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+test-*.html
+test-*.js
+
+# Backup files
+*.bak
+*.backup
+*.tmp
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencies (if using npm)
+node_modules/
+
+# Environment variables
+.env
+.env.local
+
+# Build outputs (if any)
+dist/
+build/

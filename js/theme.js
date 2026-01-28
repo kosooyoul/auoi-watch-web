@@ -5,16 +5,66 @@ let currentTheme = 'classic';
 let timeFormat = '24h';
 let animationSpeed = 1.0;
 
+// Expose currentTheme to window for auto-theme module
+window.currentTheme = currentTheme;
+
+/**
+ * Convert premium theme (simplified structure) to full theme structure
+ * @param {Object} premiumTheme - Premium theme with simplified structure
+ * @returns {Object} Full theme object compatible with existing system
+ */
+function convertPremiumThemeToFull(premiumTheme) {
+    const textRgb = hexToRgb(premiumTheme.text);
+    const hourRingRgb = hexToRgb(premiumTheme.hourRing);
+
+    return {
+        name: premiumTheme.name,
+        bgPrimary: premiumTheme.background,
+        bgSecondary: adjustBrightness(premiumTheme.background, 10),
+        textPrimary: premiumTheme.text,
+        textSecondary: premiumTheme.text,
+        textMuted: `rgba(${textRgb[0]}, ${textRgb[1]}, ${textRgb[2]}, 0.5)`,
+        textTime: `rgba(${textRgb[0]}, ${textRgb[1]}, ${textRgb[2]}, 0.7)`,
+        ringBg: `rgba(${hourRingRgb[0]}, ${hourRingRgb[1]}, ${hourRingRgb[2]}, 0.2)`,
+        ringHour: createGradient(premiumTheme.hourRing),
+        ringMinute: createGradient(premiumTheme.minuteRing),
+        ringSecond: createGradient(premiumTheme.secondRing),
+        ringMs: createGradient(premiumTheme.millisecondRing)
+    };
+}
+
+/**
+ * Find theme by name (checks both free and premium themes)
+ * @param {string} themeId - Theme ID to find
+ * @returns {Object|null} Theme object or null if not found
+ */
+function findTheme(themeId) {
+    // Check free themes first
+    if (THEMES[themeId]) {
+        return { theme: THEMES[themeId], isPremium: false, themeId };
+    }
+
+    // Check premium themes
+    const premiumTheme = PREMIUM_THEMES.find(t => t.id === themeId);
+    if (premiumTheme) {
+        return { theme: convertPremiumThemeToFull(premiumTheme), isPremium: true, themeId, premiumData: premiumTheme };
+    }
+
+    return null;
+}
+
 /**
  * Apply a theme to the page
- * @param {string} themeName - Name of the theme to apply
+ * @param {string} themeId - ID of the theme to apply
  */
-function applyTheme(themeName) {
-    const theme = THEMES[themeName];
-    if (!theme) {
-        console.error(`Theme "${themeName}" not found`);
+function applyTheme(themeId) {
+    const result = findTheme(themeId);
+    if (!result) {
+        console.error(`Theme "${themeId}" not found`);
         return;
     }
+
+    const theme = result.theme;
 
     const root = document.documentElement;
 
@@ -51,16 +101,40 @@ function applyTheme(themeName) {
     updateSVGGradients(theme);
 
     // Update current theme
-    currentTheme = themeName;
+    currentTheme = themeId;
+    window.currentTheme = themeId; // Expose to window for auto-theme
 
     // Save to localStorage
     saveSettings();
+
+    // Track theme selection for recommendations
+    if (typeof trackThemeSelection === 'function') {
+        trackThemeSelection(themeId);
+    }
 
     // Update URL with new theme
     updateURL();
 
     // Update active theme option in UI
-    updateThemeUI(themeName);
+    updateThemeUI(themeId);
+
+    // Analytics: Track theme unlock (Event 7) - only for premium themes
+    if (result.isPremium && isThemeUnlocked(themeId)) {
+        Analytics.trackThemeUnlock(themeId);
+    }
+}
+
+/**
+ * Update a single SVG gradient with colors
+ * @param {string} gradientId - ID of the gradient element
+ * @param {Object} colors - Object with start and mid color properties
+ */
+function updateGradient(gradientId, colors) {
+    const gradient = document.getElementById(gradientId);
+    if (gradient && gradient.children.length >= 2) {
+        gradient.children[0].setAttribute('style', `stop-color:${colors.start};stop-opacity:1`);
+        gradient.children[1].setAttribute('style', `stop-color:${colors.mid};stop-opacity:1`);
+    }
 }
 
 /**
@@ -68,33 +142,14 @@ function applyTheme(themeName) {
  * @param {Object} theme - Theme object
  */
 function updateSVGGradients(theme) {
-    // Hour gradient
-    const hourGradient = document.getElementById('hourGradient');
-    if (hourGradient) {
-        hourGradient.children[0].setAttribute('style', `stop-color:${theme.ringHour.start};stop-opacity:1`);
-        hourGradient.children[1].setAttribute('style', `stop-color:${theme.ringHour.mid};stop-opacity:1`);
-    }
+    const gradients = [
+        { id: 'hourGradient', colors: theme.ringHour },
+        { id: 'minuteGradient', colors: theme.ringMinute },
+        { id: 'secondGradient', colors: theme.ringSecond },
+        { id: 'msGradient', colors: theme.ringMs }
+    ];
 
-    // Minute gradient
-    const minuteGradient = document.getElementById('minuteGradient');
-    if (minuteGradient) {
-        minuteGradient.children[0].setAttribute('style', `stop-color:${theme.ringMinute.start};stop-opacity:1`);
-        minuteGradient.children[1].setAttribute('style', `stop-color:${theme.ringMinute.mid};stop-opacity:1`);
-    }
-
-    // Second gradient
-    const secondGradient = document.getElementById('secondGradient');
-    if (secondGradient) {
-        secondGradient.children[0].setAttribute('style', `stop-color:${theme.ringSecond.start};stop-opacity:1`);
-        secondGradient.children[1].setAttribute('style', `stop-color:${theme.ringSecond.mid};stop-opacity:1`);
-    }
-
-    // MS gradient
-    const msGradient = document.getElementById('msGradient');
-    if (msGradient) {
-        msGradient.children[0].setAttribute('style', `stop-color:${theme.ringMs.start};stop-opacity:1`);
-        msGradient.children[1].setAttribute('style', `stop-color:${theme.ringMs.mid};stop-opacity:1`);
-    }
+    gradients.forEach(({ id, colors }) => updateGradient(id, colors));
 }
 
 /**
@@ -112,12 +167,15 @@ function updateThemeUI(themeName) {
 
 /**
  * Get theme from URL query parameter
- * @returns {string|null} Theme name from URL or null
+ * @returns {string|null} Theme ID from URL or null
  */
 function getThemeFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
-    const theme = urlParams.get('theme');
-    return (theme && THEMES[theme]) ? theme : null;
+    const themeId = urlParams.get('theme');
+    if (themeId && findTheme(themeId)) {
+        return themeId;
+    }
+    return null;
 }
 
 /**
@@ -175,41 +233,34 @@ function saveSettings() {
         timeFormat: timeFormat,
         animationSpeed: animationSpeed
     };
-    localStorage.setItem('ringClockSettings', JSON.stringify(settings));
+    saveToStorage('Settings', settings);
 }
 
 /**
  * Load settings from URL params (priority) or localStorage
  */
 function loadSettings() {
-    try {
-        // Check URL params first (higher priority)
-        const urlTheme = getThemeFromURL();
-        if (urlTheme) {
-            applyTheme(urlTheme);
-        }
+    // Check URL params first (higher priority)
+    const urlTheme = getThemeFromURL();
+    if (urlTheme) {
+        applyTheme(urlTheme);
+    }
 
-        // Fallback to localStorage
-        const saved = localStorage.getItem('ringClockSettings');
-        if (saved) {
-            const settings = JSON.parse(saved);
-            if (settings.theme && THEMES[settings.theme] && !urlTheme) {
-                applyTheme(settings.theme);
-            }
-            if (settings.timeFormat) {
-                applyTimeFormat(settings.timeFormat);
-            }
-            if (settings.animationSpeed !== undefined) {
-                applyAnimationSpeed(settings.animationSpeed);
-            }
-        }
+    // Fallback to localStorage
+    const settings = loadFromStorage('Settings', {});
+    if (settings.theme && findTheme(settings.theme) && !urlTheme) {
+        applyTheme(settings.theme);
+    }
+    if (settings.timeFormat) {
+        applyTimeFormat(settings.timeFormat);
+    }
+    if (settings.animationSpeed !== undefined) {
+        applyAnimationSpeed(settings.animationSpeed);
+    }
 
-        // If no URL param, update URL
-        if (!urlTheme) {
-            updateURL();
-        }
-    } catch (error) {
-        console.error('Error loading settings:', error);
+    // If no URL param, update URL
+    if (!urlTheme) {
+        updateURL();
     }
 }
 
@@ -283,6 +334,12 @@ function initSettingsUI() {
     settingsBtn.addEventListener('click', () => {
         settingsModal.classList.add('active');
         document.querySelector('.theme-option').focus();
+
+        // Analytics: Track theme gallery view
+        Analytics.trackThemeGalleryView();
+
+        // Update Focus Stats (if available)
+        updateFocusStatsDisplay();
     });
 
     // Close modal
@@ -357,4 +414,338 @@ function initSettingsUI() {
             saveSettings();
         });
     }
+
+    // Auto Theme toggle
+    const autoThemeToggle = document.getElementById('autoThemeToggle');
+    const autoThemeLabel = document.getElementById('autoThemeLabel');
+
+    if (autoThemeToggle && autoThemeLabel) {
+        // Set initial state
+        autoThemeToggle.checked = isAutoThemeEnabled();
+        autoThemeLabel.textContent = autoThemeToggle.checked ? 'On' : 'Off';
+
+        // Toggle handler
+        autoThemeToggle.addEventListener('change', () => {
+            toggleAutoTheme();
+            autoThemeLabel.textContent = autoThemeToggle.checked ? 'On' : 'Off';
+        });
+    }
+
+    // Render premium themes
+    renderPremiumThemes();
+
+    // Analytics: Track premium section view (Event 2)
+    // Use IntersectionObserver to detect when premium section scrolls into view
+    const premiumContainer = document.getElementById('premiumThemesContainer');
+    if (premiumContainer && typeof IntersectionObserver !== 'undefined') {
+        let hasTracked = false; // Track only once per session
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !hasTracked) {
+                    Analytics.trackPremiumThemeView();
+                    hasTracked = true;
+                    // Optional: unobserve after first view
+                    observer.unobserve(premiumContainer);
+                }
+            });
+        }, {
+            threshold: 0.5 // Trigger when 50% of section is visible
+        });
+        observer.observe(premiumContainer);
+    }
+}
+
+/**
+ * Get purchases data from localStorage
+ * @returns {Object} Purchases object
+ */
+function getPurchases() {
+    return loadFromStorage('Purchases', {
+        luxury: { purchased: false },
+        nature: { purchased: false },
+        neon: { purchased: false },
+        professional: { purchased: false },
+        bundle: { purchased: false }
+    });
+}
+
+/**
+ * Save purchases data to localStorage
+ * @param {Object} purchases - Purchases object
+ */
+function savePurchases(purchases) {
+    saveToStorage('Purchases', purchases);
+}
+
+/**
+ * Check if a theme is unlocked
+ * @param {string} themeId - Theme ID to check
+ * @returns {boolean} Whether theme is unlocked
+ */
+function isThemeUnlocked(themeId) {
+    // Free themes are always unlocked
+    if (THEMES[themeId]) {
+        return true;
+    }
+
+    // Check if premium theme
+    const premiumTheme = PREMIUM_THEMES.find(t => t.id === themeId);
+    if (!premiumTheme) {
+        return true; // Unknown theme, assume unlocked
+    }
+
+    // Check if pack or bundle is purchased
+    const purchases = getPurchases();
+    return purchases[premiumTheme.pack]?.purchased || purchases.bundle?.purchased;
+}
+
+/**
+ * Unlock a theme pack
+ * @param {string} packId - Pack ID to unlock ('luxury', 'nature', 'neon', or 'bundle')
+ * @param {Object} options - Optional purchase details (price, date, receipt)
+ */
+function unlockPack(packId, options = {}) {
+    const purchases = getPurchases();
+
+    purchases[packId] = {
+        purchased: true,
+        date: options.date || new Date().toISOString(),
+        price: options.price || THEME_PACKS[packId]?.price || 0,
+        receipt: options.receipt || null
+    };
+
+    savePurchases(purchases);
+
+    // Re-render premium themes to update UI
+    const container = document.getElementById('premiumThemesContainer');
+    if (container) {
+        container.innerHTML = '';
+        renderPremiumThemes();
+    }
+
+    return true;
+}
+
+/**
+ * Check if a pack is purchased
+ * @param {string} packId - Pack ID to check
+ * @returns {boolean} Whether pack is purchased
+ */
+function isPackPurchased(packId) {
+    const purchases = getPurchases();
+    return purchases[packId]?.purchased || false;
+}
+
+/**
+ * Render premium themes dynamically
+ */
+function renderPremiumThemes() {
+    const container = document.getElementById('premiumThemesContainer');
+    if (!container) return;
+
+    // Group themes by pack
+    const packs = {
+        luxury: { name: 'Luxury Pack', price: 4.99, themes: [] },
+        nature: { name: 'Nature Pack', price: 3.99, themes: [] },
+        neon: { name: 'Neon Pack', price: 3.99, themes: [] },
+        professional: { name: 'Professional Pack', price: 4.99, themes: [] }
+    };
+
+    PREMIUM_THEMES.forEach(theme => {
+        if (packs[theme.pack]) {
+            packs[theme.pack].themes.push(theme);
+        }
+    });
+
+    // Render each pack
+    Object.entries(packs).forEach(([packId, pack]) => {
+        const packSection = document.createElement('div');
+        packSection.className = 'premium-pack-section';
+
+        const isPurchased = isPackPurchased(packId);
+
+        // Pack header
+        const packHeader = document.createElement('div');
+        packHeader.className = 'premium-pack-header';
+
+        if (isPurchased) {
+            packHeader.innerHTML = `
+                <span class="pack-name">${pack.name}</span>
+                <span class="pack-price">$${pack.price.toFixed(2)}</span>
+                <button class="buy-pack-btn purchased" disabled>✓ Purchased</button>
+            `;
+        } else {
+            packHeader.innerHTML = `
+                <span class="pack-name">${pack.name}</span>
+                <span class="pack-price">$${pack.price.toFixed(2)}</span>
+                <button class="buy-pack-btn" data-pack="${packId}">Buy Pack</button>
+            `;
+        }
+        packSection.appendChild(packHeader);
+
+        // Theme grid for this pack
+        const themeGrid = document.createElement('div');
+        themeGrid.className = 'theme-grid premium-theme-grid';
+
+        pack.themes.forEach(theme => {
+            const isUnlocked = isThemeUnlocked(theme.id);
+            const themeCard = createPremiumThemeCard(theme, isUnlocked);
+            themeGrid.appendChild(themeCard);
+        });
+
+        packSection.appendChild(themeGrid);
+        container.appendChild(packSection);
+    });
+
+    // Add event listeners to buy buttons
+    const buyButtons = container.querySelectorAll('.buy-pack-btn');
+    buyButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const packId = btn.dataset.pack;
+            handlePurchasePack(packId);
+        });
+    });
+}
+
+/**
+ * Create premium theme card element
+ * @param {Object} theme - Premium theme object
+ * @param {boolean} isUnlocked - Whether theme is unlocked
+ * @returns {HTMLElement} Theme card element
+ */
+function createPremiumThemeCard(theme, isUnlocked) {
+    const card = document.createElement('div');
+    card.className = isUnlocked ? 'theme-option premium-theme' : 'theme-option premium-theme locked';
+    card.dataset.theme = theme.id;
+    card.setAttribute('role', 'radio');
+    card.setAttribute('aria-checked', 'false');
+    card.setAttribute('tabindex', '0');
+
+    // Theme preview with ring colors
+    const preview = document.createElement('div');
+    preview.className = 'theme-preview';
+    preview.innerHTML = `
+        <div class="theme-color" style="background: ${theme.hourRing};"></div>
+        <div class="theme-color" style="background: ${theme.minuteRing};"></div>
+        <div class="theme-color" style="background: ${theme.secondRing};"></div>
+        <div class="theme-color" style="background: ${theme.millisecondRing};"></div>
+    `;
+
+    // Lock overlay for locked themes
+    if (!isUnlocked) {
+        const lockOverlay = document.createElement('div');
+        lockOverlay.className = 'lock-overlay';
+        lockOverlay.innerHTML = '<span class="lock-icon">🔒</span>';
+        preview.appendChild(lockOverlay);
+    }
+
+    // Theme name
+    const name = document.createElement('div');
+    name.className = 'theme-name';
+    name.textContent = theme.name;
+
+    card.appendChild(preview);
+    card.appendChild(name);
+
+    // Add click handler if unlocked
+    if (isUnlocked) {
+        card.addEventListener('click', () => applyTheme(theme.id));
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                applyTheme(theme.id);
+            }
+        });
+    } else {
+        // Show message for locked themes
+        card.addEventListener('click', () => {
+            alert(`This theme is part of the ${theme.pack} pack. Purchase the pack to unlock it.`);
+        });
+    }
+
+    return card;
+}
+
+/**
+ * Handle purchase pack button click
+ * For now, this unlocks the pack immediately for testing
+ * In Task 4, this will redirect to Stripe payment
+ * @param {string} packId - Pack ID to purchase
+ */
+function handlePurchasePack(packId) {
+    // Analytics: Track buy button click (Event 3)
+    const pack = THEME_PACKS[packId];
+    if (pack) {
+        Analytics.trackBuyButtonClick(packId, pack.price);
+    }
+
+    // Redirect to Stripe Payment Link
+    if (typeof window.purchasePack === 'function') {
+        window.purchasePack(packId);
+    } else {
+        console.error('Payment system not loaded. Make sure js/payment.js is included.');
+        alert('Payment system is not available. Please refresh the page.');
+    }
+}
+
+// ==================== DEVELOPER TESTING HELPERS ====================
+
+/**
+ * Reset all purchases (for testing)
+ * Call in browser console: resetPurchases()
+ */
+function resetPurchases() {
+    savePurchases({
+        luxury: { purchased: false },
+        nature: { purchased: false },
+        neon: { purchased: false },
+        bundle: { purchased: false }
+    });
+
+    // Re-render premium themes
+    const container = document.getElementById('premiumThemesContainer');
+    if (container) {
+        container.innerHTML = '';
+        renderPremiumThemes();
+    }
+
+    console.log('✓ All purchases reset');
+}
+
+/**
+ * Unlock all packs (for testing)
+ * Call in browser console: unlockAllPacks()
+ */
+function unlockAllPacks() {
+    ['luxury', 'nature', 'neon', 'professional'].forEach(packId => {
+        unlockPack(packId);
+    });
+    console.log('✓ All packs unlocked');
+}
+
+/**
+ * Show purchase status (for testing)
+ * Call in browser console: showPurchaseStatus()
+ */
+function showPurchaseStatus() {
+    const purchases = getPurchases();
+    console.log('📦 Purchase Status:', purchases);
+
+    Object.entries(purchases).forEach(([packId, data]) => {
+        const status = data.purchased ? '✓ Purchased' : '🔒 Locked';
+        const name = THEME_PACKS[packId]?.name || packId;
+        console.log(`  ${status} ${name}`);
+        if (data.purchased && data.date) {
+            console.log(`    Date: ${data.date}`);
+        }
+    });
+}
+
+// Expose helpers to window for console access
+if (typeof window !== 'undefined') {
+    window.resetPurchases = resetPurchases;
+    window.unlockAllPacks = unlockAllPacks;
+    window.showPurchaseStatus = showPurchaseStatus;
+    window.unlockPack = unlockPack;
+    window.getPurchases = getPurchases;
 }

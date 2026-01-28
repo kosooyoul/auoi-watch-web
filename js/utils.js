@@ -81,3 +81,140 @@ function getTargetColor(palette, progress) {
         return interpolateColor(palette[1], palette[2], (progress - 0.5) * 2);
     }
 }
+
+/**
+ * Initialize modal with common open/close behavior
+ * @param {Object} config - Modal configuration
+ * @param {HTMLElement} config.openButton - Button to open modal
+ * @param {HTMLElement} config.modal - Modal element
+ * @param {HTMLElement} config.closeButton - Button to close modal
+ * @param {string} config.activeClass - Class to add when modal is active (default: 'show')
+ * @param {Function} config.onOpen - Optional callback when modal opens
+ * @param {Function} config.onClose - Optional callback when modal closes
+ */
+function initModal(config) {
+    const {
+        openButton,
+        modal,
+        closeButton,
+        activeClass = 'show',
+        onOpen = null,
+        onClose = null
+    } = config;
+
+    if (!openButton || !modal || !closeButton) {
+        console.error('initModal: Missing required elements');
+        return;
+    }
+
+    // Close modal function
+    const closeModal = () => {
+        modal.classList.remove(activeClass);
+        if (onClose) onClose();
+    };
+
+    // Open modal
+    openButton.addEventListener('click', () => {
+        modal.classList.add(activeClass);
+        if (onOpen) onOpen();
+    });
+
+    // Close button
+    closeButton.addEventListener('click', closeModal);
+
+    // Close on backdrop click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains(activeClass)) {
+            closeModal();
+        }
+    });
+
+    // Return closeModal function for external use
+    return { closeModal };
+}
+
+/**
+ * Save data to localStorage with error handling
+ * @param {string} key - localStorage key (will be prefixed with 'ringClock')
+ * @param {*} data - Data to save (will be JSON.stringify'd)
+ * @returns {boolean} - true if successful, false otherwise
+ */
+function saveToStorage(key, data) {
+    try {
+        const fullKey = `ringClock${key}`;
+        localStorage.setItem(fullKey, JSON.stringify(data));
+        return true;
+    } catch (error) {
+        console.error(`Error saving to localStorage (${key}):`, error);
+        return false;
+    }
+}
+
+/**
+ * Load data from localStorage with error handling
+ * @param {string} key - localStorage key (will be prefixed with 'ringClock')
+ * @param {*} defaultValue - Default value if load fails or key doesn't exist
+ * @returns {*} - Parsed data or defaultValue
+ */
+function loadFromStorage(key, defaultValue = null) {
+    try {
+        const fullKey = `ringClock${key}`;
+        const saved = localStorage.getItem(fullKey);
+        if (saved) {
+            return JSON.parse(saved);
+        }
+        return defaultValue;
+    } catch (error) {
+        console.error(`Error loading from localStorage (${key}):`, error);
+        return defaultValue;
+    }
+}
+
+/**
+ * Convert RGB array to hex color string
+ * @param {Array} rgb - RGB array [r, g, b]
+ * @returns {string} Hex color string (e.g. "#667eea")
+ */
+function rgbToHex(rgb) {
+    const toHex = (n) => {
+        const hex = Math.max(0, Math.min(255, n)).toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+    };
+    return `#${toHex(rgb[0])}${toHex(rgb[1])}${toHex(rgb[2])}`;
+}
+
+/**
+ * Adjust color brightness
+ * @param {string} hex - Hex color string
+ * @param {number} percent - Brightness adjustment (-100 to 100)
+ * @returns {string} Adjusted hex color
+ */
+function adjustBrightness(hex, percent) {
+    const rgb = hexToRgb(hex);
+    const adjusted = rgb.map(c => {
+        const newValue = c + (c * percent / 100);
+        return Math.max(0, Math.min(255, Math.round(newValue)));
+    });
+    return rgbToHex(adjusted);
+}
+
+/**
+ * Create gradient object from single color
+ * Used for premium themes to generate start/mid/end gradient
+ * @param {string} color - Hex color string
+ * @returns {Object} Gradient object with start, mid, end
+ */
+function createGradient(color) {
+    return {
+        start: adjustBrightness(color, -15),
+        mid: color,
+        end: adjustBrightness(color, 15)
+    };
+}

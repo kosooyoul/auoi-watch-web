@@ -33,31 +33,13 @@ function initAlarmSystem() {
     // Check notification permission
     checkNotificationPermission();
 
-    // Open alarm modal
-    alarmBtn.addEventListener('click', () => {
-        alarmModal.classList.add('active');
-        checkNotificationPermission();
-    });
-
-    // Close alarm modal
-    const closeAlarmModal = () => {
-        alarmModal.classList.remove('active');
-    };
-
-    alarmCloseBtn.addEventListener('click', closeAlarmModal);
-
-    // Close on backdrop click
-    alarmModal.addEventListener('click', (e) => {
-        if (e.target === alarmModal) {
-            closeAlarmModal();
-        }
-    });
-
-    // Close on Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && alarmModal.classList.contains('active')) {
-            closeAlarmModal();
-        }
+    // Initialize alarm modal with utility function
+    initModal({
+        openButton: alarmBtn,
+        modal: alarmModal,
+        closeButton: alarmCloseBtn,
+        activeClass: 'active',
+        onOpen: checkNotificationPermission
     });
 
     // Tab switching
@@ -384,21 +366,17 @@ function deleteAlarm(alarmId) {
  * Save alarms to localStorage
  */
 function saveAlarms() {
-    localStorage.setItem('ringClockAlarms', JSON.stringify(alarms));
+    saveToStorage('Alarms', alarms);
 }
 
 /**
  * Load alarms from localStorage
  */
 function loadAlarms() {
-    try {
-        const saved = localStorage.getItem('ringClockAlarms');
-        if (saved) {
-            alarms = JSON.parse(saved);
-            renderAlarms();
-        }
-    } catch (error) {
-        console.error('Error loading alarms:', error);
+    const saved = loadFromStorage('Alarms', []);
+    if (saved.length > 0) {
+        alarms = saved;
+        renderAlarms();
     }
 }
 
@@ -489,15 +467,8 @@ function triggerAlarm(alarm) {
         });
     }
 
-    // Play sound (optional - browser may block)
-    try {
-        const audio = new Audio('data:audio/wav;base64,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');
-        audio.play().catch(() => {
-            // Ignore if audio playback is blocked
-        });
-    } catch (error) {
-        // Ignore audio errors
-    }
+    // Play sound (custom message or default beep)
+    playAlarmSound();
 
     // Auto-disable one-time alarms (repeat = 'none')
     const repeat = alarm.repeat || 'none';
@@ -746,4 +717,45 @@ function renderAlarmMarkers(currentHour, currentMinute, currentSecond) {
         alarmMarkersContainer.appendChild(tick);
         alarmMarkersContainer.appendChild(dot);
     });
+}
+
+// ==================== ALARM SOUND HELPERS ====================
+
+/**
+ * Play alarm sound - custom message or default beep
+ */
+function playAlarmSound() {
+    try {
+        // Check if custom message is selected
+        const customMessage = typeof getSelectedMessage === 'function' ? getSelectedMessage() : null;
+
+        if (customMessage && customMessage.data) {
+            // Play custom message
+            const audio = new Audio(customMessage.data);
+            audio.play().catch(() => {
+                // Fallback to default beep if custom message fails
+                playDefaultAlarmBeep();
+            });
+        } else {
+            // Play default beep
+            playDefaultAlarmBeep();
+        }
+    } catch (error) {
+        // Fallback to default beep on error
+        playDefaultAlarmBeep();
+    }
+}
+
+/**
+ * Play default alarm beep sound
+ */
+function playDefaultAlarmBeep() {
+    try {
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZUQ8OVKzo8LRpHQU9k9v00H0wBSh+zPLcizsIG2/E8OWhVRANUrDp8LJrHwU5j9r01IQzBh1xxPLgjz8JHnLE8+WnWBENT6vj8rJsIAU3lNz104I0Bh5uwu7nm1QPDlKq5O+waxwENIzZ8tOAMAYeb8Xu45xVDw5SpuPvs2wdBDWR2vLTgTEHH2/E7+OdVQ8NUKXi77FrHgU2k9v004IyBx1wwu7lnlYODU+k4e+wah8ENI/Z89GBMwcebsLu5Z5WDQ1Poe/tr2oeBjWS2vLSgTIGH2/E7+OdVQ0OUaTi765qHgU2kdr00oEzBh9uwu7knlYODlCj4e+uah4FNJHY89KBMwYeb8Pu5J1WDQ5Qot/vrWkeBjSP2PLRgTIGH27D7uSeVg0NT6Hf7qxpHgYzjdjy0oEyBh9uw+7knVYNDU+g3+6saB8GMIvW8tKBMQYebsTu45xVDQ1Qn9/urGgeBi+J1fHRgDEGHm3E7uOcVQwNUJ3e7axoHgUuhNPx0YEwBh5txO/knFUMDU+b3u6rZx8GK4LS8dGBMAYfbsTu5JxVDQ5Pmt7uqmgfBiqA0PHQgDEGH23E7uScVQ0OT5je7qppHgUnfM/x0IAuBh1rxO/jnVQNDU6W3e2qaBwGJHnN8c99LgYdacTv451UDHR5BjqGy/HQfS4GHWnE7+SdVA0NTpHd7alqHwYmec3xz38vBh5qxe/lnVQNDU6P3e2pbB4GJXnN8c9/LgYdacXw5Z5VDQ5Pj93uqGseBiR3zfHPfzAGHmrE8OWdVQ0OT47d7ahqHwckdszx0IAxBh5qxPDlnlYNDk+N3e6oaiAGJHfL8tGBMQYea8Xw5Z5WDQ9PjN3uqGofBiN2y/LRgTEHH2vF8OWdVg0PTovu6qZpHgYjdcrx0YEwBx5qxPDlnVYMD06I3eynZh8GInTI8dCBLwcda8Xv5ZxWDQ9Oh9zspmYeBiJ0x/HPfy8GHWrE7+WcVg0PTobdbKZnHwYidMfx0IAwBx5rxe/lnlYND1CI3u2pah4GJHTG8dGAMQcfbMTv5Z5WDhBPht3tqGseBiZzxfHRgDEHH2zE7+SfVg0QUYbc7qdrIAYmcsXx0YAxBx9rxO/kn1YNEFCFu+6nayAGJnLF8dGAMQcfbMPw5Z5VDRFPg9zuqGseBiVxxPDQgTAHHmrE8OSfVg0STILb7KZrHwYnccTw0IAyBx5sw+/knVYNEU6B2+2maB8GKHDj8NGAMQgfbMPv5J1VDRJOf9vsp2kfBydv4/DRgDEIH23E7+SdVg0ST37b7KZrHwYpbuTw0oAzBx9sw+/knVYNEk9+2+6laB4GKW3k8NKAMwcfbcTu5J1WDBJQftzup2kfBiltZPDTgDQHH23E7+OdVgwSUH3c7qhlHgYsbmPw04A0Bx9txO7jnVYMElB+3O6oZR4GLG5k8NOANAcfbcTu451WDBJQftzup2YeBixuZPDTgDQHH23E7uOdVgsSUH7c7qdmHgYtb2Pw04A0Bx9txO7inVYLE1B+3O6nZh8GK29k8NKAMwcfbMTu4p1WCxNPftzupmUfBipuZPDSgDQHHmzD7uKdVgsUUH7c7qZmHwYtb2Pw04A0Bx9rxO7inVYLFFB+3O6mZh8GK29k8NKAMwcfbMPu4p1WCxRPfdzupmYfBixuY/DSgDMHHmzE7uKdVgsUUH3c7qZmHwYsb2Px04AzBx9txO7inVYLFFB93O6mZh8GK29j8NKAMwcfbMPu4Z1WCxRPfdzupWYfBixuY/DSgDMHH2zE7uKdVgsUUH3c7qVlHwYrbmTw0oAzBx9tw+7inVYLFFB93O6lZh8GK29k8NGAMwcebMPu4p1WCxRRfdvupmUfBixuY/DSgDQHH23E7uOdVgsUUH3b76VmHwYrbmPw04A0Bx5sxO7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uSdVgsUUH7b7qZmHgYrbmPw04A0Bx5sw+7knVYLFFB+2+6mZR8GK25j8NKAMwcfbMPu5J1WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVgsUUH7b7qVmHwYrbmPw04A0Bx5sw+7jnVYLFFB+2+6mZh8GK25j8NKAMwcfbMPu451WCxRPftvupmYfBixuY/DSgDQHH2zD7uOdVg==');
+        audio.play().catch(() => {
+            // Ignore if audio playback is blocked
+        });
+    } catch (error) {
+        // Ignore audio errors
+    }
 }
