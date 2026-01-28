@@ -241,6 +241,73 @@ const PREMIUM_THEMES = [
         minuteRing: '#7c3aed',
         secondRing: '#a78bfa',
         millisecondRing: '#c4b5fd'
+    },
+
+    // ===== PROFESSIONAL PACK ($4.99) =====
+    {
+        id: 'corporateBlue',
+        name: 'Corporate Blue',
+        pack: 'professional',
+        price: 4.99,
+        description: 'Professional navy blue with crisp white and silver accents',
+        background: '#0f1419',
+        text: '#e8edf2',
+        hourRing: '#1e3a8a',
+        minuteRing: '#2563eb',
+        secondRing: '#60a5fa',
+        millisecondRing: '#93c5fd'
+    },
+    {
+        id: 'executiveGray',
+        name: 'Executive Gray',
+        pack: 'professional',
+        price: 4.99,
+        description: 'Sophisticated charcoal gray with cool silver tones',
+        background: '#121416',
+        text: '#e5e7eb',
+        hourRing: '#374151',
+        minuteRing: '#6b7280',
+        secondRing: '#9ca3af',
+        millisecondRing: '#d1d5db'
+    },
+    {
+        id: 'businessGreen',
+        name: 'Business Green',
+        pack: 'professional',
+        price: 4.99,
+        description: 'Growth-focused emerald green with fresh mint accents',
+        background: '#0f1511',
+        text: '#e0f2e9',
+        hourRing: '#065f46',
+        minuteRing: '#059669',
+        secondRing: '#10b981',
+        millisecondRing: '#6ee7b7'
+    },
+    {
+        id: 'presentationDark',
+        name: 'Presentation Dark',
+        pack: 'professional',
+        price: 4.99,
+        description: 'High contrast dark theme optimized for screen sharing',
+        background: '#0a0a0a',
+        text: '#ffffff',
+        hourRing: '#3b82f6',
+        minuteRing: '#8b5cf6',
+        secondRing: '#ec4899',
+        millisecondRing: '#f97316'
+    },
+    {
+        id: 'officeNeutral',
+        name: 'Office Neutral',
+        pack: 'professional',
+        price: 4.99,
+        description: 'Comfortable warm beige for extended work sessions',
+        background: '#1a1815',
+        text: '#f5f1e8',
+        hourRing: '#92815a',
+        minuteRing: '#b39e7a',
+        secondRing: '#c9b896',
+        millisecondRing: '#e0d4b8'
     }
 ];
 
@@ -264,11 +331,17 @@ const THEME_PACKS = {
         themes: ['cyberpunkMagenta', 'electricLime', 'neonUltraviolet'],
         description: '3 vibrant themes: Cyberpunk Magenta, Electric Lime, Neon Ultraviolet'
     },
+    professional: {
+        name: 'Professional Pack',
+        price: 4.99,
+        themes: ['corporateBlue', 'executiveGray', 'businessGreen', 'presentationDark', 'officeNeutral'],
+        description: '5 business-focused themes: Corporate Blue, Executive Gray, Business Green, Presentation Dark, Office Neutral'
+    },
     bundle: {
         name: 'All Themes Bundle',
-        price: 12.99,
-        themes: ['goldenHour', 'midnightMarble', 'roseGoldElegance', 'forestTwilight', 'oceanDepths', 'desertDawn', 'cyberpunkMagenta', 'electricLime', 'neonUltraviolet'],
-        description: 'All 9 premium themes - Save 20%',
-        discount: 0.20
+        price: 16.99,
+        themes: ['goldenHour', 'midnightMarble', 'roseGoldElegance', 'forestTwilight', 'oceanDepths', 'desertDawn', 'cyberpunkMagenta', 'electricLime', 'neonUltraviolet', 'corporateBlue', 'executiveGray', 'businessGreen', 'presentationDark', 'officeNeutral'],
+        description: 'All 14 premium themes - Save 25%',
+        discount: 0.25
     }
 };

@@ -2,6 +2,206 @@
 
 ## Version History
 
+### v1.17.0 (2026-01-23)
+**User Engagement Phase 1 - Quick Wins (3 Features)**
+
+**🎯 Business Goal: Increase User Retention & Emotional Connection**
+
+This release implements Phase 1 of User Engagement features based on comprehensive research of 15+ clock/timer apps. These features create emotional connection, personalization, and habit-forming behavior patterns.
+
+**Research Foundation:** `business/research/user-engagement-study.md`
+
+---
+
+#### Feature 1: Time-based Personalized Greeting ✅ Complete
+**Development Time:** ~2 hours
+**Revenue Impact:** $0 (brand value, free feature)
+**Research:** Flocus (1M+ users) uses this for emotional connection
+
+**What it does:**
+- Displays time-appropriate greeting below clock: "Good morning 🌅" / "Good evening 🌙"
+- Changes automatically based on time of day (morning/afternoon/evening/night)
+- Optional user name personalization
+- Subtle fade-in animation on hour changes
+
+**Implementation:**
+- **New Module:** `js/greeting.js` (180 lines)
+- **HTML:** Greeting container element below text-time display
+- **CSS:** Responsive positioning, fade-in animation, hover effects
+- **Time Periods:**
+  - Morning (5am-12pm): "Good morning 🌅 · focus time"
+  - Afternoon (12pm-5pm): "Good afternoon ☀️ · productive hours"
+  - Evening (5pm-9pm): "Good evening 🌙 · wind down"
+  - Night (9pm-5am): "Good night 🌃 · rest well"
+
+**Key Functions:**
+- `initGreeting()` - Initialize system, load settings, start update loop
+- `updateGreeting()` - Get current time period and display appropriate message
+- `getGreetingForTime(hour)` - Return greeting config for given hour
+- `setUserName(name)` - Optional personalization with user's name
+- `loadGreetingSettings()` / `saveGreetingSettings()` - localStorage persistence
+
+**User Benefit:**
+- Makes app feel "alive" and aware of user context
+- Creates emotional connection: "The app understands me"
+- No friction - works automatically without configuration
+
+---
+
+#### Feature 2: Dynamic Theme Auto-Switching ✅ Complete
+**Development Time:** ~4 hours
+**Revenue Impact:** +$1.99 (new premium feature or bundle upgrade)
+**Research:** 24 Hour Wallpaper proves users love time-synced visuals
+
+**What it does:**
+- Automatically switches themes throughout the day to match circadian rhythm
+- Settings toggle: "Auto Theme" (On/Off)
+- Uses free themes by default, premium themes if unlocked
+- Respects user's manual theme selection when auto-theme is off
+
+**Implementation:**
+- **New Module:** `js/auto-theme.js` (250 lines)
+- **HTML:** Toggle switch in Settings modal
+- **CSS:** Custom toggle switch component with smooth animations
+- **Theme.js Update:** Expose `window.currentTheme` for auto-theme module
+
+**Time-based Theme Schedule:**
+- Morning (6am-12pm): Warm Sunset (free) → Desert Dawn (premium)
+- Afternoon (12pm-6pm): Ocean Breeze (free) → Classic (fallback)
+- Evening (6pm-10pm): Soft Pastel (free) → Forest Twilight (premium)
+- Night (10pm-6am): Neon Night (free) → Midnight Marble (premium)
+
+**Key Functions:**
+- `initAutoTheme()` - Initialize system, load settings, start checking
+- `toggleAutoTheme()` - Enable/disable auto-switching
+- `getThemeForCurrentTime(usePremium)` - Determine appropriate theme
+- `checkAndSwitchTheme()` - Run every minute, switch if hour changed
+- `startAutoTheme()` / `stopAutoTheme()` - Control check interval
+- `getSchedulePreview()` - Preview schedule for UI display
+
+**Premium Behavior:**
+- If user owns premium pack → Use premium themes automatically
+- If user doesn't own pack → Use free themes
+- Incentive to purchase: "Unlock premium auto-themes!"
+
+**User Benefit:**
+- "Living wallpaper" experience for clock
+- Matches natural light cycles (calming effect)
+- Zero manual intervention required
+- Premium themes become more valuable (used 4x per day)
+
+---
+
+#### Feature 3: Focus Mode + Session Tracking ✅ Complete
+**Development Time:** ~6 hours
+**Revenue Impact:** +$2.99 (premium feature: Focus Stats)
+**Research:** Athenify, Lofizen, Habitica all have focus tracking
+
+**What it does:**
+- Focus Mode button (🎯) enters distraction-free mode
+- Hides all UI elements except clock and session timer
+- Automatically enters fullscreen
+- Tracks focus session duration
+- Saves sessions to localStorage (min. 1 minute to count)
+- Displays statistics in Settings: Today / This Week / Streak
+
+**Implementation:**
+- **New Module:** `js/focus.js` (420 lines)
+- **HTML:** Focus button, focus session info overlay, focus stats in Settings
+- **CSS:** Focus button, session timer display, stats grid layout
+- **Behavior:** ESC key or fullscreen exit → End session
+
+**Focus Mode Flow:**
+```
+User clicks 🎯 Focus button
+→ enterFocusMode()
+→ Request fullscreen
+→ Hide all UI buttons (opacity: 0)
+→ Show session timer (00:00)
+→ startFocusSession() - Record start time
+→ Update timer every second
+
+User presses ESC or exits fullscreen
+→ exitFocusMode()
+→ endFocusSession() - Calculate duration
+→ Save session (if > 1 minute)
+→ Show UI buttons
+→ Exit fullscreen
+```
+
+**Session Tracking:**
+- **Data Structure:**
+  ```javascript
+  {
+    startTime: 1706000000000,  // Date.now()
+    endTime: 1706003600000,
+    duration: 3600000           // 1 hour in ms
+  }
+  ```
+- **Storage:** localStorage key `FocusSessions` (array of sessions)
+- **Minimum Duration:** 1 minute (60,000ms) to avoid accidental clicks
+
+**Statistics:**
+- **Today:** Total focus time for current day (e.g., "2h 34m")
+- **This Week:** Total focus time since Sunday
+- **Day Streak:** Consecutive days with at least 1 session (e.g., "7 🔥")
+
+**Key Functions:**
+- `initFocusMode()` - Initialize button, keyboard listeners
+- `toggleFocusMode()` - Enter or exit focus mode
+- `enterFocusMode()` - Fullscreen + hide UI + start session
+- `exitFocusMode()` - Exit fullscreen + show UI + end session
+- `startFocusSession()` - Record start time, start timer
+- `endFocusSession()` - Calculate duration, save if > 1 min
+- `updateSessionTimer()` - Update timer display every second
+- `getTodayStats()` / `getWeekStats()` / `getFocusStreak()` - Calculate stats
+- `updateFocusStatsDisplay()` - Render stats in Settings modal
+- `formatDuration(ms)` - Format milliseconds to "HH:MM:SS" or "MM:SS"
+- `formatDurationShort(ms)` - Format to "2h 34m" for stats display
+- `saveFocusSession()` / `loadFocusSessions()` - localStorage persistence
+- `clearAllSessions()` - Dev helper to reset data
+
+**Premium Upsell Opportunity:**
+- Free: Basic focus mode (fullscreen + timer)
+- Premium ($2.99): Focus Stats dashboard, detailed analytics, export data
+
+**User Benefit:**
+- Distraction-free environment for deep work
+- Visible progress (gamification via stats)
+- Streak tracking → Habit formation ("Don't break the chain")
+- Self-awareness: "I focused 10 hours this week!"
+- Motivation: See improvement over time
+
+---
+
+**Files Changed:**
+- **New Files:**
+  - `js/greeting.js` (180 lines)
+  - `js/auto-theme.js` (250 lines)
+  - `js/focus.js` (420 lines)
+- **Modified Files:**
+  - `index.html` - Added greeting container, focus button, focus session info, auto-theme toggle, focus stats section
+  - `styles.css` - Added 150+ lines for greeting, toggle switch, focus button, session timer, stats grid
+  - `js/theme.js` - Exposed `window.currentTheme`, added auto-theme toggle handler, added focus stats update on settings open
+  - `main.js` - Initialize greeting, auto-theme, focus mode systems
+
+**Total Development Time:** ~12 hours (as estimated in business/research/user-engagement-study.md)
+
+**Expected Impact:**
+- **Retention:** +20% (streak tracking, daily habit formation)
+- **Engagement:** +15-minute average session duration (focus mode)
+- **ARPPU:** +$4.98 (auto-theme $1.99 + focus stats $2.99)
+- **Emotional Connection:** Time-based greeting creates "app understands me" feeling
+- **Premium Value:** Auto-theme makes premium packs more valuable (4x daily use)
+
+**Next Steps:**
+- Monitor focus session data (avg duration, completion rate)
+- A/B test: Free focus mode vs premium stats paywall
+- Phase 2: Ambient sound library + streak counter
+- Phase 3: Custom wake-up messages + circadian insights
+
+---
+
 ### v1.16.0 (2026-01-20)
 **Monetization Phase 2 - Stripe Payment Integration**
 

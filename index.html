@@ -44,6 +44,21 @@
         ⏱️
     </button>
 
+    <!-- Focus Mode Button -->
+    <button class="focus-btn" id="focusBtn" aria-label="Enter focus mode">
+        🎯
+    </button>
+
+    <!-- Sound Button -->
+    <button class="sound-btn" id="soundBtn" aria-label="Open ambient sounds">
+        🎵
+    </button>
+
+    <!-- Analytics Dashboard Button -->
+    <button class="analytics-btn" id="analyticsBtn" aria-label="Open analytics dashboard">
+        📊
+    </button>
+
     <!-- Settings Button -->
     <button class="settings-btn" id="settingsBtn" aria-label="Open settings">
         ⚙
@@ -144,6 +159,83 @@
             </div>
 
             <div class="settings-section">
+                <label class="settings-label">Auto Theme</label>
+                <div class="toggle-container">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autoThemeToggle" aria-label="Enable auto theme switching">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label" id="autoThemeLabel">Off</span>
+                </div>
+                <p class="auto-theme-hint">Automatically switch themes based on time of day</p>
+            </div>
+
+            <div class="settings-section">
+                <label class="settings-label">Focus Stats 🎯</label>
+                <div class="focus-stats-container" id="focusStatsContainer">
+                    <div class="stat-item">
+                        <div class="stat-value" id="todayFocusTime">0m</div>
+                        <div class="stat-label">Today</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="weekFocusTime">0m</div>
+                        <div class="stat-label">This Week</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="focusStreak">0</div>
+                        <div class="stat-label">Day Streak 🔥</div>
+                    </div>
+                </div>
+                <p class="focus-stats-hint">Use Focus Mode (🎯) to track your deep work sessions</p>
+            </div>
+
+            <div class="settings-section">
+                <div class="recommendations-header">
+                    <label class="settings-label">Theme Recommendations 🎨</label>
+                    <button class="refresh-recommendations-btn" id="refreshRecommendationsBtn" title="Refresh recommendations">
+                        🔄
+                    </button>
+                </div>
+                <div class="theme-recommendations-container" id="themeRecommendationsContainer">
+                    <div class="recommendations-content" id="recommendationsContent">
+                        <!-- Recommendations will be dynamically generated -->
+                    </div>
+                </div>
+                <p class="recommendations-hint">AI-powered theme suggestions based on your usage patterns</p>
+            </div>
+
+            <div class="settings-section">
+                <label class="settings-label">Circadian Insights 🌙</label>
+                <div class="circadian-insights-container" id="circadianInsightsContainer">
+                    <div class="insight-grid">
+                        <div class="insight-item">
+                            <div class="insight-label">Peak Hours</div>
+                            <div class="insight-value" id="peakHoursDisplay">Analyzing...</div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-label">Best Focus Time</div>
+                            <div class="insight-value" id="focusTimeDisplay">Analyzing...</div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-label">Suggested Break</div>
+                            <div class="insight-value" id="breakTimeDisplay">🔒 Premium</div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-label">Productivity</div>
+                            <div class="insight-value" id="productivityScore">🔒 Premium</div>
+                        </div>
+                    </div>
+                    <div class="insights-premium-notice" id="insightsPremiumNotice">
+                        <p class="premium-notice-text">🌟 Unlock detailed circadian insights with Premium</p>
+                        <button class="upgrade-insights-btn" id="upgradeInsightsBtn">
+                            Upgrade for $4.99/year
+                        </button>
+                    </div>
+                </div>
+                <p class="insights-hint">Personalized insights based on your activity patterns</p>
+            </div>
+
+            <div class="settings-section">
                 <label class="settings-label">Share Settings</label>
                 <button class="share-url-btn" id="shareUrlBtn" aria-label="Copy shareable URL">
                     <span class="share-icon">🔗</span>
@@ -238,6 +330,18 @@
                         </div>
                     </div>
 
+                    <!-- Custom Wake-up Message -->
+                    <div class="alarm-field">
+                        <label class="picker-label">Wake-up Message 💌</label>
+                        <div class="message-selector">
+                            <select class="message-select" id="messageSelect">
+                                <option value="default">Default Alarm</option>
+                                <option value="record-new">+ Record New Message</option>
+                            </select>
+                        </div>
+                        <p class="message-hint">Wake up to a message from someone you love</p>
+                    </div>
+
                     <button class="add-alarm-btn" id="addAlarmBtn">+ Add Alarm</button>
                 </div>
 
@@ -297,9 +401,217 @@
                 </div>
             </div>
 
+            <!-- Time Zone Converter -->
+            <div class="timezone-converter-section">
+                <label class="picker-label">Time Zone Converter 🌍</label>
+                <div class="converter-inputs">
+                    <div class="converter-input-group">
+                        <label class="converter-label">From</label>
+                        <select class="converter-select" id="converterFromCity">
+                            <option value="">Choose city...</option>
+                        </select>
+                        <input type="time" class="converter-time-input" id="converterTime" value="12:00">
+                    </div>
+                    <div class="converter-arrow">→</div>
+                    <div class="converter-input-group">
+                        <label class="converter-label">To</label>
+                        <select class="converter-select" id="converterToCity">
+                            <option value="">Choose city...</option>
+                        </select>
+                        <div class="converted-time" id="convertedTime">--:--</div>
+                    </div>
+                </div>
+                <div class="converter-hint">Convert times between time zones</div>
+            </div>
+
+            <!-- Meeting Time Finder -->
+            <div class="meeting-finder-section">
+                <label class="picker-label">Meeting Time Finder 📅</label>
+                <div class="meeting-cities-selector">
+                    <select class="meeting-city-select" id="meetingCitySelect">
+                        <option value="">Add participating city...</option>
+                    </select>
+                    <button class="add-meeting-city-btn" id="addMeetingCityBtn">+ Add</button>
+                </div>
+                <div class="meeting-cities-list" id="meetingCitiesList">
+                    <p class="empty-meeting-state">Add cities to find optimal meeting times</p>
+                </div>
+                <div class="meeting-suggestions" id="meetingSuggestions" style="display: none;">
+                    <div class="suggestions-title">Best Meeting Times:</div>
+                    <div class="suggestions-list" id="suggestionsList"></div>
+                </div>
+            </div>
+
             <!-- World Clock List -->
             <div class="world-clock-list" id="worldClockList">
                 <p class="empty-state" id="emptyWorldClockState">No cities added</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Message Modal -->
+    <div class="message-modal" id="messageModal" role="dialog" aria-labelledby="messageTitle" aria-modal="true">
+        <div class="message-panel">
+            <div class="message-header">
+                <h2 class="message-title" id="messageTitle">Custom Wake-up Message 💌</h2>
+                <button class="close-btn" id="messageCloseBtn" aria-label="Close">×</button>
+            </div>
+
+            <!-- Record Section -->
+            <div class="record-section">
+                <h3 class="section-subtitle">Record Message</h3>
+                <div class="record-controls">
+                    <button class="record-btn" id="recordBtn">
+                        <span class="btn-icon">🎤</span>
+                        <span class="btn-text">Start Recording</span>
+                    </button>
+                    <button class="stop-record-btn" id="stopRecordBtn" disabled>
+                        <span class="btn-icon">⏹</span>
+                        <span class="btn-text">Stop</span>
+                    </button>
+                </div>
+                <div class="recording-indicator" id="recordingIndicator" style="display: none;">
+                    <span class="recording-dot"></span>
+                    <span class="recording-time" id="recordingTime">00:00</span>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-section" id="previewSection" style="display: none;">
+                <h3 class="section-subtitle">Preview</h3>
+                <audio class="audio-preview" id="audioPreview" controls></audio>
+                <div class="preview-controls">
+                    <button class="save-message-btn" id="saveMessageBtn">
+                        <span class="btn-icon">💾</span>
+                        <span class="btn-text">Save Message</span>
+                    </button>
+                    <button class="discard-btn" id="discardBtn">
+                        <span class="btn-icon">🗑️</span>
+                        <span class="btn-text">Discard</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- My Messages List -->
+            <div class="messages-list-section">
+                <h3 class="section-subtitle">My Messages</h3>
+                <div class="messages-list" id="messagesList">
+                    <p class="empty-state">No messages yet. Record your first one!</p>
+                </div>
+            </div>
+
+            <!-- Premium Upsell (if free tier) -->
+            <div class="message-premium-notice" id="messagePremiumNotice" style="display: none;">
+                <p class="premium-text">
+                    🔒 Free users can save 1 message. Upgrade to Premium for unlimited messages!
+                </p>
+                <button class="premium-upgrade-btn" id="messageUpgradeBtn">
+                    Upgrade to Premium - $1.99
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ambient Sound Modal -->
+    <div class="sound-modal" id="soundModal" role="dialog" aria-labelledby="soundTitle" aria-modal="true">
+        <div class="sound-panel">
+            <div class="sound-header">
+                <h2 class="sound-title" id="soundTitle">Ambient Sounds 🎵</h2>
+                <button class="close-btn" id="soundCloseBtn" aria-label="Close sounds">×</button>
+            </div>
+
+            <!-- Sound Categories -->
+            <div class="sound-categories">
+                <!-- Lofi Beats -->
+                <div class="sound-category">
+                    <h3 class="category-title">Lofi Beats</h3>
+                    <div class="sound-grid">
+                        <div class="sound-card" data-sound="lofi-chill">
+                            <div class="sound-icon">🎸</div>
+                            <div class="sound-name">Chill Lofi</div>
+                            <button class="sound-play-btn" data-sound="lofi-chill">▶</button>
+                        </div>
+                        <div class="sound-card" data-sound="lofi-jazzy">
+                            <div class="sound-icon">🎹</div>
+                            <div class="sound-name">Jazzy Lofi</div>
+                            <button class="sound-play-btn" data-sound="lofi-jazzy">▶</button>
+                        </div>
+                        <div class="sound-card" data-sound="lofi-ambient">
+                            <div class="sound-icon">🌌</div>
+                            <div class="sound-name">Ambient Lofi</div>
+                            <button class="sound-play-btn" data-sound="lofi-ambient">▶</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nature Sounds -->
+                <div class="sound-category">
+                    <h3 class="category-title">Nature</h3>
+                    <div class="sound-grid">
+                        <div class="sound-card" data-sound="rain">
+                            <div class="sound-icon">🌧️</div>
+                            <div class="sound-name">Rain</div>
+                            <button class="sound-play-btn" data-sound="rain">▶</button>
+                        </div>
+                        <div class="sound-card" data-sound="ocean">
+                            <div class="sound-icon">🌊</div>
+                            <div class="sound-name">Ocean Waves</div>
+                            <button class="sound-play-btn" data-sound="ocean">▶</button>
+                        </div>
+                        <div class="sound-card" data-sound="forest">
+                            <div class="sound-icon">🌲</div>
+                            <div class="sound-name">Forest</div>
+                            <button class="sound-play-btn" data-sound="forest">▶</button>
+                        </div>
+                        <div class="sound-card" data-sound="fire">
+                            <div class="sound-icon">🔥</div>
+                            <div class="sound-name">Fireplace</div>
+                            <button class="sound-play-btn" data-sound="fire">▶</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- White Noise -->
+                <div class="sound-category">
+                    <h3 class="category-title">White Noise</h3>
+                    <div class="sound-grid">
+                        <div class="sound-card" data-sound="white-noise">
+                            <div class="sound-icon">📻</div>
+                            <div class="sound-name">White Noise</div>
+                            <button class="sound-play-btn" data-sound="white-noise">▶</button>
+                        </div>
+                        <div class="sound-card" data-sound="brown-noise">
+                            <div class="sound-icon">🎚️</div>
+                            <div class="sound-name">Brown Noise</div>
+                            <button class="sound-play-btn" data-sound="brown-noise">▶</button>
+                        </div>
+                        <div class="sound-card" data-sound="pink-noise">
+                            <div class="sound-icon">🌸</div>
+                            <div class="sound-name">Pink Noise</div>
+                            <button class="sound-play-btn" data-sound="pink-noise">▶</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Volume Control -->
+            <div class="sound-controls">
+                <label class="volume-label">Volume</label>
+                <div class="volume-control">
+                    <span class="volume-icon">🔈</span>
+                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50" aria-label="Volume">
+                    <span class="volume-icon">🔊</span>
+                </div>
+                <div class="volume-value" id="volumeValue">50%</div>
+            </div>
+
+            <!-- Currently Playing -->
+            <div class="now-playing" id="nowPlaying" style="display: none;">
+                <div class="now-playing-info">
+                    <span class="now-playing-label">Now Playing:</span>
+                    <span class="now-playing-name" id="nowPlayingName">-</span>
+                </div>
+                <button class="stop-btn" id="stopBtn">⏹ Stop</button>
             </div>
         </div>
     </div>
@@ -407,6 +719,82 @@
             <div class="text-time" aria-live="polite" aria-atomic="true">
                 <span id="textTime">00:00:00.000</span>
             </div>
+
+            <!-- Time-based Greeting -->
+            <div class="greeting-container" id="greetingContainer">
+                <span class="greeting-text" id="greetingText">Good morning</span>
+                <span class="greeting-emoji" id="greetingEmoji">🌅</span>
+            </div>
+
+            <!-- Streak Counter -->
+            <div class="streak-container" id="streakContainer" style="display: none;">
+                <span class="streak-fire">🔥</span>
+                <span class="streak-number" id="streakNumber">0</span>
+                <span class="streak-label">day streak</span>
+            </div>
+
+            <!-- Focus Mode Session Info -->
+            <div class="focus-session-info" id="focusSessionInfo" style="display: none;">
+                <div class="focus-timer" id="focusTimer">00:00</div>
+                <div class="focus-label">Focus Session</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Dashboard Modal -->
+    <div class="analytics-dashboard-modal" id="analyticsDashboardModal" role="dialog" aria-labelledby="analyticsDashboardTitle" aria-modal="true">
+        <div class="analytics-dashboard-content">
+            <div class="analytics-dashboard-header">
+                <h2 id="analyticsDashboardTitle">Analytics Dashboard</h2>
+                <button class="modal-close-btn" id="analyticsDashboardCloseBtn" aria-label="Close analytics dashboard">×</button>
+            </div>
+
+            <div class="analytics-dashboard-body">
+                <!-- Overview Stats -->
+                <div class="analytics-section">
+                    <h3 class="section-title">Overview</h3>
+                    <div class="stats-grid" id="overviewStatsContainer">
+                        <!-- Stats will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Conversion Funnel -->
+                <div class="analytics-section">
+                    <h3 class="section-title">Conversion Funnel</h3>
+                    <div class="funnel-container" id="conversionFunnelContainer">
+                        <!-- Funnel will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Event Timeline -->
+                <div class="analytics-section">
+                    <h3 class="section-title">Recent Events</h3>
+                    <div class="event-timeline" id="eventTimelineContainer">
+                        <!-- Events will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Session Stats -->
+                <div class="analytics-section">
+                    <h3 class="section-title">Recent Sessions</h3>
+                    <div class="sessions-container" id="sessionStatsContainer">
+                        <!-- Sessions will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Export Controls -->
+                <div class="analytics-section">
+                    <h3 class="section-title">Data Management</h3>
+                    <div class="analytics-controls">
+                        <button class="analytics-control-btn export-btn" onclick="exportAnalyticsData()">
+                            📥 Export Data
+                        </button>
+                        <button class="analytics-control-btn clear-btn" onclick="clearAnalyticsData()">
+                            🗑️ Clear Data
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -414,9 +802,18 @@
     <script src="js/constants.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/theme.js"></script>
+    <script src="js/auto-theme.js"></script>
     <script src="js/analytics.js"></script>
+    <script src="js/analytics-dashboard.js"></script>
     <script src="js/payment.js"></script>
     <script src="js/clock.js"></script>
+    <script src="js/greeting.js"></script>
+    <script src="js/focus.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/streak.js"></script>
+    <script src="js/custom-message.js"></script>
+    <script src="js/theme-recommendations.js"></script>
+    <script src="js/circadian-insights.js"></script>
     <script src="js/fullscreen.js"></script>
     <script src="js/pwa.js"></script>
     <script src="js/alarm.js"></script>

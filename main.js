@@ -29,6 +29,33 @@ function init() {
     // Initialize stopwatch system
     initStopwatchSystem();
 
+    // Initialize greeting system
+    initGreeting();
+
+    // Initialize auto-theme system
+    initAutoTheme();
+
+    // Initialize focus mode system
+    initFocusMode();
+
+    // Initialize audio system
+    initAudioSystem();
+
+    // Initialize streak system
+    initStreakSystem();
+
+    // Initialize custom message system
+    initCustomMessageSystem();
+
+    // Initialize theme recommendations system
+    initThemeRecommendations();
+
+    // Initialize circadian insights system
+    initCircadianInsights();
+
+    // Initialize analytics dashboard
+    initAnalyticsDashboard();
+
     // Initialize clock
     initializeRings();
     updateClock();

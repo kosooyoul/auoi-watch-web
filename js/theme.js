@@ -5,6 +5,9 @@ let currentTheme = 'classic';
 let timeFormat = '24h';
 let animationSpeed = 1.0;
 
+// Expose currentTheme to window for auto-theme module
+window.currentTheme = currentTheme;
+
 /**
  * Convert premium theme (simplified structure) to full theme structure
  * @param {Object} premiumTheme - Premium theme with simplified structure
@@ -99,9 +102,15 @@ function applyTheme(themeId) {
 
     // Update current theme
     currentTheme = themeId;
+    window.currentTheme = themeId; // Expose to window for auto-theme
 
     // Save to localStorage
     saveSettings();
+
+    // Track theme selection for recommendations
+    if (typeof trackThemeSelection === 'function') {
+        trackThemeSelection(themeId);
+    }
 
     // Update URL with new theme
     updateURL();
@@ -328,6 +337,9 @@ function initSettingsUI() {
 
         // Analytics: Track theme gallery view
         Analytics.trackThemeGalleryView();
+
+        // Update Focus Stats (if available)
+        updateFocusStatsDisplay();
     });
 
     // Close modal
@@ -403,6 +415,22 @@ function initSettingsUI() {
         });
     }
 
+    // Auto Theme toggle
+    const autoThemeToggle = document.getElementById('autoThemeToggle');
+    const autoThemeLabel = document.getElementById('autoThemeLabel');
+
+    if (autoThemeToggle && autoThemeLabel) {
+        // Set initial state
+        autoThemeToggle.checked = isAutoThemeEnabled();
+        autoThemeLabel.textContent = autoThemeToggle.checked ? 'On' : 'Off';
+
+        // Toggle handler
+        autoThemeToggle.addEventListener('change', () => {
+            toggleAutoTheme();
+            autoThemeLabel.textContent = autoThemeToggle.checked ? 'On' : 'Off';
+        });
+    }
+
     // Render premium themes
     renderPremiumThemes();
 
@@ -436,6 +464,7 @@ function getPurchases() {
         luxury: { purchased: false },
         nature: { purchased: false },
         neon: { purchased: false },
+        professional: { purchased: false },
         bundle: { purchased: false }
     });
 }
@@ -518,7 +547,8 @@ function renderPremiumThemes() {
     const packs = {
         luxury: { name: 'Luxury Pack', price: 4.99, themes: [] },
         nature: { name: 'Nature Pack', price: 3.99, themes: [] },
-        neon: { name: 'Neon Pack', price: 3.99, themes: [] }
+        neon: { name: 'Neon Pack', price: 3.99, themes: [] },
+        professional: { name: 'Professional Pack', price: 4.99, themes: [] }
     };
 
     PREMIUM_THEMES.forEach(theme => {
@@ -687,7 +717,7 @@ function resetPurchases() {
  * Call in browser console: unlockAllPacks()
  */
 function unlockAllPacks() {
-    ['luxury', 'nature', 'neon'].forEach(packId => {
+    ['luxury', 'nature', 'neon', 'professional'].forEach(packId => {
         unlockPack(packId);
     });
     console.log('✓ All packs unlocked');
