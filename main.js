@@ -4,21 +4,20 @@
  * Initialize the application
  */
 function init() {
-    // Initialize analytics (first, so other modules can track events)
-    Analytics.init();
+    // Initialize clock FIRST (most important - must always work)
+    initializeRings();
+    updateClock();
 
-    // Initialize settings system
+    // Initialize settings system (needed for themes)
     initSettingsUI();
     loadSettings(); // Load saved theme from localStorage
 
-    // Initialize payment system
-    initPaymentSystem();
-
-    // Initialize fullscreen
+    // Initialize core features
     initFullscreen();
-
-    // Initialize PWA
     initPWA();
+
+    // Initialize analytics (so other modules can track events)
+    Analytics.init();
 
     // Initialize alarm system
     initAlarmSystem();
@@ -41,24 +40,21 @@ function init() {
     // Initialize audio system
     initAudioSystem();
 
-    // Initialize streak system
-    initStreakSystem();
-
-    // Initialize custom message system
-    initCustomMessageSystem();
-
-    // Initialize theme recommendations system
-    initThemeRecommendations();
-
-    // Initialize circadian insights system
-    initCircadianInsights();
+    // Initialize payment system
+    initPaymentSystem();
 
     // Initialize analytics dashboard
     initAnalyticsDashboard();
 
-    // Initialize clock
-    initializeRings();
-    updateClock();
+    // Initialize experimental features (non-critical)
+    try {
+        initStreakSystem();
+        initCustomMessageSystem();
+        initThemeRecommendations();
+        initCircadianInsights();
+    } catch (error) {
+        console.warn('Some experimental features failed to initialize:', error);
+    }
 }
 
 // Start the clock when DOM is ready
