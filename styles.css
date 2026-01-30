@@ -814,6 +814,49 @@ body {
     color: var(--text-secondary);
 }
 
+/* Features Menu */
+.features-menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.feature-menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.feature-menu-btn:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.feature-menu-btn:active {
+    transform: translateY(0);
+}
+
+.feature-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.feature-label {
+    flex: 1;
+}
+
 /* Premium Themes Section */
 .premium-pack-section {
     margin-bottom: 24px;
@@ -4962,5 +5005,57 @@ body {
     .analytics-control-btn {
         min-width: auto;
         width: 100%;
+    }
+}
+
+/* ==================== UI CLEANUP ==================== */
+/* Hide removed buttons (moved to Settings menu) */
+.world-clock-btn,
+.stopwatch-btn,
+.focus-btn,
+.sound-btn,
+.analytics-btn {
+    display: none !important;
+}
+
+/* ==================== MOBILE OPTIMIZATION ==================== */
+/* Adjust features menu for mobile */
+@media (max-width: 768px) {
+    .features-menu {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .feature-menu-btn {
+        padding: 14px 16px;
+        font-size: 0.9rem;
+    }
+
+    .feature-icon {
+        font-size: 1.3rem;
+    }
+
+    /* Improve button spacing on mobile */
+    .fullscreen-btn,
+    .alarm-btn,
+    .settings-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 1.3rem;
+    }
+
+    .fullscreen-btn {
+        top: 16px;
+        left: 16px;
+    }
+
+    .alarm-btn {
+        top: 16px;
+        left: 70px;
+    }
+
+    .settings-btn {
+        top: 16px;
+        right: 16px;
     }
 }

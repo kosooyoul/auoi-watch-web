@@ -434,6 +434,78 @@ function initSettingsUI() {
     // Render premium themes
     renderPremiumThemes();
 
+    // Feature menu buttons - open respective modals
+    const worldClockMenuBtn = document.getElementById('worldClockMenuBtn');
+    const stopwatchMenuBtn = document.getElementById('stopwatchMenuBtn');
+    const focusMenuBtn = document.getElementById('focusMenuBtn');
+    const soundMenuBtn = document.getElementById('soundMenuBtn');
+    const analyticsMenuBtn = document.getElementById('analyticsMenuBtn');
+
+    if (worldClockMenuBtn) {
+        worldClockMenuBtn.addEventListener('click', () => {
+            closeModal(); // Close settings
+            setTimeout(() => {
+                const worldClockModal = document.getElementById('worldClockModal');
+                if (worldClockModal) {
+                    worldClockModal.classList.add('active');
+                    if (typeof updateWorldClocks === 'function') {
+                        updateWorldClocks();
+                    }
+                }
+            }, 100);
+        });
+    }
+
+    if (stopwatchMenuBtn) {
+        stopwatchMenuBtn.addEventListener('click', () => {
+            closeModal();
+            setTimeout(() => {
+                const stopwatchModal = document.getElementById('stopwatchModal');
+                if (stopwatchModal) {
+                    stopwatchModal.classList.add('active');
+                }
+            }, 100);
+        });
+    }
+
+    if (focusMenuBtn) {
+        focusMenuBtn.addEventListener('click', () => {
+            closeModal();
+            setTimeout(() => {
+                if (typeof toggleFocusMode === 'function') {
+                    toggleFocusMode();
+                }
+            }, 100);
+        });
+    }
+
+    if (soundMenuBtn) {
+        soundMenuBtn.addEventListener('click', () => {
+            closeModal();
+            setTimeout(() => {
+                const soundModal = document.getElementById('soundModal');
+                if (soundModal) {
+                    soundModal.classList.add('active');
+                }
+            }, 100);
+        });
+    }
+
+    if (analyticsMenuBtn) {
+        analyticsMenuBtn.addEventListener('click', () => {
+            closeModal();
+            setTimeout(() => {
+                const analyticsDashboardModal = document.getElementById('analyticsDashboardModal');
+                if (analyticsDashboardModal) {
+                    analyticsDashboardModal.classList.add('active');
+                    if (typeof renderAnalyticsDashboard === 'function') {
+                        renderAnalyticsDashboard();
+                    }
+                }
+            }, 100);
+        });
+    }
+
     // Analytics: Track premium section view (Event 2)
     // Use IntersectionObserver to detect when premium section scrolls into view
     const premiumContainer = document.getElementById('premiumThemesContainer');
