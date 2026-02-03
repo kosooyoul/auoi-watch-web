@@ -1,0 +1,206 @@
+/* ==================== FLOATING UI OPTIMIZATION ==================== */
+/* All UI elements float around the clock without interfering with its design */
+/* Clock stays perfectly centered at all times */
+
+/* ==================== TEXT TIME - Floating at Bottom ==================== */
+.text-time {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: clamp(0.8rem, 2.5vmin, 1.2rem);
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    color: var(--text-time);
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: color 0.3s ease;
+    z-index: 5;
+    pointer-events: none;
+}
+
+/* ==================== GREETING - Floating at Bottom Center ==================== */
+.greeting-container {
+    position: fixed;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.85;
+    transition: opacity 0.3s ease;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.greeting-container:hover {
+    opacity: 1;
+}
+
+/* ==================== STREAK - Floating at Bottom Center ==================== */
+.streak-container {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: rgba(255, 107, 129, 0.1);
+    border: 1px solid rgba(255, 107, 129, 0.3);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    opacity: 0.9;
+    transition: all 0.3s ease;
+    z-index: 5;
+    cursor: pointer;
+}
+
+.streak-container:hover {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.05);
+    background: rgba(255, 107, 129, 0.15);
+}
+
+/* ==================== RESPONSIVE ADJUSTMENTS ==================== */
+
+/* Watch size - hide some floating elements */
+@media (max-width: 375px) {
+    .text-time {
+        bottom: 10px;
+        font-size: clamp(0.65rem, 2vmin, 0.9rem);
+    }
+
+    .greeting-container {
+        bottom: 40px;
+    }
+
+    .streak-container {
+        display: none; /* Too crowded on watch size */
+    }
+}
+
+/* Mobile portrait - adjust spacing */
+@media (min-width: 376px) and (max-width: 768px) and (orientation: portrait) {
+    .text-time {
+        bottom: 16px;
+    }
+
+    .greeting-container {
+        bottom: 50px;
+    }
+
+    .streak-container {
+        bottom: 90px;
+    }
+}
+
+/* Mobile landscape - compact layout */
+@media (max-height: 600px) and (orientation: landscape) {
+    .text-time {
+        bottom: 10px;
+        font-size: clamp(0.7rem, 2.2vmin, 1rem);
+    }
+
+    .greeting-container {
+        bottom: 35px;
+    }
+
+    .streak-container {
+        display: none; /* No vertical space in landscape */
+    }
+}
+
+/* Tablet - comfortable spacing */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .text-time {
+        bottom: 24px;
+    }
+
+    .greeting-container {
+        bottom: 65px;
+    }
+
+    .streak-container {
+        bottom: 110px;
+    }
+}
+
+/* Desktop - generous spacing */
+@media (min-width: 1025px) and (max-width: 1920px) {
+    .text-time {
+        bottom: 30px;
+    }
+
+    .greeting-container {
+        bottom: 75px;
+    }
+
+    .streak-container {
+        bottom: 120px;
+    }
+}
+
+/* Signage - large spacing */
+@media (min-width: 1921px) {
+    .text-time {
+        bottom: 40px;
+        font-size: clamp(1.3rem, 3.2vmin, 1.8rem);
+    }
+
+    .greeting-container {
+        bottom: 90px;
+    }
+
+    .greeting-text {
+        font-size: clamp(1rem, 2.5vmin, 1.3rem);
+    }
+
+    .greeting-emoji {
+        font-size: clamp(1.2rem, 2.8vmin, 1.5rem);
+    }
+
+    .streak-container {
+        bottom: 140px;
+        padding: 12px 24px;
+    }
+
+    .streak-fire {
+        font-size: clamp(1.4rem, 3vmin, 1.8rem);
+    }
+
+    .streak-number {
+        font-size: clamp(1.4rem, 3vmin, 1.8rem);
+    }
+
+    .streak-label {
+        font-size: clamp(0.9rem, 2.2vmin, 1.1rem);
+    }
+}
+
+/* ==================== FULLSCREEN MODE ==================== */
+/* In fullscreen, minimize distractions */
+body:fullscreen .text-time,
+body:-webkit-full-screen .text-time,
+body:-moz-full-screen .text-time {
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+}
+
+body:fullscreen:hover .text-time,
+body:-webkit-full-screen:hover .text-time,
+body:-moz-full-screen:hover .text-time {
+    opacity: 0.7;
+}
+
+body:fullscreen .greeting-container,
+body:-webkit-full-screen .greeting-container,
+body:-moz-full-screen .greeting-container,
+body:fullscreen .streak-container,
+body:-webkit-full-screen .streak-container,
+body:-moz-full-screen .streak-container {
+    opacity: 0;
+    pointer-events: none;
+}

@@ -23,6 +23,7 @@
 
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="styles-responsive.css">
+    <link rel="stylesheet" href="styles-floating-ui.css">
 </head>
 <body>
     <!-- Fullscreen Button -->
@@ -801,29 +802,29 @@
         </div>
     </div>
 
-    <!-- Module Scripts (load in dependency order) -->
-    <script src="js/constants.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/theme.js"></script>
-    <script src="js/auto-theme.js"></script>
-    <script src="js/analytics.js"></script>
-    <script src="js/analytics-dashboard.js"></script>
-    <script src="js/payment.js"></script>
-    <script src="js/clock.js"></script>
-    <script src="js/greeting.js"></script>
-    <script src="js/focus.js"></script>
-    <script src="js/audio.js"></script>
-    <script src="js/streak.js"></script>
-    <script src="js/custom-message.js"></script>
-    <script src="js/theme-recommendations.js"></script>
-    <script src="js/circadian-insights.js"></script>
-    <script src="js/fullscreen.js"></script>
-    <script src="js/pwa.js"></script>
-    <script src="js/alarm.js"></script>
-    <script src="js/world-clock.js"></script>
-    <script src="js/stopwatch.js"></script>
+    <!-- Module Scripts (deferred for faster page load) -->
+    <script defer src="js/constants.js"></script>
+    <script defer src="js/utils.js"></script>
+    <script defer src="js/theme.js"></script>
+    <script defer src="js/auto-theme.js"></script>
+    <script defer src="js/analytics.js"></script>
+    <script defer src="js/analytics-dashboard.js"></script>
+    <script defer src="js/payment.js"></script>
+    <script defer src="js/clock.js"></script>
+    <script defer src="js/greeting.js"></script>
+    <script defer src="js/focus.js"></script>
+    <script defer src="js/audio.js"></script>
+    <script defer src="js/streak.js"></script>
+    <script defer src="js/custom-message.js"></script>
+    <script defer src="js/theme-recommendations.js"></script>
+    <script defer src="js/circadian-insights.js"></script>
+    <script defer src="js/fullscreen.js"></script>
+    <script defer src="js/pwa.js"></script>
+    <script defer src="js/alarm.js"></script>
+    <script defer src="js/world-clock.js"></script>
+    <script defer src="js/stopwatch.js"></script>
 
     <!-- Main initialization -->
-    <script src="main.js"></script>
+    <script defer src="main.js"></script>
 </body>
 </html>
