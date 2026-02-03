@@ -13,29 +13,21 @@
     --text-time-font: clamp(0.8rem, 2.5vmin, 1.2rem);
 }
 
-/* Override container for responsive layout */
-.container {
+/* Responsive container - use higher specificity instead of !important */
+body .container {
     width: 100%;
     height: 100vh;
     max-width: 100%;
     max-height: 100%;
     padding: var(--button-spacing);
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-/* Override clock wrapper for responsive sizing */
-.clock-wrapper {
-    position: relative;
+/* Responsive clock wrapper - use higher specificity */
+body .clock-wrapper {
     width: var(--clock-size);
     height: var(--clock-size);
     max-width: var(--clock-size);
     max-height: var(--clock-size);
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 /* Responsive button base */
@@ -94,9 +86,9 @@
         display: none;
     }
 
-    /* Reduce ring stroke width for clarity */
-    .rings circle {
-        stroke-width: 8;
+    /* Reduce ring stroke width for clarity on small screens */
+    .rings .ring-bg {
+        stroke-width: 0.3 !important;
     }
 }
 
@@ -377,23 +369,30 @@
 /* ==================== HIGH DPI DISPLAYS ==================== */
 /* Retina displays, high-resolution screens */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    .rings circle {
-        stroke-width: 12;
+    .rings .ring-bg {
+        stroke-width: 0.75 !important;
     }
 
     .alarm-marker {
-        stroke-width: 2.5;
+        stroke-width: 2.5 !important;
     }
 }
 
 /* ==================== SETTINGS MODAL RESPONSIVE ==================== */
 /* Modal optimization for different screen sizes */
+
+/* Base settings panel - apply to all sizes */
+.settings-panel {
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+}
+
 @media (max-width: 375px) {
     .settings-panel {
         width: calc(100% - 24px);
         max-width: 100%;
         padding: 16px;
-        max-height: calc(100vh - 24px);
+        max-height: calc(100vh - 40px) !important;
     }
 
     .settings-title {
