@@ -1,0 +1,571 @@
+/* ==================== RESPONSIVE UI OPTIMIZATION ==================== */
+/* Ring Time Clock - Optimized for Watch, Mobile, Tablet, Desktop, and Signage */
+/* Mobile First Approach */
+
+/* ==================== BASE STYLES (All Devices) ==================== */
+:root {
+    /* Responsive sizing variables */
+    --clock-size: min(85vw, 85vh, 500px);
+    --button-size: 44px;
+    --button-spacing: 16px;
+    --time-font: clamp(0.9rem, 3vmin, 1.5rem);
+    --label-font: clamp(0.45rem, 1.3vmin, 0.65rem);
+    --text-time-font: clamp(0.8rem, 2.5vmin, 1.2rem);
+}
+
+/* Override container for responsive layout */
+.container {
+    width: 100%;
+    height: 100vh;
+    max-width: 100%;
+    max-height: 100%;
+    padding: var(--button-spacing);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Override clock wrapper for responsive sizing */
+.clock-wrapper {
+    position: relative;
+    width: var(--clock-size);
+    height: var(--clock-size);
+    max-width: var(--clock-size);
+    max-height: var(--clock-size);
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive button base */
+.fullscreen-btn,
+.alarm-btn,
+.settings-btn {
+    width: var(--button-size);
+    height: var(--button-size);
+    font-size: calc(var(--button-size) * 0.5);
+}
+
+/* ==================== WATCH SIZE (≤375px) ==================== */
+/* Apple Watch, small smartwatches, very small phones */
+@media (max-width: 375px) {
+    :root {
+        --clock-size: min(90vw, 90vh, 260px);
+        --button-size: 36px;
+        --button-spacing: 12px;
+        --time-font: clamp(0.7rem, 2.5vmin, 1rem);
+        --label-font: clamp(0.35rem, 1vmin, 0.5rem);
+        --text-time-font: clamp(0.65rem, 2vmin, 0.9rem);
+    }
+
+    /* Position buttons closer to edges */
+    .fullscreen-btn {
+        top: 12px;
+        left: 12px;
+    }
+
+    .alarm-btn {
+        top: 60px;
+        left: 12px;
+    }
+
+    .settings-btn {
+        top: 12px;
+        right: 12px;
+    }
+
+    /* Hide text labels on very small screens */
+    .time-label {
+        display: none;
+    }
+
+    /* Simplify greeting */
+    .greeting-container {
+        bottom: clamp(-60px, -15vmin, -70px);
+    }
+
+    .greeting-text {
+        font-size: clamp(0.6rem, 1.6vmin, 0.75rem);
+    }
+
+    /* Hide streak on watch size */
+    .streak-container {
+        display: none;
+    }
+
+    /* Reduce ring stroke width for clarity */
+    .rings circle {
+        stroke-width: 8;
+    }
+}
+
+/* ==================== MOBILE (376px - 768px) ==================== */
+/* Most smartphones in portrait mode */
+@media (min-width: 376px) and (max-width: 768px) {
+    :root {
+        --clock-size: min(85vw, 85vh, 400px);
+        --button-size: 44px;
+        --button-spacing: 16px;
+        --time-font: clamp(0.85rem, 2.8vmin, 1.3rem);
+        --label-font: clamp(0.4rem, 1.2vmin, 0.6rem);
+        --text-time-font: clamp(0.75rem, 2.3vmin, 1.1rem);
+    }
+
+    /* Standard mobile button positioning */
+    .fullscreen-btn {
+        top: 16px;
+        left: 16px;
+    }
+
+    .alarm-btn {
+        top: 72px;
+        left: 16px;
+    }
+
+    .settings-btn {
+        top: 16px;
+        right: 16px;
+    }
+
+    /* Optimize greeting position */
+    .greeting-container {
+        bottom: clamp(-80px, -18vmin, -90px);
+    }
+
+    /* Adjust streak position */
+    .streak-container {
+        bottom: clamp(-110px, -24vmin, -120px);
+    }
+}
+
+/* ==================== MOBILE LANDSCAPE (≤900px height) ==================== */
+/* Smartphones in landscape mode */
+@media (max-height: 600px) and (orientation: landscape) {
+    :root {
+        --clock-size: min(60vh, 60vw, 350px);
+        --button-size: 40px;
+        --button-spacing: 12px;
+    }
+
+    /* Move buttons to horizontal layout */
+    .fullscreen-btn {
+        top: 12px;
+        left: 12px;
+    }
+
+    .alarm-btn {
+        top: 12px;
+        left: 64px;
+    }
+
+    .settings-btn {
+        top: 12px;
+        right: 12px;
+    }
+
+    /* Hide text time to save vertical space */
+    .text-time {
+        display: none;
+    }
+
+    /* Simplify greeting */
+    .greeting-container {
+        bottom: clamp(-50px, -12vmin, -60px);
+        font-size: 0.7rem;
+    }
+
+    /* Hide streak in landscape */
+    .streak-container {
+        display: none;
+    }
+}
+
+/* ==================== TABLET (769px - 1024px) ==================== */
+/* iPads, Android tablets, small laptops */
+@media (min-width: 769px) and (max-width: 1024px) {
+    :root {
+        --clock-size: min(70vw, 70vh, 500px);
+        --button-size: 48px;
+        --button-spacing: 20px;
+        --time-font: clamp(1rem, 3.2vmin, 1.6rem);
+        --label-font: clamp(0.5rem, 1.4vmin, 0.7rem);
+        --text-time-font: clamp(0.9rem, 2.6vmin, 1.3rem);
+    }
+
+    /* Standard tablet button positioning */
+    .fullscreen-btn {
+        top: 20px;
+        left: 20px;
+    }
+
+    .alarm-btn {
+        top: 80px;
+        left: 20px;
+    }
+
+    .settings-btn {
+        top: 20px;
+        right: 20px;
+    }
+
+    /* Adjust greeting */
+    .greeting-container {
+        bottom: clamp(-90px, -20vmin, -100px);
+    }
+
+    /* Adjust streak */
+    .streak-container {
+        bottom: clamp(-120px, -26vmin, -130px);
+    }
+}
+
+/* ==================== DESKTOP (1025px - 1920px) ==================== */
+/* Standard desktop monitors, laptops */
+@media (min-width: 1025px) and (max-width: 1920px) {
+    :root {
+        --clock-size: min(60vw, 60vh, 600px);
+        --button-size: 52px;
+        --button-spacing: 24px;
+        --time-font: clamp(1.1rem, 3.5vmin, 1.8rem);
+        --label-font: clamp(0.55rem, 1.5vmin, 0.75rem);
+        --text-time-font: clamp(1rem, 2.8vmin, 1.4rem);
+    }
+
+    /* Desktop button positioning with more space */
+    .fullscreen-btn {
+        top: 24px;
+        left: 24px;
+    }
+
+    .alarm-btn {
+        top: 88px;
+        left: 24px;
+    }
+
+    .settings-btn {
+        top: 24px;
+        right: 24px;
+    }
+
+    /* Enhanced hover effects on desktop */
+    .fullscreen-btn:hover,
+    .alarm-btn:hover,
+    .settings-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .settings-btn:hover {
+        transform: rotate(90deg);
+    }
+
+    /* Desktop greeting positioning */
+    .greeting-container {
+        bottom: clamp(-100px, -22vmin, -110px);
+    }
+
+    /* Desktop streak positioning */
+    .streak-container {
+        bottom: clamp(-130px, -28vmin, -140px);
+    }
+}
+
+/* ==================== SIGNAGE / LARGE DISPLAYS (1921px+) ==================== */
+/* 4K displays, digital signage, large TVs */
+@media (min-width: 1921px) {
+    :root {
+        --clock-size: min(50vw, 50vh, 800px);
+        --button-size: 64px;
+        --button-spacing: 32px;
+        --time-font: clamp(1.4rem, 4vmin, 2.2rem);
+        --label-font: clamp(0.7rem, 1.8vmin, 1rem);
+        --text-time-font: clamp(1.3rem, 3.2vmin, 1.8rem);
+    }
+
+    /* Signage button positioning - more spacious */
+    .fullscreen-btn {
+        top: 32px;
+        left: 32px;
+    }
+
+    .alarm-btn {
+        top: 108px;
+        left: 32px;
+    }
+
+    .settings-btn {
+        top: 32px;
+        right: 32px;
+    }
+
+    /* Larger buttons for signage */
+    .fullscreen-btn,
+    .alarm-btn,
+    .settings-btn {
+        width: 64px;
+        height: 64px;
+        font-size: 2rem;
+    }
+
+    /* Enhanced effects for large displays */
+    .rings {
+        filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.3));
+    }
+
+    /* Signage greeting - larger and more prominent */
+    .greeting-container {
+        bottom: clamp(-120px, -25vmin, -140px);
+    }
+
+    .greeting-text {
+        font-size: clamp(1rem, 2.5vmin, 1.3rem);
+    }
+
+    .greeting-emoji {
+        font-size: clamp(1.2rem, 2.8vmin, 1.5rem);
+    }
+
+    /* Signage streak - larger */
+    .streak-container {
+        bottom: clamp(-160px, -32vmin, -180px);
+        padding: 12px 24px;
+    }
+
+    .streak-fire {
+        font-size: clamp(1.4rem, 3vmin, 1.8rem);
+    }
+
+    .streak-number {
+        font-size: clamp(1.4rem, 3vmin, 1.8rem);
+    }
+
+    .streak-label {
+        font-size: clamp(0.9rem, 2.2vmin, 1.1rem);
+    }
+}
+
+/* ==================== ULTRA-WIDE DISPLAYS ==================== */
+/* 21:9, 32:9 aspect ratio monitors */
+@media (min-width: 2560px) and (min-aspect-ratio: 21/9) {
+    :root {
+        --clock-size: min(40vw, 70vh, 900px);
+    }
+
+    /* Center content better on ultra-wide */
+    .container {
+        padding: 40px;
+    }
+}
+
+/* ==================== PORTRAIT MODE (all sizes) ==================== */
+/* Optimize for vertical displays */
+@media (orientation: portrait) {
+    .clock-wrapper {
+        margin-top: calc(var(--button-size) + var(--button-spacing));
+    }
+}
+
+/* ==================== LANDSCAPE MODE (all sizes) ==================== */
+/* Optimize for horizontal displays */
+@media (orientation: landscape) and (min-height: 601px) {
+    .clock-wrapper {
+        margin-top: 0;
+    }
+}
+
+/* ==================== HIGH DPI DISPLAYS ==================== */
+/* Retina displays, high-resolution screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .rings circle {
+        stroke-width: 12;
+    }
+
+    .alarm-marker {
+        stroke-width: 2.5;
+    }
+}
+
+/* ==================== SETTINGS MODAL RESPONSIVE ==================== */
+/* Modal optimization for different screen sizes */
+@media (max-width: 375px) {
+    .settings-panel {
+        width: calc(100% - 24px);
+        max-width: 100%;
+        padding: 16px;
+        max-height: calc(100vh - 24px);
+    }
+
+    .settings-title {
+        font-size: 1.2rem;
+    }
+
+    .theme-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .features-menu {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .feature-menu-btn {
+        padding: 10px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (min-width: 376px) and (max-width: 768px) {
+    .settings-panel {
+        width: calc(100% - 32px);
+        max-width: 480px;
+        padding: 20px;
+    }
+
+    .theme-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .features-menu {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .settings-panel {
+        width: calc(100% - 80px);
+        max-width: 600px;
+        padding: 28px;
+    }
+
+    .theme-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .features-menu {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+}
+
+@media (min-width: 1025px) {
+    .settings-panel {
+        width: calc(100% - 100px);
+        max-width: 700px;
+        padding: 32px;
+    }
+
+    .theme-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+    }
+
+    .features-menu {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+    }
+}
+
+@media (min-width: 1921px) {
+    .settings-panel {
+        max-width: 900px;
+        padding: 40px;
+    }
+
+    .settings-title {
+        font-size: 2rem;
+    }
+
+    .theme-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+    }
+
+    .features-menu {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+}
+
+/* ==================== FULLSCREEN MODE ADJUSTMENTS ==================== */
+/* Hide buttons in fullscreen except when needed */
+body:fullscreen .alarm-btn,
+body:-webkit-full-screen .alarm-btn,
+body:-moz-full-screen .alarm-btn {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+body:fullscreen:hover .alarm-btn,
+body:-webkit-full-screen:hover .alarm-btn,
+body:-moz-full-screen:hover .alarm-btn {
+    opacity: 0.5;
+    pointer-events: auto;
+}
+
+/* ==================== TOUCH DEVICE OPTIMIZATIONS ==================== */
+/* Larger touch targets for mobile */
+@media (hover: none) and (pointer: coarse) {
+    .fullscreen-btn,
+    .alarm-btn,
+    .settings-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    /* Remove hover effects on touch devices */
+    .fullscreen-btn:hover,
+    .alarm-btn:hover,
+    .settings-btn:hover {
+        transform: none;
+    }
+
+    /* Add active states instead */
+    .fullscreen-btn:active,
+    .alarm-btn:active,
+    .settings-btn:active {
+        transform: scale(0.95);
+        background: rgba(255, 255, 255, 0.2);
+    }
+}
+
+/* ==================== REDUCED MOTION ==================== */
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ==================== PRINT STYLES ==================== */
+/* Optimize for printing */
+@media print {
+    .fullscreen-btn,
+    .alarm-btn,
+    .settings-btn,
+    .fullscreen-hint,
+    .greeting-container,
+    .streak-container {
+        display: none;
+    }
+
+    body {
+        background: white;
+    }
+
+    .clock-wrapper {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+    }
+}
